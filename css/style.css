@@ -1262,6 +1262,7 @@ ul {
 .mission-strip-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  align-items: start;
 }
 
 .mission-strip-item {
@@ -1270,6 +1271,8 @@ ul {
   transition: var(--transition);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .mission-strip-item:last-child {
   border-right: none;
