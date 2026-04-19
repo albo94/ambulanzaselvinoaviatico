@@ -206,7 +206,7 @@ ul {
   flex-shrink: 0;
 }
 .header-logo-text {
-  display: none;
+  display: flex;
   flex-direction: column;
   line-height: 1.2;
   white-space: nowrap;
@@ -225,9 +225,6 @@ ul {
   color: var(--text-light);
   letter-spacing: 1.5px;
   text-transform: uppercase;
-}
-@media (min-width: 640px) {
-  .header-logo-text { display: flex; }
 }
 
 /* Main nav */
