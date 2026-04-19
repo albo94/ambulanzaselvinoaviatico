@@ -1085,10 +1085,10 @@ ul {
 }
 
 .footer-brand .footer-logo {
-  height: 55px;
+  height: 60px;
   width: auto;
-  filter: brightness(0) invert(1);
   margin-bottom: 20px;
+  border-radius: 8px;
 }
 
 .footer-brand p {
