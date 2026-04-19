@@ -194,11 +194,40 @@ ul {
 /* Logo */
 .header-logo {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
 }
 .header-logo img {
-  height: 55px;
+  height: 42px;
   width: auto;
   object-fit: contain;
+  flex-shrink: 0;
+}
+.header-logo-text {
+  display: none;
+  flex-direction: column;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.header-logo-text .logo-name {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--dark);
+  letter-spacing: 0.3px;
+}
+.header-logo-text .logo-sub {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 400;
+  font-size: 0.7rem;
+  color: var(--text-light);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+@media (min-width: 640px) {
+  .header-logo-text { display: flex; }
 }
 
 /* Main nav */
