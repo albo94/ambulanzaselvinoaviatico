@@ -550,8 +550,13 @@ ul {
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
 }
+.services-grid--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
 
 .service-card {
+  display: flex;
+  flex-direction: column;
   background: var(--white);
   border: 1px solid var(--gray-2);
   border-radius: 12px;
@@ -559,6 +564,8 @@ ul {
   text-align: center;
   transition: var(--transition);
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  color: var(--text);
+  cursor: pointer;
 }
 .service-card:hover {
   transform: translateY(-8px);
@@ -596,6 +603,24 @@ ul {
   font-size: 0.95rem;
   color: var(--text-light);
   line-height: 1.7;
+  flex-grow: 1;
+}
+
+.service-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--orange);
+  transition: gap 0.2s ease;
+}
+.service-card:hover .service-card-link {
+  gap: 10px;
 }
 
 /* ============================================================
@@ -1643,6 +1668,222 @@ ul {
 }
 
 /* ============================================================
+   SERVIZI PAGE
+   ============================================================ */
+.servizi-tabs {
+  background: var(--white);
+  border-bottom: 2px solid var(--gray-2);
+  position: sticky;
+  top: 72px;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.servizi-tabs-list {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.servizi-tabs-list::-webkit-scrollbar { display: none; }
+
+.servizi-tabs-list li a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 24px;
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-light);
+  border-bottom: 3px solid transparent;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.servizi-tabs-list li a:hover {
+  color: var(--orange);
+  border-bottom-color: var(--orange);
+  background: #fdf6f2;
+}
+
+.servizio-section {
+  background: var(--white);
+}
+.servizio-section--alt {
+  background: var(--gray);
+}
+
+.servizio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.servizio-grid--reverse {
+  direction: rtl;
+}
+.servizio-grid--reverse > * {
+  direction: ltr;
+}
+
+.servizio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(232,96,28,0.1);
+  color: var(--orange);
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 5px 12px;
+  border-radius: 30px;
+  margin-bottom: 12px;
+}
+
+.servizio-list {
+  margin: 20px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.servizio-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.servizio-list li i {
+  color: var(--orange);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.servizio-media {
+  position: relative;
+}
+
+.servizio-photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.servizio-photo-grid img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.servizio-photo-grid img:hover {
+  transform: scale(1.04);
+}
+.servizio-photo-grid .sp-wide {
+  grid-column: span 2;
+  height: 260px;
+}
+
+.servizio-photo-grid--4 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.servizio-photo-grid--4 img {
+  height: 200px;
+}
+
+/* Formazione grid */
+.formazione-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-bottom: 48px;
+}
+
+.formazione-card {
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: var(--transition);
+  border-top: 4px solid var(--orange);
+}
+.formazione-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+.formazione-card-img {
+  height: 120px;
+  background: linear-gradient(135deg, #c04d14 0%, #E8601C 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.formazione-card-icon {
+  font-size: 3rem;
+  color: rgba(255,255,255,0.85);
+}
+
+.formazione-card-body {
+  padding: 28px;
+}
+.formazione-card-body h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  color: var(--dark);
+}
+.formazione-card-body p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.formazione-list {
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.formazione-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.formazione-list li i {
+  color: var(--orange);
+  margin-top: 3px;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+}
+
+.formazione-foto-note {
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.formazione-foto-note img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ============================================================
    MOBILE NAV – full screen overlay
    ============================================================ */
 .mobile-nav {
@@ -1827,8 +2068,27 @@ ul {
   }
 
   /* Services */
-  .services-grid {
+  .services-grid,
+  .services-grid--4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Servizi page */
+  .servizio-grid,
+  .servizio-grid--reverse {
     grid-template-columns: 1fr;
+    direction: ltr;
+    gap: 32px;
+  }
+  .servizio-photo-grid img,
+  .servizio-photo-grid .sp-wide {
+    height: 180px;
+  }
+  .formazione-grid {
+    grid-template-columns: 1fr;
+  }
+  .formazione-foto-note img {
+    height: 220px;
   }
 
   /* About */
@@ -1921,6 +2181,10 @@ ul {
 @media (max-width: 480px) {
   .container {
     padding: 0 16px;
+  }
+  .services-grid,
+  .services-grid--4 {
+    grid-template-columns: 1fr;
   }
   .mission-stats {
     grid-template-columns: 1fr;
