@@ -347,16 +347,21 @@ ul {
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   text-align: center;
+  padding-top: 48px;
 }
 
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.60) 100%);
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,0.52) 0%,
+    rgba(0,0,0,0.18) 28%,
+    rgba(0,0,0,0.08) 55%,
+    rgba(0,0,0,0.38) 100%);
 }
 
 .hero-content {
@@ -366,6 +371,10 @@ ul {
   max-width: 800px;
   padding: 0 24px;
   animation: heroFadeIn 1s ease forwards;
+  /* Title anchored to top, buttons at bottom */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @keyframes heroFadeIn {
@@ -392,15 +401,16 @@ ul {
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: 16px;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  margin-bottom: 10px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.55);
 }
 
 .hero-content p {
-  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-size: clamp(1rem, 2vw, 1.2rem);
   font-weight: 400;
-  margin-bottom: 36px;
+  margin-bottom: 0;
   opacity: 0.92;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 
 .hero-buttons {
@@ -408,6 +418,29 @@ ul {
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 28px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+/* Mostra pulsanti all'hover del mouse */
+@media (hover: hover) {
+  .hero:hover .hero-buttons {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+/* Su touch/mobile i pulsanti sono sempre visibili */
+@media (hover: none) {
+  .hero-buttons {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
 }
 
 /* Page hero (smaller) */
