@@ -166,7 +166,62 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* ----------------------------------------------------------
-     6. HEADER SHADOW on scroll
+     6. CAROUSEL
+  ---------------------------------------------------------- */
+  document.querySelectorAll('.carousel').forEach(function (carousel) {
+    const track    = carousel.querySelector('.carousel-track');
+    const slides   = carousel.querySelectorAll('.carousel-slide');
+    const dotsWrap = carousel.querySelector('.carousel-dots');
+    const prevBtn  = carousel.querySelector('.carousel-prev');
+    const nextBtn  = carousel.querySelector('.carousel-next');
+
+    if (!track || slides.length === 0) return;
+
+    let current = 0;
+    let timer;
+
+    // Build dots
+    slides.forEach(function (_, i) {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Vai alla foto ' + (i + 1));
+      dot.addEventListener('click', function () { goTo(i); resetTimer(); });
+      dotsWrap.appendChild(dot);
+    });
+
+    function goTo(idx) {
+      current = (idx + slides.length) % slides.length;
+      track.style.transform = 'translateX(-' + current * 100 + '%)';
+      carousel.querySelectorAll('.carousel-dot').forEach(function (d, i) {
+        d.classList.toggle('active', i === current);
+      });
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      timer = setInterval(function () { goTo(current + 1); }, 4500);
+    }
+
+    prevBtn && prevBtn.addEventListener('click', function () { goTo(current - 1); resetTimer(); });
+    nextBtn && nextBtn.addEventListener('click', function () { goTo(current + 1); resetTimer(); });
+
+    // Touch swipe
+    var touchX = 0;
+    carousel.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+    carousel.addEventListener('touchend', function (e) {
+      var diff = touchX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) { goTo(diff > 0 ? current + 1 : current - 1); resetTimer(); }
+    }, { passive: true });
+
+    // Pause on hover
+    carousel.addEventListener('mouseenter', function () { clearInterval(timer); });
+    carousel.addEventListener('mouseleave', resetTimer);
+
+    resetTimer();
+  });
+
+  /* ----------------------------------------------------------
+     7. HEADER SHADOW on scroll
   ---------------------------------------------------------- */
   const header = document.querySelector('.site-header');
   if (header) {

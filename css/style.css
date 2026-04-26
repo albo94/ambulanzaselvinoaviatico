@@ -1462,6 +1462,107 @@ ul {
 }
 
 /* ============================================================
+   CONSIGLIO DIRETTIVO
+   ============================================================ */
+.consiglio-section {
+  background: var(--gray);
+}
+.consiglio-photo {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.consiglio-photo img {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.5s ease;
+}
+.consiglio-photo:hover img {
+  transform: scale(1.03);
+}
+
+/* ============================================================
+   CAROUSEL
+   ============================================================ */
+.carousel-section {
+  background: var(--white);
+}
+.carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  max-width: 960px;
+  margin: 0 auto;
+}
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
+  will-change: transform;
+}
+.carousel-slide {
+  flex: 0 0 100%;
+}
+.carousel-slide img {
+  width: 100%;
+  height: 520px;
+  object-fit: cover;
+  display: block;
+}
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.40);
+  color: var(--white);
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-btn:hover {
+  background: var(--orange);
+}
+.carousel-prev { left: 14px; }
+.carousel-next { right: 14px; }
+.carousel-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+  z-index: 2;
+}
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  border: none;
+  padding: 0;
+}
+.carousel-dot.active {
+  background: var(--white);
+  transform: scale(1.35);
+}
+
+/* ============================================================
    MOBILE NAV – full screen overlay
    ============================================================ */
 .mobile-nav {
@@ -1541,6 +1642,17 @@ ul {
    RESPONSIVE – 768px
    ============================================================ */
 @media (max-width: 768px) {
+  .carousel-slide img {
+    height: 260px;
+  }
+  .consiglio-photo img {
+    height: 260px;
+  }
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.3rem;
+  }
 
   /* Header */
   .header-nav {
