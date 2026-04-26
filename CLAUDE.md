@@ -114,7 +114,7 @@ In `associazione.html`, tra "Chi Siamo" e "Timeline". Foto: `images/consiglio-di
 
 ### Pagina Servizi (servizi.html)
 Tab sticky sotto l'header con 5 sezioni:
-1. **#emergenza** – Emergenza 118, foto in `images/servizi/emergenza/`
+1. **#emergenza** – Emergenza 112, foto in `images/servizi/emergenza/`
 2. **#trasporto** – Trasporto Sanitario, foto singola `trasporti-programmati.jpg`, contatto Antonia Rondi 333 413 4299
 3. **#manifestazioni** – Assistenza Manifestazioni, griglia 4 foto
 4. **#presidio** – Presidio del Territorio (pressione, glicemia, DAE), griglia 6 foto
