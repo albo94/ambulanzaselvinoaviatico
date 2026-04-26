@@ -40,7 +40,9 @@ images/
 ├── manifestazioni-1..4.jpg      – Carosello manifestazioni (associazione.html)
 ├── servizio-civile-1..2.jpg     – Sezione servizio civile (associazione.html)
 ├── news-team.jpg                – Sezione news (index.html)
-├── team-gruppo.jpg              – Sezione "La Nostra Associazione" (index.html)
+├── team-gruppo.jpg              – (non più usata in index)
+├── team/gruppo11.jpg            – Sezione "La Nostra Associazione" (index.html)
+├── team/vol3,7,11,15.jpg        – Photo strip home page (4 foto volontari)
 ├── team-rosso.jpg               – OG image volontario.html
 ├── servizi/
 │   ├── emergenza/               – ambulanza.jpg, ambulanza1-4.jpg, elicottero.jpg
