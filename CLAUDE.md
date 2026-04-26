@@ -10,14 +10,47 @@ Repository: `https://github.com/albo94/ambulanzaselvinoaviatico`
 /
 ├── index.html          – Home page
 ├── associazione.html   – Storia, valori, consiglio direttivo, carosello, gallery
+├── servizi.html        – Pagina servizi con sezioni e tab sticky
 ├── contatti.html       – Mappa, indirizzi, orari
 ├── volontario.html     – Come diventare volontario, donazioni, contributi pubblici
 ├── sitemap.xml
 ├── robots.txt
 ├── css/style.css       – Unico foglio di stile (tutto il sito)
 ├── js/main.js          – Hamburger, stats counter, carousel, scroll reveal
-├── images/             – Tutte le immagini usate dal sito
+├── images/             – Immagini usate dal sito (vedi struttura sottocartelle)
 └── docs/               – PDF scaricabili (contributi pubblici, volontariato in vacanza)
+```
+
+## Struttura immagini (images/)
+
+```
+images/
+├── hero-principale.jpg          – Hero home page
+├── logo.png                     – Favicon, header, footer
+├── consiglio-direttivo.jpg      – Sezione Consiglio Direttivo (associazione.html)
+├── consiglio-2.jpg              – Gallery associazione
+├── consiglio5.jpg               – Per uso futuro in associazione
+├── consiglio vecchio.jpg        – Foto storica consiglio
+├── storica sede.jpg             – Foto storica sede
+├── corteo.jpg                   – Usata in associazione.html e servizi
+├── evento-taglio-nastro.jpg     – Carosello inaugurazione 2026
+├── evento-benedizione.jpg       – Carosello inaugurazione 2026
+├── presidente.jpg               – Carosello + gallery
+├── mg-6071/6108/6129.jpg        – Carosello inaugurazione 2026
+├── manifestazioni-1..4.jpg      – Carosello manifestazioni (associazione.html)
+├── servizio-civile-1..2.jpg     – Sezione servizio civile (associazione.html)
+├── news-team.jpg                – Sezione news (index.html)
+├── team-gruppo.jpg              – Sezione "La Nostra Associazione" (index.html)
+├── team-rosso.jpg               – OG image volontario.html
+├── servizi/
+│   ├── emergenza/               – ambulanza.jpg, ambulanza1-4.jpg, elicottero.jpg
+│   ├── trasporto/               – trasporti-programmati.jpg
+│   ├── manifestazioni/          – manifestazioni5.jpg, manifestazioni6.jpg, arena-verona.jpg
+│   ├── territorio/              – territorio1-7.jpg, guardia-medica.jpg
+│   └── formazione/              – formazione1-7.jpg
+├── team/                        – gruppo.jpg, gruppo2-12.jpg, vol1-16.jpg
+├── eventi/inaugurazione/        – (cartella per foto eventi futuri)
+└── gallery/                     – (cartella per gallery futura)
 ```
 
 ## Dati associazione
@@ -37,6 +70,7 @@ Repository: `https://github.com/albo94/ambulanzaselvinoaviatico`
 - **Ambulanze operative**: 3
 - **Interventi/anno**: ~450–500
 - **Convenz. AREU H24** dal 2021
+- **Trasporti programmati**: Sig.ra Antonia Rondi – tel. 333 413 4299
 
 ## Palette colori (CSS custom properties)
 
@@ -63,6 +97,7 @@ Footer background: `#1e2a35` (blu-grigio caldo, non `--dark-2`).
 ### Header
 Sticky, bianco, logo + testo "Ambulanza / Selvino · Aviatico", nav, social icons, CTA buttons.
 Mobile: hamburger + mobile-nav overlay fullscreen.
+Nav links: Home | Associazione | Servizi | Contatti (+ Diventa Volontario / Dona Adesso).
 
 ### Join Banner
 Sfondo **arancione** (`var(--orange)`). Usare `btn-white` (non `btn-orange`) per il pulsante principale, e `btn-white-outline` per quello secondario.
@@ -72,24 +107,18 @@ Presente in `associazione.html` – sezione "Inaugurazione 26 Aprile 2026".
 - JS in `main.js` (sezione 6 – CAROUSEL)
 - CSS in `style.css` (sezione CAROUSEL)
 - Auto-play 4.5s, pausa su hover, swipe touch, dot indicators, prev/next buttons
+- `object-fit: contain` + sfondo `#111` per foto verticali da telefono
 
 ### Sezione Consiglio Direttivo
 In `associazione.html`, tra "Chi Siamo" e "Timeline". Foto: `images/consiglio-direttivo.jpg`.
 
-## Immagini principali
-
-| File                        | Usata in                              |
-|-----------------------------|---------------------------------------|
-| `hero-principale.jpg`       | Hero home page (index.html)           |
-| `consiglio-direttivo.jpg`   | Sezione Consiglio Direttivo           |
-| `evento-taglio-nastro.jpg`  | Carosello + gallery inaugurazione 2026|
-| `evento-benedizione.jpg`    | Carosello inaugurazione 2026          |
-| `evento-tutti.jpg`          | Carosello + gallery (wide)            |
-| `presidente.jpg`            | Carosello + gallery                   |
-| `mg-6071/6108/6129.jpg`     | Carosello inaugurazione 2026          |
-| `evento-2026-01..09.jpg`    | Carosello inaugurazione 2026          |
-| `ambulanza-team.jpg`        | Gallery associazione, OG image        |
-| `logo.png`                  | Favicon, header, footer               |
+### Pagina Servizi (servizi.html)
+Tab sticky sotto l'header con 5 sezioni:
+1. **#emergenza** – Emergenza 118, foto in `images/servizi/emergenza/`
+2. **#trasporto** – Trasporto Sanitario, foto singola `trasporti-programmati.jpg`, contatto Antonia Rondi 333 413 4299
+3. **#manifestazioni** – Assistenza Manifestazioni, griglia 4 foto
+4. **#presidio** – Presidio del Territorio (pressione, glicemia, DAE), griglia 6 foto
+5. **#formazione** – Formazione (Scuole, Soccorritori, Comunità, Aziende), card con foto reali
 
 ## PDF (cartella docs/)
 
@@ -118,3 +147,5 @@ In `associazione.html`, tra "Chi Siamo" e "Timeline". Foto: `images/consiglio-di
 - Font Awesome 6 Free — verificare che le icone esistano prima di usarle (`fa-hand-holding-heart` non `fa-hands-holding-heart`)
 - Le sezioni del sito alternano sfondo bianco (`--white`) e grigio chiaro (`--gray`)
 - Commit e push su `main` per pubblicare — GitHub Pages si aggiorna in ~1 min
+- File con spazi nel nome (es. `storica sede.jpg`) vanno rinominati con trattini per uso web
+- `.servizio-photo-single img` usa `object-position: center 15%` per mostrare i volti
