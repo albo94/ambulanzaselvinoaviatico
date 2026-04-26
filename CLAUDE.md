@@ -28,26 +28,25 @@ images/
 ├── hero-principale.jpg          – Hero home page
 ├── logo.png                     – Favicon, header, footer
 ├── consiglio-direttivo.jpg      – Sezione Consiglio Direttivo (associazione.html)
-├── consiglio-2.jpg              – Gallery associazione
+├── consiglio-2.jpg              – Carosello squadra (associazione.html)
 ├── consiglio5.jpg               – Per uso futuro in associazione
-├── consiglio vecchio.jpg        – Foto storica consiglio
-├── storica sede.jpg             – Foto storica sede
-├── corteo.jpg                   – Usata in associazione.html e servizi
-├── evento-taglio-nastro.jpg     – Carosello inaugurazione 2026
+├── consiglio-vecchio.jpg        – Foto storica consiglio
+├── storica-sede.jpg             – Foto storica sede
+├── corteo.jpg                   – Hero page associazione.html
+├── evento-taglio-nastro.jpg     – Carosello inaugurazione 2026 + news home
 ├── evento-benedizione.jpg       – Carosello inaugurazione 2026
-├── presidente.jpg               – Carosello + gallery
+├── presidente.jpg               – Carosello inaugurazione 2026
 ├── mg-6071/6108/6129.jpg        – Carosello inaugurazione 2026
 ├── manifestazioni-1..4.jpg      – Carosello manifestazioni (associazione.html)
 ├── servizio-civile-1..2.jpg     – Sezione servizio civile (associazione.html)
-├── news-team.jpg                – Sezione news (index.html)
-├── team-gruppo.jpg              – (non più usata in index)
-├── team/gruppo11.jpg            – Sezione "La Nostra Associazione" (index.html)
-├── team/vol3,7,11,15.jpg        – Photo strip home page (4 foto volontari)
-├── team-rosso.jpg               – OG image volontario.html
+├── news-team.jpg                – Card news volontariato (index.html)
+├── team-gruppo.jpg              – (disponibile, non usata attivamente)
+├── team-rosso.jpg               – Carosello squadra + OG image volontario.html
+├── arena-verona.jpg             – Carosello squadra (associazione.html)
 ├── servizi/
-│   ├── emergenza/               – ambulanza.jpg, ambulanza1-4.jpg, elicottero.jpg
+│   ├── emergenza/               – ambulanza3.jpg, ambulanza4.jpg, elicottero.jpg
 │   ├── trasporto/               – trasporti-programmati.jpg
-│   ├── manifestazioni/          – manifestazioni5.jpg, manifestazioni6.jpg, arena-verona.jpg
+│   ├── manifestazioni/          – manifestazioni5.jpg, manifestazioni6.jpg, manifestazioni-2.jpg
 │   ├── territorio/              – territorio1-7.jpg, guardia-medica.jpg
 │   └── formazione/              – formazione1-7.jpg, formazione-soccorritori-1..2.jpg
 │       ├── scuole/              – formazione-scuole.jpg, formazione-scuole-2.jpg, formazione-scuole-3.jpg
@@ -55,9 +54,13 @@ images/
 │       ├── comunita/            – (vuota, usa formazione1-7 nella cartella padre)
 │       └── aziende/             – formazione-aziende.jpg
 ├── team/                        – gruppo.jpg, gruppo2-12.jpg, vol1-16.jpg
+│   ├── gruppo11.jpg             – Sezione "La Nostra Associazione" (index.html)
+│   └── vol8,11,12,15.jpg        – Photo strip home page (4 foto volontari di gruppo)
 ├── eventi/inaugurazione/        – (cartella per foto eventi futuri)
 └── gallery/                     – (cartella per gallery futura)
 ```
+
+**Nota:** Per aggiungere foto al carosello "La Nostra Squadra" (associazione.html) basta mettere il file in `images/team/` e aggiungere una riga `<div class="carousel-slide"><img src="..."></div>` nel div `id="gallery-carousel"`.
 
 ## Dati associazione
 
@@ -109,7 +112,9 @@ Nav links: Home | Associazione | Servizi | Contatti (+ Diventa Volontario / Dona
 Sfondo **arancione** (`var(--orange)`). Usare `btn-white` (non `btn-orange`) per il pulsante principale, e `btn-white-outline` per quello secondario.
 
 ### Carosello (carousel)
-Presente in `associazione.html` – sezione "Inaugurazione 26 Aprile 2026".
+Il sito ha **due caroselli** in `associazione.html`, entrambi gestiti dallo stesso JS tramite `querySelectorAll('.carousel')`:
+1. **`#main-carousel`** – "Inaugurazione 26 Aprile 2026" (evento-taglio-nastro, benedizione, presidente, mg-6071/6108/6129 + slot per foto future)
+2. **`#gallery-carousel`** – "La Nostra Squadra" (16 foto: gruppo2-12, vol8/11/12/15, team-rosso, team-gruppo, arena-verona)
 - JS in `main.js` (sezione 6 – CAROUSEL)
 - CSS in `style.css` (sezione CAROUSEL)
 - Auto-play 4.5s, pausa su hover, swipe touch, dot indicators, prev/next buttons
@@ -120,11 +125,24 @@ In `associazione.html`, tra "Chi Siamo" e "Timeline". Foto: `images/consiglio-di
 
 ### Pagina Servizi (servizi.html)
 Tab sticky sotto l'header con 5 sezioni:
-1. **#emergenza** – Emergenza 112, foto in `images/servizi/emergenza/`
+1. **#emergenza** – Emergenza 112, griglia 3 foto (`ambulanza3`, `ambulanza4`, `elicottero`)
 2. **#trasporto** – Trasporto Sanitario, foto singola `trasporti-programmati.jpg`, contatto Antonia Rondi 333 413 4299
-3. **#manifestazioni** – Assistenza Manifestazioni, griglia 4 foto
+3. **#manifestazioni** – Assistenza Manifestazioni, griglia 3 foto: `manifestazioni6` (sp-wide top), `manifestazioni-2` (basso sx), `manifestazioni5` (basso dx con 2 volontari)
 4. **#presidio** – Presidio del Territorio (pressione, glicemia, DAE), griglia 6 foto
-5. **#formazione** – Formazione (Scuole, Soccorritori, Comunità, Aziende): 4 sub-blocchi con layout `servizio-grid` (testo + foto intere), separati da `.formazione-divider`; titoli `h3.formazione-h3`
+5. **#formazione** – 4 sub-blocchi con layout `servizio-grid` separati da `.formazione-divider`:
+   - **Scuole**: foto `formazione3.jpg` + griglia 3 foto scuole
+   - **Soccorritori**: 2 foto affiancate senza sp-wide (`formazione-soccorritori-1`, `formazione-soccorritori-2`)
+   - **Comunità**: griglia 3 foto (formazione5/6/7 o simili)
+   - **Aziende**: foto `aziende/formazione-aziende.jpg`
+
+### News (index.html)
+3 card news:
+- **Evento**: `images/evento-taglio-nastro.jpg` – Inaugurazione nuova ambulanza
+- **Formazione**: `images/servizi/formazione/formazione1.jpg` – Formiamo i soccorritori
+- **Volontariato**: `images/news-team.jpg` – Entra a far parte della squadra
+
+### Contatti (contatti.html)
+Blocchi contatto: Sede Operativa, Sede Legale, Email, Disponibilità, Presidente (Alberto Grigis 346-1099244), **Trasporti Programmati (Sig.ra Antonia Rondi 333-413 4299)**, Social.
 
 ## PDF (cartella docs/)
 
