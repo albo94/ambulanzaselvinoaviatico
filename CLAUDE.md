@@ -47,7 +47,11 @@ images/
 │   ├── trasporto/               – trasporti-programmati.jpg
 │   ├── manifestazioni/          – manifestazioni5.jpg, manifestazioni6.jpg, arena-verona.jpg
 │   ├── territorio/              – territorio1-7.jpg, guardia-medica.jpg
-│   └── formazione/              – formazione1-7.jpg
+│   └── formazione/              – formazione1-7.jpg, formazione-soccorritori-1..2.jpg
+│       ├── scuole/              – formazione-scuole.jpg, formazione-scuole-2.jpg, formazione-scuole-3.jpg
+│       ├── soccorritori/        – (vuota, usa file nella cartella padre)
+│       ├── comunita/            – (vuota, usa formazione1-7 nella cartella padre)
+│       └── aziende/             – formazione-aziende.jpg
 ├── team/                        – gruppo.jpg, gruppo2-12.jpg, vol1-16.jpg
 ├── eventi/inaugurazione/        – (cartella per foto eventi futuri)
 └── gallery/                     – (cartella per gallery futura)
@@ -118,7 +122,7 @@ Tab sticky sotto l'header con 5 sezioni:
 2. **#trasporto** – Trasporto Sanitario, foto singola `trasporti-programmati.jpg`, contatto Antonia Rondi 333 413 4299
 3. **#manifestazioni** – Assistenza Manifestazioni, griglia 4 foto
 4. **#presidio** – Presidio del Territorio (pressione, glicemia, DAE), griglia 6 foto
-5. **#formazione** – Formazione (Scuole, Soccorritori, Comunità, Aziende), card con foto reali
+5. **#formazione** – Formazione (Scuole, Soccorritori, Comunità, Aziende): 4 sub-blocchi con layout `servizio-grid` (testo + foto intere), separati da `.formazione-divider`; titoli `h3.formazione-h3`
 
 ## PDF (cartella docs/)
 

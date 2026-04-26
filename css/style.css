@@ -1856,102 +1856,22 @@ ul {
   text-decoration: underline;
 }
 
-/* Formazione grid */
-.formazione-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
-  margin-bottom: 48px;
-}
-
-.formazione-card {
-  background: var(--white);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  transition: var(--transition);
-  border-top: 4px solid var(--orange);
-}
-.formazione-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-hover);
-}
-
-.formazione-card-img {
-  height: 180px;
-  background: linear-gradient(135deg, #c04d14 0%, #E8601C 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
-.formazione-card-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s ease;
-}
-.formazione-card:hover .formazione-card-img img {
-  transform: scale(1.05);
-}
-.formazione-card-icon {
-  font-size: 3rem;
-  color: rgba(255,255,255,0.85);
-  position: absolute;
-}
-
-.formazione-card-body {
-  padding: 28px;
-}
-.formazione-card-body h3 {
-  font-size: 1.05rem;
-  font-weight: 700;
+/* Formazione sub-sections */
+.formazione-h3 {
+  font-family: 'Titillium Web', sans-serif;
+  font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  letter-spacing: 1px;
   color: var(--dark);
-}
-.formazione-card-body p {
-  font-size: 0.9rem;
-  color: var(--text-light);
-  line-height: 1.7;
   margin-bottom: 16px;
+  line-height: 1.2;
 }
 
-.formazione-list {
-  margin: 0 0 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.formazione-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: var(--text);
-}
-.formazione-list li i {
-  color: var(--orange);
-  margin-top: 3px;
-  flex-shrink: 0;
-  font-size: 0.7rem;
-}
-
-.formazione-foto-note {
-  max-width: 800px;
-  margin: 0 auto;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-.formazione-foto-note img {
-  width: 100%;
-  height: 380px;
-  object-fit: cover;
-  display: block;
+.formazione-divider {
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  margin: 56px 0;
 }
 
 /* ============================================================
@@ -2163,13 +2083,6 @@ ul {
   .servizio-photo-grid .sp-wide {
     height: 180px;
   }
-  .formazione-grid {
-    grid-template-columns: 1fr;
-  }
-  .formazione-foto-note img {
-    height: 220px;
-  }
-
   /* About */
   .about-grid {
     grid-template-columns: 1fr;
