@@ -425,8 +425,17 @@ ul {
   pointer-events: none;
 }
 
-/* Mostra pulsanti all'hover del mouse */
+/* Banner emergenza – nascosto di default, appare all'hover */
+.hero-hover-reveal {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  margin-bottom: 4px;
+}
+
+/* Mostra banner + pulsanti all'hover del mouse */
 @media (hover: hover) {
+  .hero:hover .hero-hover-reveal,
   .hero:hover .hero-buttons {
     opacity: 1;
     transform: translateY(0);
@@ -434,8 +443,9 @@ ul {
   }
 }
 
-/* Su touch/mobile i pulsanti sono sempre visibili */
+/* Su touch/mobile sempre visibili */
 @media (hover: none) {
+  .hero-hover-reveal,
   .hero-buttons {
     opacity: 1;
     transform: translateY(0);
@@ -1492,6 +1502,39 @@ ul {
   font-size: 0.88rem;
   color: var(--text-light);
   line-height: 1.6;
+}
+
+/* ============================================================
+   SERVIZIO CIVILE
+   ============================================================ */
+.servizio-civile-section {
+  background: var(--white);
+}
+.sc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+.sc-photo {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sc-photo img {
+  width: 100%;
+  height: 420px;
+  object-fit: contain;
+  display: block;
+}
+@media (max-width: 600px) {
+  .sc-grid { grid-template-columns: 1fr; }
+  .sc-photo img { height: 280px; }
 }
 
 /* ============================================================
