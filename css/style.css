@@ -1453,6 +1453,7 @@ ul {
 }
 .mv-block:last-child {
   background: #2c3e50;
+  color: var(--white);
 }
 
 .mv-block .mv-label {
