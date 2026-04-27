@@ -1824,6 +1824,10 @@ ul {
   height: 200px;
 }
 
+.servizio-photo-grid--duo img {
+  height: 340px;
+}
+
 /* Trasporto contact box */
 .servizio-contact-box {
   margin-top: 20px;
