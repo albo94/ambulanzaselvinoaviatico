@@ -684,6 +684,10 @@ var AMB_DASH = (function () {
     var elenco = (d.tipiPersonale && d.tipiPersonale.length) ? d.tipiPersonale : TIPI_RIPIEGO;
     d.volontari.forEach(function (v) {
       v._gruppo = v.gruppo !== undefined ? v.gruppo : tipoChiave(v.tipo);
+      // chi ha una data di assunzione: la colonna Tipo la dice, così si capisce
+      // perché una persona segnata Dipendente in anagrafica sta fra i volontari
+      v._ruoli = v.ruoli || v.tipo || '';
+      if (v.dal) v._ruoli = (v._ruoli ? v._ruoli + ' ' : '') + 'dal ' + v.dal;
     });
     var attivi = d.volontari.filter(function (v) { return v.tot > 0 || (v.oreTot || v.ore) > 0; });
 
@@ -804,7 +808,7 @@ var AMB_DASH = (function () {
     cT.corpo.appendChild(tabellaOrdinabile([
       { testo: 'Nome',        chiave: 'nickname' },
       { testo: 'Matricola',   chiave: 'matricola' },
-      { testo: 'Tipo',        chiave: 'ruoli' },
+      { testo: 'Tipo',        chiave: '_ruoli' },
       { testo: 'Totale',      chiave: 'tot',    numerica: true },
       { testo: 'Rossi',       chiave: 'rossi',  numerica: true },
       { testo: 'Gialli',      chiave: 'gialli', numerica: true },
