@@ -245,7 +245,7 @@ var AMB_DASH = (function () {
       s.appendChild(r);
       s.appendChild(el('text', {
         x: ml + w + 8, y: y + riga / 2 + 4, class: 'dash-tick-forte'
-      }, o.formato ? o.formato(v.valore) : n(v.valore)));
+      }, v.testo || (o.formato ? o.formato(v.valore) : n(v.valore))));
     });
     return s;
   }
@@ -617,9 +617,13 @@ var AMB_DASH = (function () {
       var fabbisogno = 24 * 3 * giorni;
       var oreTutte = emerg.oreTutti || emerg.ore;
       var oreDip = Math.max(oreTutte - emerg.ore, 0);
-      var quota = function (v) {
-        return n(v) + ' h · ' + Math.round(v / fabbisogno * 100) + '%';
-      };
+      // Le percentuali dividono le ore davvero coperte, e fanno 100: dire
+      // "72% + 54%" costringeva a chiedersi rispetto a cosa. Il confronto con
+      // il minimo H24 resta, ma in una frase, dove si può spiegare.
+      var coperte = emerg.ore + oreDip;
+      var pctVol = coperte ? Math.round(emerg.ore / coperte * 100) : 0;
+      var pctDip = coperte ? 100 - pctVol : 0;
+      var sulMinimo = fabbisogno ? Math.round(coperte / fabbisogno * 100) : 0;
 
       var periodo = parziale
         ? 'Nei primi ' + giorni + ' giorni del ' + annoCorr + ', garantire'
@@ -627,18 +631,21 @@ var AMB_DASH = (function () {
 
       var c6 = scheda('Le ore di turno e la copertura H24',
         periodo + ' l\'ambulanza 24 ore su 24 con un equipaggio di tre persone ha ' +
-        'voluto dire ' + n(fabbisogno) + ' ore di turno. Ecco da chi sono arrivate. ' +
-        'Sono le ore davvero coperte: i turni futuri già prenotati non sono contati, ' +
-        'perché a tabellone i mesi avanti sono ancora mezzi vuoti. Il totale supera il ' +
-        '100% quando su un turno c\'è più gente del minimo, e capita spesso.');
+        'voluto dire ' + n(fabbisogno) + ' ore di turno. Ne sono state coperte ' +
+        n(coperte) + ', il ' + sulMinimo + '% del minimo: su un turno c\'è spesso ' +
+        'più gente di tre. Le percentuali qui sotto dividono quelle ' + n(coperte) +
+        ' ore fra chi le ha fatte. Sono ore davvero svolte: i turni futuri già ' +
+        'prenotati a tabellone non sono contati.');
       root.appendChild(c6);
       barre(c6.corpo, {
         voci: [
-          { nome: 'Serve per l\'H24', valore: fabbisogno, colore: '#c8d2de' },
-          { nome: 'Coperte dai volontari', valore: emerg.ore, colore: COLORI[0] },
-          { nome: 'Coperte dai dipendenti', valore: oreDip, colore: COLORI[1] }
+          { nome: 'Serve per l\'H24', valore: fabbisogno, colore: '#c8d2de',
+            testo: n(fabbisogno) + ' h · il minimo' },
+          { nome: 'Coperte dai volontari', valore: emerg.ore, colore: COLORI[0],
+            testo: n(emerg.ore) + ' h · ' + pctVol + '%' },
+          { nome: 'Coperte dai dipendenti', valore: oreDip, colore: COLORI[1],
+            testo: n(oreDip) + ' h · ' + pctDip + '%' }
         ],
-        formato: quota,
         larghezzaEtichette: 195,
         etichetta: 'Copertura H24'
       });
