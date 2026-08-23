@@ -164,6 +164,10 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
 - **Grafici**: `js/dashboard.js`, SVG disegnato a mano — nessuna libreria, in linea con la
   regola "solo vanilla" del sito. Espone `AMB_DASH.carica(url, contenitore, opzioni)`.
 - **Stili**: `css/dashboard.css`, usa le variabili di `style.css` con fallback propri.
+- **Tipi di personale** (dipendenti, volontari, TS…): l'elenco **non** sta qui. Arriva nel
+  JSON come `tipiPersonale`, generato da `05_tipi.gs` nell'Apps Script, che è anche quello
+  che genera il menu a tendina del foglio. In `dashboard.js` c'è solo un ripiego minimo
+  per payload vecchi: non aggiungere liste di tipi qui.
 - Lo **stesso** CSS e JS sono caricati anche dalla dashboard interna riservata (web app
   Apps Script), che li prende da questo dominio: se rinomini o sposti quei due file,
   la dashboard interna smette di disegnare i grafici.

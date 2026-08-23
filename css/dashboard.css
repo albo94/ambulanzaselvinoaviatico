@@ -71,13 +71,17 @@
   font-size: 1.25rem;
   margin: 0 0 4px;
   color: #1e2a35;
+  text-wrap: balance;
 }
 
 .dash-card-head p {
   margin: 0;
   font-size: .92rem;
   color: var(--dash-tenue);
-  max-width: 70ch;
+  max-width: 78ch;
+  /* righe di lunghezza simile: senza questo l'ultima riga restava con
+     due parole in croce ("dell'Altopiano.") */
+  text-wrap: balance;
 }
 
 .dash-card-body { overflow-x: auto; }

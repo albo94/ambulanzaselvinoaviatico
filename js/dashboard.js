@@ -510,31 +510,27 @@ var AMB_DASH = (function () {
 
   /* ── composizione: parte riservata ──────────────────────── */
 
-  // I gruppi seguono la colonna TIPO del tab MATRICOLE. L'ordine qui e'
-  // l'ordine in cui compaiono i grafici.
-  var GRUPPI = [
-    { chiave: 'dipendente',      titolo: 'Dipendenti',      colore: COLORI[1] },
-    { chiave: 'servizio civile', titolo: 'Servizio civile', colore: COLORI[2] },
-    { chiave: 'volontario',      titolo: 'Volontari',       colore: COLORI[0] },
-    { chiave: 'nuovo',           titolo: 'Nuovi',           colore: COLORI[3] },
-    { chiave: '',                titolo: 'Senza tipo',      colore: COLORI[5] }
+  // L'elenco dei tipi di personale NON sta qui: arriva nel payload come
+  // d.tipiPersonale, generato da 05_tipi.gs nell'Apps Script. È la stessa
+  // tabella che genera il menu a tendina del foglio, così non ci sono due
+  // liste da tenere allineate. Qui restano solo i valori di ripiego, usati
+  // se il payload è più vecchio del codice.
+  var TIPI_RIPIEGO = [
+    { chiave: 'dipendente', etichetta: 'Dipendenti', colore: COLORI[1] },
+    { chiave: 'volontario', etichetta: 'Volontari',  colore: COLORI[0] }
   ];
 
-  function normTipo(t) {
-    t = String(t || '').trim().toLowerCase();
-    if (!t) return '';
-    if (t.indexOf('dipend') === 0) return 'dipendente';
-    if (t.indexOf('civil') >= 0 || t === 'sc') return 'servizio civile';
-    if (t.indexOf('volont') === 0) return 'volontario';
-    if (t.indexOf('nuov') === 0) return 'nuovo';
-    return t;
+  function tipoChiave(t) {
+    return String(t || '').trim().toLowerCase().replace(/\s+/g, ' ');
   }
 
-  function etichettaGruppo(chiave) {
-    for (var i = 0; i < GRUPPI.length; i++) {
-      if (GRUPPI[i].chiave === chiave) return GRUPPI[i].titolo;
+  /** Titolo leggibile di un gruppo; se non è in elenco usa il valore del foglio. */
+  function etichettaGruppo(chiave, elenco, esempio) {
+    for (var i = 0; i < elenco.length; i++) {
+      if (elenco[i].chiave === chiave) return elenco[i].etichetta;
     }
-    return chiave.charAt(0).toUpperCase() + chiave.slice(1);
+    if (esempio) return esempio;
+    return chiave ? chiave.charAt(0).toUpperCase() + chiave.slice(1) : 'Senza tipo';
   }
 
   function montaRiservata(root, d) {
@@ -561,11 +557,15 @@ var AMB_DASH = (function () {
 
     if (!d.volontari || !d.volontari.length) return;
 
-    d.volontari.forEach(function (v) { v._gruppo = normTipo(v.tipo); });
+    var elenco = (d.tipiPersonale && d.tipiPersonale.length) ? d.tipiPersonale : TIPI_RIPIEGO;
+    d.volontari.forEach(function (v) {
+      v._gruppo = v.gruppo !== undefined ? v.gruppo : tipoChiave(v.tipo);
+    });
     var attivi = d.volontari.filter(function (v) { return v.tot > 0 || v.ore > 0; });
 
-    // un grafico per tipo, nell'ordine di GRUPPI; i tipi non previsti in coda
-    var presenti = GRUPPI.map(function (g) { return g.chiave; });
+    // un grafico per tipo, nell'ordine dell'elenco; i tipi non previsti in coda
+    var presenti = elenco.filter(function (g) { return !g.escludi; })
+                         .map(function (g) { return g.chiave; });
     attivi.forEach(function (v) {
       if (presenti.indexOf(v._gruppo) < 0) presenti.push(v._gruppo);
     });
@@ -575,9 +575,9 @@ var AMB_DASH = (function () {
                          .sort(function (a, b) { return b.tot - a.tot; });
       if (!membri.length) return;
       var g = null;
-      GRUPPI.forEach(function (x) { if (x.chiave === chiave) g = x; });
+      elenco.forEach(function (x) { if (x.chiave === chiave) g = x; });
       var colore = g ? g.colore : COLORI[4];
-      var titolo = etichettaGruppo(chiave);
+      var titolo = etichettaGruppo(chiave, elenco, membri[0].tipo);
       var LIM = 20;
       var nota = membri.length + (membri.length === 1 ? ' persona con attività nel ' : ' persone con attività nel ') +
                  d.annoCorrente + '. Barra = interventi 118 + attività registrate.';
@@ -616,9 +616,9 @@ var AMB_DASH = (function () {
 
     var gruppiPresenti = [];
     presenti.forEach(function (k) {
-      if (attivi.some(function (v) { return v._gruppo === k; })) {
-        gruppiPresenti.push({ valore: k, testo: etichettaGruppo(k) });
-      }
+      var uno = null;
+      attivi.forEach(function (v) { if (v._gruppo === k && !uno) uno = v; });
+      if (uno) gruppiPresenti.push({ valore: k, testo: etichettaGruppo(k, elenco, uno.tipo) });
     });
 
     cT.corpo.appendChild(tabellaOrdinabile([
