@@ -673,8 +673,8 @@ var AMB_DASH = (function () {
         nota: 'Barra = interventi 118 + attività registrate.' },
       { chiave: 'oreTot', etichetta: 'Ore di attività',
         unita: function (v) { return n(v) + ' h'; },
-        nota: 'Barra = ore sulle missioni 118 più quelle di programmate, ' +
-              'manutenzioni, presidi e manifestazioni.' }
+        nota: 'Barra = ore sulle missioni 118 più quelle di tutte le altre ' +
+              'attività, amministrazione e formazione comprese.' }
     ];
     var misuraAttiva = MISURE[0];
 
