@@ -504,9 +504,15 @@ var AMB_DASH = (function () {
                   nota: (dm >= 0 ? '+' : '−') + Math.abs(pm) + '%',
                   segno: dm >= 0 ? 'su' : 'giu' });
     }
-    if (oreUlt) {
-      voci.push({ label: 'Ore di volontariato ' + annoCorr, valore: n(oreUlt.totale),
-                  nota: 'attività fuori emergenza' });
+    var emerg = null;
+    (d.oreEmergenza || []).forEach(function (e) { if (e.anno === annoCorr) emerg = e; });
+    if (oreUlt || emerg) {
+      var oreExtra = oreUlt ? oreUlt.totale : 0;
+      var oreEm = emerg ? emerg.ore : 0;
+      voci.push({ label: 'Ore di volontariato ' + annoCorr, valore: n(oreEm + oreExtra),
+                  nota: emerg
+                    ? (n(oreEm) + ' in emergenza + ' + n(oreExtra) + ' di attività')
+                    : 'attività fuori emergenza' });
     }
     if (kmUlt && kmUlt.km) {
       voci.push({ label: 'Km percorsi in convenzione', valore: n(kmUlt.km),
