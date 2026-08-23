@@ -647,7 +647,7 @@ var AMB_DASH = (function () {
     d.volontari.forEach(function (v) {
       v._gruppo = v.gruppo !== undefined ? v.gruppo : tipoChiave(v.tipo);
     });
-    var attivi = d.volontari.filter(function (v) { return v.tot > 0 || v.ore > 0; });
+    var attivi = d.volontari.filter(function (v) { return v.tot > 0 || (v.oreTot || v.ore) > 0; });
 
     // un grafico per tipo, nell'ordine dell'elenco; i tipi non previsti in coda
     var esclusi = {};
@@ -665,9 +665,10 @@ var AMB_DASH = (function () {
       { chiave: 'tot', etichetta: 'Interventi e attività',
         unita: function (v) { return n(v); },
         nota: 'Barra = interventi 118 + attività registrate.' },
-      { chiave: 'ore', etichetta: 'Ore di attività',
+      { chiave: 'oreTot', etichetta: 'Ore di attività',
         unita: function (v) { return n(v) + ' h'; },
-        nota: 'Barra = ore di programmate, manutenzioni, presidi e manifestazioni.' }
+        nota: 'Barra = ore sulle missioni 118 più quelle di programmate, ' +
+              'manutenzioni, presidi e manifestazioni.' }
     ];
     var misuraAttiva = MISURE[0];
 
@@ -774,7 +775,9 @@ var AMB_DASH = (function () {
       { testo: 'Manif.',      chiave: 'manif',  numerica: true },
       { testo: 'Manut.',      chiave: 'manut',  numerica: true },
       { testo: 'Presidio',    chiave: 'presid', numerica: true },
-      { testo: 'Ore attività', chiave: 'ore',   numerica: true }
+      { testo: 'Ore 118',     chiave: 'ore118', numerica: true },
+      { testo: 'Ore attività', chiave: 'ore',   numerica: true },
+      { testo: 'Ore totali',  chiave: 'oreTot', numerica: true }
     ], attivi, { filtroTesto: 'nickname', gruppi: gruppiPresenti, ordine: 'tot' }));
   }
 
