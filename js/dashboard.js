@@ -564,10 +564,12 @@ var AMB_DASH = (function () {
     var attivi = d.volontari.filter(function (v) { return v.tot > 0 || v.ore > 0; });
 
     // un grafico per tipo, nell'ordine dell'elenco; i tipi non previsti in coda
+    var esclusi = {};
+    elenco.forEach(function (g) { if (g.escludi) esclusi[g.chiave] = true; });
     var presenti = elenco.filter(function (g) { return !g.escludi; })
                          .map(function (g) { return g.chiave; });
     attivi.forEach(function (v) {
-      if (presenti.indexOf(v._gruppo) < 0) presenti.push(v._gruppo);
+      if (!esclusi[v._gruppo] && presenti.indexOf(v._gruppo) < 0) presenti.push(v._gruppo);
     });
 
     presenti.forEach(function (chiave) {
@@ -591,14 +593,15 @@ var AMB_DASH = (function () {
       });
     });
 
-    // segnala i nickname doppi: le statistiche sono calcolate per nickname,
-    // quindi due matricole con lo stesso nickname mostrano gli stessi numeri
-    var visti = {}, doppi = {};
-    d.volontari.forEach(function (v) {
-      if (visti[v.nickname]) doppi[v.nickname] = true;
-      visti[v.nickname] = true;
+    // Chi ha cambiato ruolo ha una matricola per ruolo: l'Apps Script unisce
+    // le righe in una persona sola, qui si segnala solo chi ha piu' ruoli.
+    var listaDoppi = attivi.filter(function (v) {
+      return v.matricola && v.matricola.indexOf('·') >= 0;
+    }).map(function (v) {
+      var det = v.matricola;
+      if (v.ruoli && v.ruoli.indexOf('+') >= 0) det += ' – ' + v.ruoli;
+      return v.nickname + ' (' + det + ')';
     });
-    var listaDoppi = Object.keys(doppi);
 
     var cT = scheda('Tutte le persone – ' + d.annoCorrente,
       'Clicca un\'intestazione per ordinare, usa i filtri per restringere. ' +
@@ -606,16 +609,17 @@ var AMB_DASH = (function () {
     root.appendChild(cT);
 
     if (listaDoppi.length) {
-      var avv = html('p', 'dash-avviso-riga',
-        'Attenzione: ' + listaDoppi.join(', ') +
-        (listaDoppi.length === 1 ? ' compare' : ' compaiono') +
-        ' due volte nel tab MATRICOLE con matricole diverse. Le statistiche sono ' +
-        'calcolate per nickname, quindi le righe doppie riportano gli stessi numeri.');
-      cT.corpo.appendChild(avv);
+      cT.corpo.appendChild(html('p', 'dash-avviso-riga',
+        'Con più di un ruolo in associazione, e quindi più di una matricola: ' +
+        listaDoppi.join(', ') + '. In questo elenco compaiono una volta sola.'));
     }
 
+    var perFiltro = presenti.slice();
+    attivi.forEach(function (v) {
+      if (perFiltro.indexOf(v._gruppo) < 0) perFiltro.push(v._gruppo);
+    });
     var gruppiPresenti = [];
-    presenti.forEach(function (k) {
+    perFiltro.forEach(function (k) {
       var uno = null;
       attivi.forEach(function (v) { if (v._gruppo === k && !uno) uno = v; });
       if (uno) gruppiPresenti.push({ valore: k, testo: etichettaGruppo(k, elenco, uno.tipo) });
@@ -623,7 +627,8 @@ var AMB_DASH = (function () {
 
     cT.corpo.appendChild(tabellaOrdinabile([
       { testo: 'Nome',        chiave: 'nickname' },
-      { testo: 'Tipo',        chiave: 'tipo' },
+      { testo: 'Matricola',   chiave: 'matricola' },
+      { testo: 'Tipo',        chiave: 'ruoli' },
       { testo: 'Totale',      chiave: 'tot',    numerica: true },
       { testo: 'Rossi',       chiave: 'rossi',  numerica: true },
       { testo: 'Gialli',      chiave: 'gialli', numerica: true },
