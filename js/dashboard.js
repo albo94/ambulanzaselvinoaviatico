@@ -569,20 +569,27 @@ var AMB_DASH = (function () {
     });
 
     // ore volontariato
-    if (d.tipologie.length) {
+    if (d.tipologie.length || emerg) {
       var ultimoIdx = d.anniExtra.length - 1;
-      var c5 = scheda('Le ore di volontariato oltre l\'emergenza',
-        'Manifestazioni, trasporti programmati, presidio del territorio, formazione e amministrazione. ' +
-        'Ore-volontario: ogni ora è contata per ciascun volontario presente.');
+      var vociOre = [];
+      if (emerg && emerg.ore) {
+        vociOre.push({ nome: 'Emergenza 118', valore: emerg.ore, colore: COLORI[0] });
+      }
+      d.tipologie.forEach(function (t) {
+        var v = t.valori[ultimoIdx] || 0;
+        if (v > 0) vociOre.push({ nome: t.tipo, valore: v, colore: COLORI[2] });
+      });
+      var c5 = scheda('Dove finiscono le ore dei volontari',
+        'Il tempo sulle missioni 118 e quello delle altre attività: manifestazioni, ' +
+        'trasporti programmati, presidio del territorio, formazione e amministrazione. ' +
+        'Sono ore-volontario: ogni ora è contata per ciascuna persona presente, e il ' +
+        'personale dipendente non è compreso.');
       root.appendChild(c5);
       barre(c5.corpo, {
-        voci: d.tipologie.map(function (t) {
-          return { nome: t.tipo, valore: t.valori[ultimoIdx] || 0 };
-        }).filter(function (v) { return v.valore > 0; }),
-        colore: COLORI[2],
+        voci: vociOre,
         formato: function (v) { return n(v) + ' h'; },
         larghezzaEtichette: 175,
-        etichetta: 'Ore per tipologia'
+        etichetta: 'Ore per tipo di attività'
       });
     }
   }
