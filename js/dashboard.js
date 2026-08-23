@@ -603,20 +603,31 @@ var AMB_DASH = (function () {
     }
 
     if (emerg && emerg.ore) {
-      var oreAtt = oreUlt ? oreUlt.totale : 0;
-      var c6 = scheda('E le ore in emergenza',
-        'Le ore di turno coperte a tabellone: quelle messe a disposizione, non solo quelle ' +
-        'in cui è arrivata una chiamata. Sono la parte più grande, ma vivono insieme a tutto ' +
-        'il resto. Il personale dipendente non è compreso.');
+      // Il metro giusto per le ore di turno non sono le altre attività, ma la
+      // copertura da garantire: un equipaggio di tre persone, 24 ore al giorno,
+      // tutti i giorni dell'anno.
+      var giorni = new Date(annoCorr, 1, 29).getMonth() === 1 ? 366 : 365;
+      var fabbisogno = 24 * 3 * giorni;
+      var oreTutte = emerg.oreTutti || emerg.ore;
+      var oreDip = Math.max(oreTutte - emerg.ore, 0);
+      var quota = function (v) {
+        return n(v) + ' h · ' + Math.round(v / fabbisogno * 100) + '%';
+      };
+
+      var c6 = scheda('Le ore di turno e la copertura H24',
+        'Garantire l\'ambulanza 24 ore su 24 con un equipaggio di tre persone vuol dire ' +
+        n(fabbisogno) + ' ore in un anno di ' + giorni + ' giorni. Ecco da chi arrivano. ' +
+        'Il totale supera il 100% quando su un turno c\'è più gente del minimo.');
       root.appendChild(c6);
       barre(c6.corpo, {
         voci: [
-          { nome: 'Turni in emergenza', valore: emerg.ore, colore: COLORI[1] },
-          { nome: 'Tutte le altre attività', valore: oreAtt, colore: COLORI[2] }
+          { nome: 'Serve per l\'H24', valore: fabbisogno, colore: '#c8d2de' },
+          { nome: 'Coperte dai volontari', valore: emerg.ore, colore: COLORI[0] },
+          { nome: 'Coperte dai dipendenti', valore: oreDip, colore: COLORI[1] }
         ],
-        formato: function (v) { return n(v) + ' h'; },
-        larghezzaEtichette: 190,
-        etichetta: 'Turni e attività a confronto'
+        formato: quota,
+        larghezzaEtichette: 195,
+        etichetta: 'Copertura H24'
       });
     }
   }
