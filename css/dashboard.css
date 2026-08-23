@@ -14,6 +14,40 @@
   color: var(--dash-testo);
 }
 
+/* ── striscia stato aggiornamento ────────────────────────── */
+
+.dash-stato {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 11px 16px;
+  border-radius: 9px;
+  font-size: .9rem;
+  margin-bottom: 22px;
+  border: 1px solid var(--dash-bordo);
+  background: #fff;
+}
+
+.dash-stato.vecchio {
+  background: #fff7ed;
+  border-color: #f0c8a0;
+  color: #7a4a1d;
+}
+
+.dash-stato-ok,
+.dash-stato-avviso {
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.dash-stato-ok { background: #e6f4ea; color: #157a36; }
+.dash-stato-avviso { background: #fbe3d6; color: #a33a12; }
+
 /* ── KPI ─────────────────────────────────────────────────── */
 
 .dash-kpi-grid {
@@ -88,7 +122,7 @@
 
 /* ── grafici ─────────────────────────────────────────────── */
 
-.dash-svg { width: 100%; height: auto; display: block; min-width: 480px; }
+.dash-svg { width: 100%; height: auto; display: block; }
 .dash-svg .dash-tick { font-size: 12px; fill: #6b7783; font-family: 'Open Sans', sans-serif; }
 .dash-svg .dash-tick-forte {
   font-size: 12.5px; fill: #2b3640; font-weight: 600; font-family: 'Open Sans', sans-serif;
@@ -239,7 +273,38 @@
   border-radius: 0 6px 6px 0;
 }
 
+/* ── selettore interventi / ore ──────────────────────────── */
+
+.dash-switch {
+  display: inline-flex;
+  border: 1px solid var(--dash-bordo);
+  border-radius: 9px;
+  overflow: hidden;
+  margin: 6px 0 18px;
+  background: #fff;
+  flex-wrap: wrap;
+}
+
+.dash-switch-btn {
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 600;
+  padding: 10px 18px;
+  border: 0;
+  background: #fff;
+  color: var(--dash-tenue);
+  cursor: pointer;
+}
+
+.dash-switch-btn + .dash-switch-btn { border-left: 1px solid var(--dash-bordo); }
+.dash-switch-btn:hover { background: var(--dash-fondo); }
+.dash-switch-btn.attivo { background: var(--dash-arancio); color: #fff; }
+.dash-switch-btn:focus-visible { outline: 2px solid var(--dash-arancio); outline-offset: -3px; }
+
 @media (max-width: 640px) {
+  .dash-switch { display: flex; width: 100%; }
+  .dash-switch-btn { flex: 1; padding: 10px 8px; }
+
   .dash-card { padding: 18px 14px 22px; }
   .dash-kpi-num { font-size: 2rem; }
 }

@@ -24,6 +24,27 @@ var AMB_DASH = (function () {
 
   function n(v) { return (v || 0).toLocaleString('it-IT'); }
 
+  /**
+   * In italiano una parola di una o due lettere non si lascia a fine riga.
+   * La si incolla alla successiva con uno spazio unificatore: il testo va a
+   * capo dove ha senso invece che dopo "e", "di", "il".
+   */
+  function testo(t) {
+    var parti = String(t).split(/\s+/);
+    var out = parti[0] || '';
+    for (var i = 1; i < parti.length; i++) {
+      var prec = parti[i - 1].replace(/[^0-9A-Za-zÀ-ÿ']/g, '');
+      out += (prec.length && prec.length <= 2 ? '\u00A0' : ' ') + parti[i];
+    }
+    return out;
+  }
+
+  /** Larghezza utile del contenitore: i grafici disegnano a misura. */
+  function largo(host) {
+    var w = host.clientWidth || (host.parentNode && host.parentNode.clientWidth) || 840;
+    return Math.max(300, Math.min(900, Math.round(w)));
+  }
+
   function el(tag, attrs, testo) {
     var e = document.createElementNS(NS, tag);
     for (var k in attrs) if (attrs[k] !== null && attrs[k] !== undefined) {
@@ -97,8 +118,9 @@ var AMB_DASH = (function () {
   function colonne(host, o) {
     host.innerHTML = '';
     legenda(host, o.serie);
-    var W = 840, H = o.altezza || 320;
-    var ml = 54, mr = 14, mt = 14, mb = 34;
+    var W = largo(host), stretto = W < 520;
+    var H = o.altezza || (stretto ? 260 : 320);
+    var ml = stretto ? 40 : 54, mr = 14, mt = 14, mb = 34;
     var s = tela(host, W, H, o.etichetta);
     var x0 = ml, x1 = W - mr, y0 = mt, y1 = H - mb;
 
@@ -110,14 +132,18 @@ var AMB_DASH = (function () {
 
     var nCat = o.etichette.length;
     var larghCat = (x1 - x0) / nCat;
+    // su schermo stretto le etichette si sovrappongono: ne mostro una sì e una no
+    var saltaEtichette = stretto && nCat > 6 ? 2 : 1;
     var pad = larghCat * 0.18;
     var larghBarra = (larghCat - pad * 2) / o.serie.length;
 
     o.etichette.forEach(function (etichetta, i) {
       var cx = x0 + larghCat * i;
-      s.appendChild(el('text', {
-        x: cx + larghCat / 2, y: y1 + 20, 'text-anchor': 'middle', class: 'dash-tick'
-      }, etichetta));
+      if (i % saltaEtichette === 0) {
+        s.appendChild(el('text', {
+          x: cx + larghCat / 2, y: y1 + 20, 'text-anchor': 'middle', class: 'dash-tick'
+        }, etichetta));
+      }
 
       o.serie.forEach(function (se, j) {
         var v = se.valori[i] || 0;
@@ -140,8 +166,9 @@ var AMB_DASH = (function () {
   function linee(host, o) {
     host.innerHTML = '';
     legenda(host, o.serie);
-    var W = 840, H = o.altezza || 320;
-    var ml = 54, mr = 14, mt = 14, mb = 34;
+    var W = largo(host), stretto = W < 520;
+    var H = o.altezza || (stretto ? 260 : 320);
+    var ml = stretto ? 40 : 54, mr = 14, mt = 14, mb = 34;
     var s = tela(host, W, H, o.etichetta);
     var x0 = ml, x1 = W - mr, y0 = mt, y1 = H - mb;
 
@@ -153,8 +180,10 @@ var AMB_DASH = (function () {
 
     var nCat = o.etichette.length;
     var passoX = nCat > 1 ? (x1 - x0) / (nCat - 1) : 0;
+    var salta = stretto && nCat > 6 ? 2 : 1;
 
     o.etichette.forEach(function (etichetta, i) {
+      if (i % salta) return;
       s.appendChild(el('text', {
         x: x0 + passoX * i, y: y1 + 20, 'text-anchor': 'middle', class: 'dash-tick'
       }, etichetta));
@@ -189,18 +218,24 @@ var AMB_DASH = (function () {
   function barre(host, o) {
     host.innerHTML = '';
     var voci = o.voci.slice(0, o.limite || 12);
-    var W = 840, riga = 30, mt = 10, mb = 8;
+    var W = largo(host), riga = 30, mt = 10, mb = 8;
     var H = mt + mb + riga * voci.length;
-    var ml = o.larghezzaEtichette || 150, mr = 60;
+    // l'etichetta non può prendersi mezzo grafico su telefono
+    var ml = Math.min(o.larghezzaEtichette || 150, Math.round(W * 0.38));
+    var mr = W < 520 ? 48 : 60;
+    var maxCar = Math.max(6, Math.floor((ml - 12) / 6.6));
     var s = tela(host, W, H, o.etichetta);
     var max = 0;
     voci.forEach(function (v) { if (v.valore > max) max = v.valore; });
 
     voci.forEach(function (v, i) {
       var y = mt + riga * i;
-      s.appendChild(el('text', {
+      var nome = v.nome.length > maxCar ? v.nome.slice(0, maxCar - 1) + '…' : v.nome;
+      var et = el('text', {
         x: ml - 10, y: y + riga / 2 + 4, 'text-anchor': 'end', class: 'dash-tick-forte'
-      }, v.nome));
+      }, nome);
+      if (nome !== v.nome) et.appendChild(el('title', {}, v.nome));
+      s.appendChild(et);
       var w = max ? (v.valore / max) * (W - ml - mr) : 0;
       var r = el('rect', {
         x: ml, y: y + 5, width: Math.max(w, 1), height: riga - 12, rx: 3,
@@ -219,7 +254,13 @@ var AMB_DASH = (function () {
 
   function ciambella(host, o) {
     host.innerHTML = '';
-    var W = 840, H = 340, cx = 190, cy = H / 2, R = 125, r = 74;
+    var W = largo(host), stretto = W < 560;
+    var R = stretto ? Math.min(100, W / 3.4) : 125, r = R * 0.59;
+    var cx = stretto ? W / 2 : 190;
+    var cy = stretto ? R + 16 : 170;
+    var legX = stretto ? 20 : 400;
+    var legY = stretto ? cy + R + 32 : 46;
+    var H = stretto ? (cy + R + 32 + o.voci.length * 26) : 340;
     var s = tela(host, W, H, o.etichetta);
     var tot = o.voci.reduce(function (a, v) { return a + v.valore; }, 0);
     if (!tot) return s;
@@ -242,11 +283,11 @@ var AMB_DASH = (function () {
         ' (' + Math.round(v.valore / tot * 100) + '%)'));
       s.appendChild(p);
 
-      var y = 46 + i * 26;
-      s.appendChild(el('rect', { x: 400, y: y - 11, width: 13, height: 13, rx: 3,
+      var y = legY + i * 26;
+      s.appendChild(el('rect', { x: legX, y: y - 11, width: 13, height: 13, rx: 3,
                                  fill: COLORI[i % COLORI.length] }));
-      s.appendChild(el('text', { x: 422, y: y, class: 'dash-tick-forte' }, v.nome));
-      s.appendChild(el('text', { x: 700, y: y, class: 'dash-tick', 'text-anchor': 'end' },
+      s.appendChild(el('text', { x: legX + 22, y: y, class: 'dash-tick-forte' }, v.nome));
+      s.appendChild(el('text', { x: W - 20, y: y, class: 'dash-tick', 'text-anchor': 'end' },
         n(v.valore) + '  ·  ' + Math.round(v.valore / tot * 100) + '%'));
     });
 
@@ -262,8 +303,8 @@ var AMB_DASH = (function () {
   function scheda(titolo, sottotitolo) {
     var c = html('section', 'dash-card');
     var h = html('div', 'dash-card-head');
-    h.appendChild(html('h3', null, titolo));
-    if (sottotitolo) h.appendChild(html('p', null, sottotitolo));
+    h.appendChild(html('h3', null, testo(titolo)));
+    if (sottotitolo) h.appendChild(html('p', null, testo(sottotitolo)));
     c.appendChild(h);
     var corpo = html('div', 'dash-card-body');
     c.appendChild(corpo);
@@ -275,7 +316,7 @@ var AMB_DASH = (function () {
     var g = html('div', 'dash-kpi-grid');
     voci.forEach(function (v) {
       var c = html('div', 'dash-kpi');
-      c.appendChild(html('span', 'dash-kpi-label', v.label));
+      c.appendChild(html('span', 'dash-kpi-label', testo(v.label)));
       c.appendChild(html('span', 'dash-kpi-num', v.valore));
       if (v.nota) {
         var nn = html('span', 'dash-kpi-nota' + (v.segno ? ' ' + v.segno : ''), v.nota);
@@ -401,6 +442,44 @@ var AMB_DASH = (function () {
 
     disegna();
     return wrap;
+  }
+
+  /**
+   * Striscia con data e ora dell'ultimo aggiornamento.
+   * Se i dati sono fermi da piu' di 36 ore diventa ambra: l'aggiornamento
+   * notturno gira alle 2, quindi oltre quella soglia una notte e' saltata.
+   */
+  function strisciaAggiornamento(dati) {
+    var d = new Date(dati.aggiornato);
+    var box = html('div', 'dash-stato');
+
+    if (isNaN(d.getTime())) {
+      box.classList.add('vecchio');
+      box.appendChild(html('span', 'dash-stato-testo', 'Data di aggiornamento non disponibile.'));
+      return box;
+    }
+
+    var ore = (Date.now() - d.getTime()) / 3600000;
+    var quando = d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }) +
+                 ' alle ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+    var etichetta = html('span', 'dash-stato-testo');
+    etichetta.appendChild(html('strong', null, 'Ultimo aggiornamento: '));
+    etichetta.appendChild(document.createTextNode(quando));
+    box.appendChild(etichetta);
+
+    if (ore > 36) {
+      box.classList.add('vecchio');
+      var giorni = Math.floor(ore / 24);
+      box.appendChild(html('span', 'dash-stato-avviso',
+        giorni >= 1
+          ? ('fermi da ' + giorni + (giorni === 1 ? ' giorno' : ' giorni') + ': qualcosa non gira')
+          : 'più vecchi del previsto: qualcosa non gira'));
+    } else {
+      box.classList.add('fresco');
+      box.appendChild(html('span', 'dash-stato-ok', 'aggiornato'));
+    }
+    return box;
   }
 
   /* ── composizione: parte comune (pubblica) ──────────────── */
@@ -572,26 +651,77 @@ var AMB_DASH = (function () {
       if (!esclusi[v._gruppo] && presenti.indexOf(v._gruppo) < 0) presenti.push(v._gruppo);
     });
 
-    presenti.forEach(function (chiave) {
-      var membri = attivi.filter(function (v) { return v._gruppo === chiave; })
-                         .sort(function (a, b) { return b.tot - a.tot; });
-      if (!membri.length) return;
-      var g = null;
-      elenco.forEach(function (x) { if (x.chiave === chiave) g = x; });
-      var colore = g ? g.colore : COLORI[4];
-      var titolo = etichettaGruppo(chiave, elenco, membri[0].tipo);
-      var LIM = 20;
-      var nota = membri.length + (membri.length === 1 ? ' persona con attività nel ' : ' persone con attività nel ') +
-                 d.annoCorrente + '. Barra = interventi 118 + attività registrate.';
-      if (membri.length > LIM) nota += ' Nel grafico i primi ' + LIM + ': l\'elenco completo è nella tabella qui sotto.';
-      var c2 = scheda(titolo + ' – ' + d.annoCorrente, nota);
-      root.appendChild(c2);
-      barre(c2.corpo, {
-        voci: membri.map(function (v) { return { nome: v.nickname, valore: v.tot }; }),
-        colore: colore, limite: LIM, larghezzaEtichette: 140,
-        etichetta: 'Attività ' + titolo
+    // I due modi di leggere lo stesso elenco: quante volte è uscito qualcuno
+    // e quanto tempo ci ha messo. Sono numeri diversi — chi fa presidi e
+    // manifestazioni ha poche uscite e tante ore — quindi si sceglie.
+    var MISURE = [
+      { chiave: 'tot', etichetta: 'Interventi e attività',
+        unita: function (v) { return n(v); },
+        nota: 'Barra = interventi 118 + attività registrate.' },
+      { chiave: 'ore', etichetta: 'Ore di attività',
+        unita: function (v) { return n(v) + ' h'; },
+        nota: 'Barra = ore di programmate, manutenzioni, presidi e manifestazioni.' }
+    ];
+    var misuraAttiva = MISURE[0];
+
+    var barraMisure = html('div', 'dash-switch');
+    barraMisure.setAttribute('role', 'group');
+    barraMisure.setAttribute('aria-label', 'Cosa mostrare nei grafici per tipo');
+    var contenitoreGruppi = html('div');
+
+    MISURE.forEach(function (m) {
+      var b = html('button', 'dash-switch-btn', m.etichetta);
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        if (misuraAttiva === m) return;
+        misuraAttiva = m;
+        Array.prototype.forEach.call(barraMisure.children, function (x) {
+          var att = x === b;
+          x.classList.toggle('attivo', att);
+          x.setAttribute('aria-pressed', att ? 'true' : 'false');
+        });
+        disegnaGruppi();
       });
+      b.setAttribute('aria-pressed', m === misuraAttiva ? 'true' : 'false');
+      if (m === misuraAttiva) b.classList.add('attivo');
+      barraMisure.appendChild(b);
     });
+    root.appendChild(barraMisure);
+    root.appendChild(contenitoreGruppi);
+
+    function disegnaGruppi() {
+      contenitoreGruppi.innerHTML = '';
+      var mis = misuraAttiva;
+      presenti.forEach(function (chiave) {
+        var membri = attivi.filter(function (v) { return v._gruppo === chiave; })
+                           .filter(function (v) { return (v[mis.chiave] || 0) > 0; })
+                           .sort(function (a, b) { return b[mis.chiave] - a[mis.chiave]; });
+        if (!membri.length) return;
+        var g = null;
+        elenco.forEach(function (x) { if (x.chiave === chiave) g = x; });
+        var colore = g ? g.colore : COLORI[4];
+        var titolo = etichettaGruppo(chiave, elenco, membri[0].tipo);
+        var LIM = 20;
+        var nota = membri.length +
+                   (membri.length === 1 ? ' persona nel ' : ' persone nel ') +
+                   d.annoCorrente + '. ' + mis.nota;
+        if (membri.length > LIM) {
+          nota += ' Nel grafico i primi ' + LIM +
+                  ': l\'elenco completo è nella tabella qui sotto.';
+        }
+        var c2 = scheda(titolo + ' – ' + d.annoCorrente, nota);
+        contenitoreGruppi.appendChild(c2);
+        barre(c2.corpo, {
+          voci: membri.map(function (v) {
+            return { nome: v.nickname, valore: v[mis.chiave] || 0 };
+          }),
+          colore: colore, limite: LIM, larghezzaEtichette: 140,
+          formato: mis.unita,
+          etichetta: mis.etichetta + ' – ' + titolo
+        });
+      });
+    }
+    disegnaGruppi();
 
     // Chi ha cambiato ruolo ha una matricola per ruolo: l'Apps Script unisce
     // le righe in una persona sola, qui si segnala solo chi ha piu' ruoli.
@@ -609,9 +739,9 @@ var AMB_DASH = (function () {
     root.appendChild(cT);
 
     if (listaDoppi.length) {
-      cT.corpo.appendChild(html('p', 'dash-avviso-riga',
+      cT.corpo.appendChild(html('p', 'dash-avviso-riga', testo(
         'Con più di un ruolo in associazione, e quindi più di una matricola: ' +
-        listaDoppi.join(', ') + '. In questo elenco compaiono una volta sola.'));
+        listaDoppi.join(', ') + '. In questo elenco compaiono una volta sola.')));
     }
 
     var perFiltro = presenti.slice();
@@ -648,14 +778,32 @@ var AMB_DASH = (function () {
     formatta: n,
     monta: function (root, dati, opzioni) {
       opzioni = opzioni || {};
+      // i grafici sono disegnati alla larghezza del contenitore: se cambia
+      // (rotazione del telefono, finestra ridimensionata) vanno rifatti
+      var self = this;
+      if (!root._ridisegna) {
+        var ultima = 0, attesa = null;
+        root._ridisegna = function () {
+          clearTimeout(attesa);
+          attesa = setTimeout(function () {
+            var w = root.clientWidth;
+            if (Math.abs(w - ultima) < 40) return;
+            ultima = w;
+            self.monta(root, root._dati, root._opzioni);
+          }, 250);
+        };
+        window.addEventListener('resize', root._ridisegna);
+        window.addEventListener('orientationchange', root._ridisegna);
+      }
+      root._dati = dati;
+      root._opzioni = opzioni;
       root.innerHTML = '';
+      root.appendChild(strisciaAggiornamento(dati));
       montaComune(root, dati);
       if (opzioni.riservato) montaRiservata(root, dati);
       var p = html('p', 'dash-aggiornato');
-      var data = new Date(dati.aggiornato);
-      p.textContent = 'Dati aggiornati al ' +
-        data.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }) +
-        '. Aggiornamento automatico ogni notte.';
+      p.textContent = testo('I dati si aggiornano da soli ogni notte verso le 2. ' +
+        'Se la data qui sopra è vecchia, l\'aggiornamento automatico si è fermato.');
       root.appendChild(p);
     },
     carica: function (url, root, opzioni) {
