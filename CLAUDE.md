@@ -13,10 +13,14 @@ Repository: `https://github.com/albo94/ambulanzaselvinoaviatico`
 ├── servizi.html        – Pagina servizi con sezioni e tab sticky
 ├── contatti.html       – Mappa, indirizzi, orari
 ├── volontario.html     – Come diventare volontario, donazioni, contributi pubblici
+├── numeri.html         – Dashboard statistiche pubblica (vedi sezione dedicata)
 ├── sitemap.xml
 ├── robots.txt
 ├── css/style.css       – Unico foglio di stile (tutto il sito)
+├── css/dashboard.css   – Stili della dashboard statistiche
 ├── js/main.js          – Hamburger, stats counter, carousel, scroll reveal
+├── js/dashboard.js     – Renderer dei grafici (SVG a mano, nessuna libreria)
+├── dati/statistiche.json – Dati della dashboard, rigenerati ogni notte (non modificare)
 ├── images/             – Immagini usate dal sito (vedi struttura sottocartelle)
 └── docs/               – PDF scaricabili (contributi pubblici, volontariato in vacanza)
 ```
@@ -148,6 +152,26 @@ Blocchi contatto: Sede Operativa, Sede Legale, Email, Disponibilità, Presidente
 
 - `contributi-pubblici-2020.pdf` … `contributi-pubblici-2024.pdf`
 - `volontariato-vacanza.pdf`
+
+## Pagina "I nostri numeri" (numeri.html)
+
+Dashboard con le statistiche reali del servizio, generate dal registro delle missioni.
+
+- **Dati**: `dati/statistiche.json`. **Non va modificato a mano**: lo riscrive ogni notte
+  lo script Apps Script "Gestione Missioni 118 - automazioni" (progetto separato, sorgenti
+  in `G:\Drive condivisi\MISSIONI 118\AMB_programma missioni\apps-script`) tramite le
+  API di GitHub. Ogni notte in cui i dati cambiano arriva un commit automatico su `main`.
+- **Grafici**: `js/dashboard.js`, SVG disegnato a mano — nessuna libreria, in linea con la
+  regola "solo vanilla" del sito. Espone `AMB_DASH.carica(url, contenitore, opzioni)`.
+- **Stili**: `css/dashboard.css`, usa le variabili di `style.css` con fallback propri.
+- Lo **stesso** CSS e JS sono caricati anche dalla dashboard interna riservata (web app
+  Apps Script), che li prende da questo dominio: se rinomini o sposti quei due file,
+  la dashboard interna smette di disegnare i grafici.
+- La pagina è raggiungibile dal menu del **footer** di tutte le pagine (non dal menu
+  principale) ed è in `sitemap.xml`.
+- Sulla pagina finiscono **solo dati aggregati**: niente nomi di volontari, niente dati
+  per persona. Il sito è statico e pubblico, qualsiasi "area riservata" lato browser
+  sarebbe aggirabile — i dati per volontario stanno solo nella web app autenticata.
 
 ## SEO
 
