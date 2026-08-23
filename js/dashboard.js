@@ -511,7 +511,7 @@ var AMB_DASH = (function () {
       var oreEm = emerg ? emerg.ore : 0;
       voci.push({ label: 'Ore di volontariato ' + annoCorr, valore: n(oreEm + oreExtra),
                   nota: emerg
-                    ? (n(oreEm) + ' di turno + ' + n(oreExtra) + ' di attività')
+                    ? (n(oreEm) + ' di turno + ' + n(oreExtra) + ' di attività, già svolte')
                     : 'attività fuori emergenza' });
     }
     if (oreUlt && oreUlt.totale) {
@@ -604,9 +604,16 @@ var AMB_DASH = (function () {
 
     if (emerg && emerg.ore) {
       // Il metro giusto per le ore di turno non sono le altre attività, ma la
-      // copertura da garantire: un equipaggio di tre persone, 24 ore al giorno,
-      // tutti i giorni dell'anno.
-      var giorni = new Date(annoCorr, 1, 29).getMonth() === 1 ? 366 : 365;
+      // copertura da garantire: un equipaggio di tre persone, 24 ore al giorno.
+      //
+      // Il periodo è quello dei turni GIÀ FATTI, non l'anno intero: sul
+      // tabellone i mesi avanti sono compilati a metà, e i volontari si segnano
+      // con mesi di anticipo mentre i dipendenti entrano sotto data. Mettere
+      // mezzo anno di turni contro il fabbisogno di dodici mesi faceva sembrare
+      // scoperto un periodo che scoperto non è.
+      var interoAnno = new Date(annoCorr, 1, 29).getMonth() === 1 ? 366 : 365;
+      var giorni = emerg.giorni || interoAnno;
+      var parziale = giorni < interoAnno;
       var fabbisogno = 24 * 3 * giorni;
       var oreTutte = emerg.oreTutti || emerg.ore;
       var oreDip = Math.max(oreTutte - emerg.ore, 0);
@@ -614,10 +621,16 @@ var AMB_DASH = (function () {
         return n(v) + ' h · ' + Math.round(v / fabbisogno * 100) + '%';
       };
 
+      var periodo = parziale
+        ? 'Nei primi ' + giorni + ' giorni del ' + annoCorr + ', garantire'
+        : 'Nel ' + annoCorr + ', garantire';
+
       var c6 = scheda('Le ore di turno e la copertura H24',
-        'Garantire l\'ambulanza 24 ore su 24 con un equipaggio di tre persone vuol dire ' +
-        n(fabbisogno) + ' ore in un anno di ' + giorni + ' giorni. Ecco da chi arrivano. ' +
-        'Il totale supera il 100% quando su un turno c\'è più gente del minimo.');
+        periodo + ' l\'ambulanza 24 ore su 24 con un equipaggio di tre persone ha ' +
+        'voluto dire ' + n(fabbisogno) + ' ore di turno. Ecco da chi sono arrivate. ' +
+        'Sono le ore davvero coperte: i turni futuri già prenotati non sono contati, ' +
+        'perché a tabellone i mesi avanti sono ancora mezzi vuoti. Il totale supera il ' +
+        '100% quando su un turno c\'è più gente del minimo, e capita spesso.');
       root.appendChild(c6);
       barre(c6.corpo, {
         voci: [

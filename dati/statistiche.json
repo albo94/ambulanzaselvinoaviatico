@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-08-23T21:10:19+0200",
+ "aggiornato": "2026-08-23T21:25:10+0200",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -391,19 +391,6 @@
    ]
   },
   {
-   "comune": "Gandino",
-   "valori": [
-    0,
-    0,
-    2,
-    1,
-    2,
-    4,
-    7,
-    3
-   ]
-  },
-  {
    "comune": "Cene",
    "valori": [
     3,
@@ -414,6 +401,19 @@
     0,
     5,
     4
+   ]
+  },
+  {
+   "comune": "Gandino",
+   "valori": [
+    0,
+    0,
+    2,
+    1,
+    2,
+    4,
+    7,
+    3
    ]
   },
   {
@@ -495,15 +495,15 @@
    ]
   },
   {
-   "comune": "S. Pellegrino",
+   "comune": "Ranica",
    "valori": [
     1,
-    0,
-    0,
-    2,
+    1,
+    1,
+    1,
     1,
     2,
-    1,
+    0,
     0
    ]
   },
@@ -521,28 +521,15 @@
    ]
   },
   {
-   "comune": "Ranica",
+   "comune": "S. Pellegrino",
    "valori": [
     1,
-    1,
-    1,
-    1,
-    1,
-    2,
     0,
-    0
-   ]
-  },
-  {
-   "comune": "Clusone",
-   "valori": [
     0,
     2,
     1,
-    0,
     2,
     1,
-    0,
     0
    ]
   },
@@ -560,12 +547,12 @@
    ]
   },
   {
-   "comune": "Gorle",
+   "comune": "Clusone",
    "valori": [
     0,
+    2,
     1,
     0,
-    1,
     2,
     1,
     0,
@@ -586,6 +573,19 @@
    ]
   },
   {
+   "comune": "Gorle",
+   "valori": [
+    0,
+    1,
+    0,
+    1,
+    2,
+    1,
+    0,
+    0
+   ]
+  },
+  {
    "comune": "Colzate",
    "valori": [
     0,
@@ -593,19 +593,6 @@
     0,
     1,
     1,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Peja",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    2,
     1,
     0,
     0
@@ -625,6 +612,32 @@
    ]
   },
   {
+   "comune": "Peja",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    2,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Cazzano Sant 'andrea",
+   "valori": [
+    0,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
    "comune": "Gorno",
    "valori": [
     0,
@@ -633,32 +646,6 @@
     0,
     1,
     1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Ornica",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    2,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Stezzano",
-   "valori": [
-    0,
-    1,
-    0,
-    1,
-    0,
-    0,
     0,
     0
    ]
@@ -677,6 +664,19 @@
    ]
   },
   {
+   "comune": "Ornica",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0
+   ]
+  },
+  {
    "comune": "Sorisole",
    "valori": [
     0,
@@ -690,12 +690,12 @@
    ]
   },
   {
-   "comune": "Cazzano Sant 'andrea",
+   "comune": "Stezzano",
    "valori": [
     0,
-    2,
+    1,
     0,
-    0,
+    1,
     0,
     0,
     0,
@@ -703,11 +703,11 @@
    ]
   },
   {
-   "comune": "Terno D'isola",
+   "comune": "Gorlago",
    "valori": [
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -729,39 +729,13 @@
    ]
   },
   {
-   "comune": "Zanica",
+   "comune": "Endine Gaiano",
    "valori": [
     0,
     0,
     0,
     0,
     1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Olmo al Brembo",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1
-   ]
-  },
-  {
-   "comune": "Branzi",
-   "valori": [
-    1,
-    0,
-    0,
-    0,
-    0,
     0,
     0,
     0
@@ -781,6 +755,32 @@
    ]
   },
   {
+   "comune": "Zanica",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Villa D'ogna",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
    "comune": "Almenno S. Salvatore",
    "valori": [
     0,
@@ -794,72 +794,7 @@
    ]
   },
   {
-   "comune": "Piazzatorre",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Brembate di Sopra",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "comune": "Azzano S. Paolo",
-   "valori": [
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Brembilla",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Orezzo",
-   "valori": [
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Trescore Balneario",
+   "comune": "Ponte Nossa",
    "valori": [
     0,
     0,
@@ -885,7 +820,72 @@
    ]
   },
   {
-   "comune": "Cazzano s. Andrea",
+   "comune": "Terno D'isola",
+   "valori": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Trescore Balneario",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Oneta",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Brembate di Sopra",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Camerata Cornello",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Brembilla",
    "valori": [
     0,
     0,
@@ -898,10 +898,10 @@
    ]
   },
   {
-   "comune": "Gorlago",
+   "comune": "Branzi",
    "valori": [
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -911,11 +911,37 @@
    ]
   },
   {
-   "comune": "Albano Sant'alessandro",
+   "comune": "Piazzatorre",
    "valori": [
     0,
     0,
+    0,
+    0,
+    0,
     1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Gavarno",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Azzano S. Paolo",
+   "valori": [
+    1,
+    0,
+    0,
     0,
     0,
     0,
@@ -937,85 +963,59 @@
    ]
   },
   {
+   "comune": "Cazzano s. Andrea",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Orezzo",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Albano Sant'alessandro",
+   "valori": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Olmo al Brembo",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
    "comune": "S.pellegrino Terme",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "comune": "Gavarno",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Villa D'ogna",
-   "valori": [
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Endine Gaiano",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Camerata Cornello",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Ponte Nossa",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "comune": "Oneta",
    "valori": [
     0,
     0,
@@ -1210,13 +1210,17 @@
  "oreEmergenza": [
   {
    "anno": 2025,
-   "ore": 14425,
-   "oreTutti": 23966
+   "ore": 14326,
+   "oreTutti": 23833,
+   "giorni": 365,
+   "al": "2025-12-31"
   },
   {
    "anno": 2026,
-   "ore": 16242,
-   "oreTutti": 26610
+   "ore": 12078,
+   "oreTutti": 21196,
+   "giorni": 234,
+   "al": "2026-08-22"
   }
  ],
  "confronto": {
