@@ -511,7 +511,7 @@ var AMB_DASH = (function () {
       var oreEm = emerg ? emerg.ore : 0;
       voci.push({ label: 'Ore di volontariato ' + annoCorr, valore: n(oreEm + oreExtra),
                   nota: emerg
-                    ? (n(oreEm) + ' in emergenza + ' + n(oreExtra) + ' di attività')
+                    ? (n(oreEm) + ' di turno + ' + n(oreExtra) + ' di attività')
                     : 'attività fuori emergenza' });
     }
     if (kmUlt && kmUlt.km) {
@@ -579,17 +579,17 @@ var AMB_DASH = (function () {
       var ultimoIdx = d.anniExtra.length - 1;
       var vociOre = [];
       if (emerg && emerg.ore) {
-        vociOre.push({ nome: 'Emergenza 118', valore: emerg.ore, colore: COLORI[0] });
+        vociOre.push({ nome: 'Turni 118', valore: emerg.ore, colore: COLORI[0] });
       }
       d.tipologie.forEach(function (t) {
         var v = t.valori[ultimoIdx] || 0;
         if (v > 0) vociOre.push({ nome: t.tipo, valore: v, colore: COLORI[2] });
       });
       var c5 = scheda('Dove finiscono le ore dei volontari',
-        'Il tempo sulle missioni 118 e quello delle altre attività: manifestazioni, ' +
-        'trasporti programmati, presidio del territorio, formazione e amministrazione. ' +
-        'Sono ore-volontario: ogni ora è contata per ciascuna persona presente, e il ' +
-        'personale dipendente non è compreso.');
+        'Le ore di turno coperte in emergenza — quelle messe a disposizione, non solo ' +
+        'quelle in cui è arrivata una chiamata — e il tempo delle altre attività: ' +
+        'manifestazioni, trasporti programmati, presidio del territorio, formazione e ' +
+        'amministrazione. Il personale dipendente non è compreso.');
       root.appendChild(c5);
       barre(c5.corpo, {
         voci: vociOre,
@@ -673,7 +673,7 @@ var AMB_DASH = (function () {
         nota: 'Barra = interventi 118 + attività registrate.' },
       { chiave: 'oreTot', etichetta: 'Ore di attività',
         unita: function (v) { return n(v) + ' h'; },
-        nota: 'Barra = ore sulle missioni 118 più quelle di tutte le altre ' +
+        nota: 'Barra = ore di turno coperte più quelle di tutte le altre ' +
               'attività, amministrazione e formazione comprese.' }
     ];
     var misuraAttiva = MISURE[0];
@@ -781,7 +781,7 @@ var AMB_DASH = (function () {
       { testo: 'Manif.',      chiave: 'manif',  numerica: true },
       { testo: 'Manut.',      chiave: 'manut',  numerica: true },
       { testo: 'Presidio',    chiave: 'presid', numerica: true },
-      { testo: 'Ore 118',     chiave: 'ore118', numerica: true },
+      { testo: 'Ore turno',   chiave: 'ore118', numerica: true },
       { testo: 'Ore attività', chiave: 'ore',   numerica: true },
       { testo: 'Ore totali',  chiave: 'oreTot', numerica: true }
     ], attivi, { filtroTesto: 'nickname', gruppi: gruppiPresenti, ordine: 'tot' }));
