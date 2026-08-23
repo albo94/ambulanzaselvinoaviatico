@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-08-23T13:02:53+0200",
+ "aggiornato": "2026-08-23T20:06:49+0200",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -161,7 +161,7 @@
   },
   {
    "anno": 2026,
-   "totale": 366,
+   "totale": 367,
    "mesi": [
     30,
     29,
@@ -170,7 +170,7 @@
     30,
     57,
     97,
-    68,
+    69,
     0,
     0,
     0,
@@ -192,7 +192,7 @@
     213,
     208,
     200,
-    166
+    167
    ]
   },
   {
@@ -326,19 +326,6 @@
    ]
   },
   {
-   "comune": "Zogno",
-   "valori": [
-    2,
-    2,
-    4,
-    5,
-    9,
-    5,
-    5,
-    2
-   ]
-  },
-  {
    "comune": "Fiorano al Serio",
    "valori": [
     2,
@@ -349,6 +336,19 @@
     6,
     8,
     4
+   ]
+  },
+  {
+   "comune": "Zogno",
+   "valori": [
+    2,
+    2,
+    4,
+    5,
+    9,
+    5,
+    5,
+    2
    ]
   },
   {
@@ -534,19 +534,6 @@
    ]
   },
   {
-   "comune": "Clusone",
-   "valori": [
-    0,
-    2,
-    1,
-    0,
-    2,
-    1,
-    0,
-    0
-   ]
-  },
-  {
    "comune": "Dossena",
    "valori": [
     0,
@@ -560,15 +547,15 @@
    ]
   },
   {
-   "comune": "Casnigo",
+   "comune": "Clusone",
    "valori": [
     0,
-    0,
-    0,
+    2,
     1,
     0,
     2,
-    2,
+    1,
+    0,
     0
    ]
   },
@@ -586,6 +573,19 @@
    ]
   },
   {
+   "comune": "Casnigo",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    2,
+    2,
+    0
+   ]
+  },
+  {
    "comune": "Colzate",
    "valori": [
     0,
@@ -594,19 +594,6 @@
     1,
     1,
     1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Pedrengo",
-   "valori": [
-    1,
-    0,
-    0,
-    0,
-    2,
-    0,
     0,
     0
    ]
@@ -625,27 +612,14 @@
    ]
   },
   {
-   "comune": "Cazzano Sant 'andrea",
+   "comune": "Pedrengo",
    "valori": [
-    0,
-    2,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Ornica",
-   "valori": [
-    0,
-    0,
+    1,
     0,
     0,
     0,
     2,
+    0,
     0,
     0
    ]
@@ -677,19 +651,6 @@
    ]
   },
   {
-   "comune": "Sorisole",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    2,
-    0
-   ]
-  },
-  {
    "comune": "Albano S. Ale",
    "valori": [
     0,
@@ -703,38 +664,12 @@
    ]
   },
   {
-   "comune": "Orio al Serio",
+   "comune": "Cazzano Sant 'andrea",
    "valori": [
     0,
+    2,
     0,
     0,
-    0,
-    0,
-    0,
-    0,
-    1
-   ]
-  },
-  {
-   "comune": "Camerata Cornello",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Villa D'ogna",
-   "valori": [
-    0,
-    0,
-    0,
-    1,
     0,
     0,
     0,
@@ -742,7 +677,20 @@
    ]
   },
   {
-   "comune": "Trescore Balneario",
+   "comune": "Ornica",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Sorisole",
    "valori": [
     0,
     0,
@@ -750,7 +698,7 @@
     0,
     0,
     0,
-    1,
+    2,
     0
    ]
   },
@@ -768,19 +716,6 @@
    ]
   },
   {
-   "comune": "Albano s. Alessandro",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
    "comune": "Olmo al Brembo",
    "valori": [
     0,
@@ -791,97 +726,6 @@
     0,
     0,
     1
-   ]
-  },
-  {
-   "comune": "Branzi",
-   "valori": [
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Cazzano s. Andrea",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Sant Omobono Terme",
-   "valori": [
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Piazzatorre",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Endine Gaiano",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Zanica",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Torre De Roveri",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
    ]
   },
   {
@@ -911,28 +755,28 @@
    ]
   },
   {
-   "comune": "Ponte Nossa",
+   "comune": "Cazzano s. Andrea",
    "valori": [
     0,
     0,
     0,
     0,
     0,
-    0,
     1,
+    0,
     0
    ]
   },
   {
-   "comune": "Brembate di Sopra",
+   "comune": "Zanica",
    "valori": [
     0,
     0,
     0,
     0,
-    0,
-    0,
     1,
+    0,
+    0,
     0
    ]
   },
@@ -950,7 +794,72 @@
    ]
   },
   {
-   "comune": "S.pellegrino Terme",
+   "comune": "Orio al Serio",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "comune": "Piazzatorre",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Camerata Cornello",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Villa D'ogna",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Sant Omobono Terme",
+   "valori": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Brembate di Sopra",
    "valori": [
     0,
     0,
@@ -963,15 +872,15 @@
    ]
   },
   {
-   "comune": "Albano Sant'alessandro",
+   "comune": "Albano s. Alessandro",
    "valori": [
     0,
     0,
+    0,
+    0,
+    0,
+    0,
     1,
-    0,
-    0,
-    0,
-    0,
     0
    ]
   },
@@ -984,19 +893,6 @@
     0,
     0,
     1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Gorlago",
-   "valori": [
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
     0,
     0
    ]
@@ -1015,6 +911,32 @@
    ]
   },
   {
+   "comune": "S.pellegrino Terme",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Gorlago",
+   "valori": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
    "comune": "Orezzo",
    "valori": [
     0,
@@ -1022,6 +944,84 @@
     0,
     1,
     0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Torre De Roveri",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Ponte Nossa",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Branzi",
+   "valori": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Albano Sant'alessandro",
+   "valori": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Trescore Balneario",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Endine Gaiano",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
     0,
     0,
     0
@@ -1066,8 +1066,8 @@
   },
   {
    "anno": 2026,
-   "quota": 0.563,
-   "totale": 366
+   "quota": 0.564,
+   "totale": 367
   }
  ],
  "km": [
@@ -1108,7 +1108,7 @@
   },
   {
    "anno": 2026,
-   "km": 13284,
+   "km": 13333,
    "interrotte": 20
   }
  ],
@@ -1207,12 +1207,20 @@
    ]
   }
  ],
+ "oreEmergenza": [
+  {
+   "anno": 2026,
+   "ore": 976,
+   "missioni": 367,
+   "conOrario": 367
+  }
+ ],
  "confronto": {
   "finoAMese": 8,
   "giorno": 23,
   "missioni": {
    "prec": 359,
-   "corr": 366
+   "corr": 367
   },
   "ore": {
    "prec": 1266,
