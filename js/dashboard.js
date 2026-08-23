@@ -514,6 +514,10 @@ var AMB_DASH = (function () {
                     ? (n(oreEm) + ' di turno + ' + n(oreExtra) + ' di attività')
                     : 'attività fuori emergenza' });
     }
+    if (oreUlt && oreUlt.totale) {
+      voci.push({ label: "Di cui oltre l'emergenza", valore: n(oreUlt.totale),
+                  nota: 'manifestazioni, presidi, formazione' });
+    }
     if (kmUlt && kmUlt.km) {
       voci.push({ label: 'Km percorsi in convenzione', valore: n(kmUlt.km),
                   nota: 'anno ' + annoCorr });
@@ -574,28 +578,45 @@ var AMB_DASH = (function () {
       etichetta: 'Quota Altopiano'
     });
 
-    // ore volontariato
-    if (d.tipologie.length || emerg) {
+    // Le ore di turno sono un ordine di grandezza sopra le altre: nello stesso
+    // grafico le attività si riducono a un trattino. Due schede, due scale.
+    if (d.tipologie.length) {
       var ultimoIdx = d.anniExtra.length - 1;
-      var vociOre = [];
-      if (emerg && emerg.ore) {
-        vociOre.push({ nome: 'Turni 118', valore: emerg.ore, colore: COLORI[0] });
-      }
-      d.tipologie.forEach(function (t) {
-        var v = t.valori[ultimoIdx] || 0;
-        if (v > 0) vociOre.push({ nome: t.tipo, valore: v, colore: COLORI[2] });
-      });
-      var c5 = scheda('Dove finiscono le ore dei volontari',
-        'Le ore di turno coperte in emergenza — quelle messe a disposizione, non solo ' +
-        'quelle in cui è arrivata una chiamata — e il tempo delle altre attività: ' +
-        'manifestazioni, trasporti programmati, presidio del territorio, formazione e ' +
-        'amministrazione. Il personale dipendente non è compreso.');
+      var vociExtra = d.tipologie.map(function (t) {
+        return { nome: t.tipo, valore: t.valori[ultimoIdx] || 0 };
+      }).filter(function (v) { return v.valore > 0; });
+      var totExtra = vociExtra.reduce(function (a, v) { return a + v.valore; }, 0);
+
+      var c5 = scheda("Le ore oltre l'emergenza",
+        n(totExtra) + ' ore nel ' + annoCorr + ' che non hanno a che fare con le chiamate ' +
+        'del 118: assistenza alle manifestazioni, trasporti programmati, presidio del ' +
+        'territorio con controlli gratuiti, formazione nelle scuole e alla cittadinanza, ' +
+        "e il lavoro amministrativo che tiene in piedi l'associazione.");
       root.appendChild(c5);
       barre(c5.corpo, {
-        voci: vociOre,
+        voci: vociExtra,
+        colore: COLORI[2],
         formato: function (v) { return n(v) + ' h'; },
         larghezzaEtichette: 175,
         etichetta: 'Ore per tipo di attività'
+      });
+    }
+
+    if (emerg && emerg.ore) {
+      var oreAtt = oreUlt ? oreUlt.totale : 0;
+      var c6 = scheda('E le ore in emergenza',
+        'Le ore di turno coperte a tabellone: quelle messe a disposizione, non solo quelle ' +
+        'in cui è arrivata una chiamata. Sono la parte più grande, ma vivono insieme a tutto ' +
+        'il resto. Il personale dipendente non è compreso.');
+      root.appendChild(c6);
+      barre(c6.corpo, {
+        voci: [
+          { nome: 'Turni in emergenza', valore: emerg.ore, colore: COLORI[1] },
+          { nome: 'Tutte le altre attività', valore: oreAtt, colore: COLORI[2] }
+        ],
+        formato: function (v) { return n(v) + ' h'; },
+        larghezzaEtichette: 190,
+        etichetta: 'Turni e attività a confronto'
       });
     }
   }
