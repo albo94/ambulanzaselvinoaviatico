@@ -1,0 +1,178 @@
+/* ============================================================
+   Dashboard statistiche – stili
+   Usata da numeri.html (pubblica) e dalla web app riservata.
+   Dipende dalle variabili di css/style.css quando è caricata nel
+   sito; i fallback servono alla web app, che carica solo questo file.
+   ============================================================ */
+
+.dash {
+  --dash-arancio: var(--orange, #E8601C);
+  --dash-testo:   var(--text, #333333);
+  --dash-tenue:   var(--text-light, #666666);
+  --dash-bordo:   #e3e7eb;
+  --dash-fondo:   var(--gray, #f5f5f5);
+  color: var(--dash-testo);
+}
+
+/* ── KPI ─────────────────────────────────────────────────── */
+
+.dash-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
+  margin-bottom: 34px;
+}
+
+.dash-kpi {
+  background: #fff;
+  border: 1px solid var(--dash-bordo);
+  border-top: 4px solid var(--dash-arancio);
+  border-radius: 10px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dash-kpi-label {
+  font-size: .78rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--dash-tenue);
+  font-weight: 600;
+}
+
+.dash-kpi-num {
+  font-family: 'Titillium Web', system-ui, sans-serif;
+  font-size: 2.4rem;
+  line-height: 1.1;
+  font-weight: 700;
+  color: #1e2a35;
+}
+
+.dash-kpi-nota { font-size: .85rem; color: var(--dash-tenue); }
+.dash-kpi-nota.su  { color: #157a36; font-weight: 600; }
+.dash-kpi-nota.giu { color: #b3261e; font-weight: 600; }
+
+/* ── schede ──────────────────────────────────────────────── */
+
+.dash-card {
+  background: #fff;
+  border: 1px solid var(--dash-bordo);
+  border-radius: 10px;
+  padding: 24px 26px 28px;
+  margin-bottom: 26px;
+}
+
+.dash-card-head { margin-bottom: 16px; }
+
+.dash-card-head h3 {
+  font-family: 'Titillium Web', system-ui, sans-serif;
+  font-size: 1.25rem;
+  margin: 0 0 4px;
+  color: #1e2a35;
+}
+
+.dash-card-head p {
+  margin: 0;
+  font-size: .92rem;
+  color: var(--dash-tenue);
+  max-width: 70ch;
+}
+
+.dash-card-body { overflow-x: auto; }
+
+/* ── grafici ─────────────────────────────────────────────── */
+
+.dash-svg { width: 100%; height: auto; display: block; min-width: 480px; }
+.dash-svg .dash-tick { font-size: 12px; fill: #6b7783; font-family: 'Open Sans', sans-serif; }
+.dash-svg .dash-tick-forte {
+  font-size: 12.5px; fill: #2b3640; font-weight: 600; font-family: 'Open Sans', sans-serif;
+}
+.dash-svg .dash-donut-num {
+  font-size: 30px; font-weight: 700; fill: #1e2a35;
+  font-family: 'Titillium Web', system-ui, sans-serif;
+}
+
+.dash-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-bottom: 10px;
+}
+
+.dash-legenda-voce {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: .85rem;
+  color: var(--dash-tenue);
+}
+
+.dash-legenda-voce i {
+  width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+}
+
+/* ── tabelle ─────────────────────────────────────────────── */
+
+.dash-tabella-wrap { overflow-x: auto; margin-top: 22px; }
+
+.dash-tabella {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+  min-width: 720px;
+}
+
+.dash-tabella th {
+  background: #1e2a35;
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+  padding: 9px 10px;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+.dash-tabella th:first-child,
+.dash-tabella th:nth-child(2) { text-align: left; }
+
+.dash-tabella td {
+  padding: 7px 10px;
+  text-align: right;
+  border-bottom: 1px solid #eef1f4;
+  white-space: nowrap;
+}
+
+.dash-tabella td.dash-td-nome,
+.dash-tabella td.dash-td-nome + td { text-align: left; }
+.dash-tabella tbody tr:nth-child(even) { background: #f7f9fb; }
+
+/* ── note ────────────────────────────────────────────────── */
+
+.dash-aggiornato {
+  font-size: .85rem;
+  color: var(--dash-tenue);
+  text-align: center;
+  margin-top: 26px;
+}
+
+.dash-errore {
+  background: #fdf2f0;
+  border: 1px solid #f0c8c0;
+  border-radius: 8px;
+  padding: 18px 20px;
+  color: #8a2b1d;
+}
+
+.dash-caricamento {
+  text-align: center;
+  color: var(--dash-tenue);
+  padding: 50px 0;
+}
+
+@media (max-width: 640px) {
+  .dash-card { padding: 18px 14px 22px; }
+  .dash-kpi-num { font-size: 2rem; }
+}

@@ -1,0 +1,1222 @@
+{
+ "aggiornato": "2026-08-23T13:02:53+0200",
+ "annoCorrente": 2026,
+ "anni": [
+  2019,
+  2020,
+  2021,
+  2022,
+  2023,
+  2024,
+  2025,
+  2026
+ ],
+ "missioni": [
+  {
+   "anno": 2019,
+   "totale": 333,
+   "mesi": [
+    27,
+    18,
+    22,
+    19,
+    10,
+    31,
+    60,
+    73,
+    16,
+    20,
+    16,
+    21
+   ],
+   "fonte": "storico",
+   "parziale": false,
+   "gettonate": 0
+  },
+  {
+   "anno": 2020,
+   "totale": 357,
+   "mesi": [
+    29,
+    36,
+    76,
+    14,
+    15,
+    14,
+    56,
+    60,
+    8,
+    16,
+    9,
+    24
+   ],
+   "fonte": "storico",
+   "parziale": false,
+   "gettonate": 0
+  },
+  {
+   "anno": 2021,
+   "totale": 328,
+   "mesi": [
+    17,
+    12,
+    20,
+    17,
+    19,
+    27,
+    54,
+    75,
+    23,
+    17,
+    21,
+    26
+   ],
+   "fonte": "storico",
+   "parziale": false,
+   "gettonate": 0
+  },
+  {
+   "anno": 2022,
+   "totale": 453,
+   "mesi": [
+    33,
+    22,
+    18,
+    30,
+    29,
+    40,
+    73,
+    80,
+    27,
+    30,
+    29,
+    42
+   ],
+   "fonte": "dettaglio",
+   "parziale": false,
+   "gettonate": 0
+  },
+  {
+   "anno": 2023,
+   "totale": 459,
+   "mesi": [
+    36,
+    24,
+    14,
+    32,
+    25,
+    38,
+    71,
+    78,
+    26,
+    35,
+    34,
+    46
+   ],
+   "fonte": "dettaglio",
+   "parziale": false,
+   "gettonate": 0
+  },
+  {
+   "anno": 2024,
+   "totale": 454,
+   "mesi": [
+    35,
+    29,
+    28,
+    29,
+    25,
+    32,
+    58,
+    94,
+    25,
+    39,
+    21,
+    39
+   ],
+   "fonte": "dettaglio",
+   "parziale": false,
+   "gettonate": 0
+  },
+  {
+   "anno": 2025,
+   "totale": 519,
+   "mesi": [
+    32,
+    30,
+    29,
+    33,
+    32,
+    44,
+    64,
+    95,
+    22,
+    33,
+    35,
+    70
+   ],
+   "fonte": "dettaglio",
+   "parziale": false,
+   "gettonate": 0
+  },
+  {
+   "anno": 2026,
+   "totale": 366,
+   "mesi": [
+    30,
+    29,
+    29,
+    26,
+    30,
+    57,
+    97,
+    68,
+    0,
+    0,
+    0,
+    0
+   ],
+   "fonte": "dettaglio",
+   "parziale": true,
+   "gettonate": 1
+  }
+ ],
+ "comuni": [
+  {
+   "comune": "Selvino",
+   "valori": [
+    170,
+    121,
+    167,
+    226,
+    213,
+    208,
+    200,
+    166
+   ]
+  },
+  {
+   "comune": "Aviatico",
+   "valori": [
+    28,
+    41,
+    40,
+    50,
+    45,
+    35,
+    52,
+    40
+   ]
+  },
+  {
+   "comune": "Serina",
+   "valori": [
+    29,
+    42,
+    28,
+    37,
+    36,
+    37,
+    44,
+    29
+   ]
+  },
+  {
+   "comune": "Costa Serina",
+   "valori": [
+    29,
+    35,
+    24,
+    28,
+    26,
+    36,
+    37,
+    31
+   ]
+  },
+  {
+   "comune": "Algua",
+   "valori": [
+    18,
+    21,
+    19,
+    22,
+    22,
+    28,
+    26,
+    22
+   ]
+  },
+  {
+   "comune": "Nembro",
+   "valori": [
+    10,
+    25,
+    9,
+    16,
+    15,
+    17,
+    21,
+    12
+   ]
+  },
+  {
+   "comune": "Oltre il Colle",
+   "valori": [
+    10,
+    9,
+    8,
+    10,
+    14,
+    11,
+    14,
+    8
+   ]
+  },
+  {
+   "comune": "Albino",
+   "valori": [
+    3,
+    16,
+    2,
+    9,
+    12,
+    6,
+    16,
+    7
+   ]
+  },
+  {
+   "comune": "Gazzaniga",
+   "valori": [
+    0,
+    6,
+    4,
+    10,
+    11,
+    12,
+    12,
+    12
+   ]
+  },
+  {
+   "comune": "Cornalba",
+   "valori": [
+    8,
+    8,
+    6,
+    7,
+    12,
+    9,
+    3,
+    7
+   ]
+  },
+  {
+   "comune": "Bergamo",
+   "valori": [
+    3,
+    4,
+    3,
+    4,
+    6,
+    2,
+    14,
+    3
+   ]
+  },
+  {
+   "comune": "Zogno",
+   "valori": [
+    2,
+    2,
+    4,
+    5,
+    9,
+    5,
+    5,
+    2
+   ]
+  },
+  {
+   "comune": "Fiorano al Serio",
+   "valori": [
+    2,
+    2,
+    2,
+    6,
+    4,
+    6,
+    8,
+    4
+   ]
+  },
+  {
+   "comune": "Alzano",
+   "valori": [
+    6,
+    2,
+    2,
+    5,
+    3,
+    6,
+    8,
+    1
+   ]
+  },
+  {
+   "comune": "Vertova",
+   "valori": [
+    0,
+    5,
+    2,
+    4,
+    4,
+    5,
+    6,
+    3
+   ]
+  },
+  {
+   "comune": "Leffe",
+   "valori": [
+    3,
+    0,
+    0,
+    2,
+    9,
+    3,
+    5,
+    4
+   ]
+  },
+  {
+   "comune": "Gandino",
+   "valori": [
+    0,
+    0,
+    2,
+    1,
+    2,
+    4,
+    7,
+    3
+   ]
+  },
+  {
+   "comune": "Cene",
+   "valori": [
+    3,
+    1,
+    0,
+    4,
+    2,
+    0,
+    5,
+    4
+   ]
+  },
+  {
+   "comune": "Bracca",
+   "valori": [
+    0,
+    1,
+    0,
+    4,
+    6,
+    4,
+    2,
+    0
+   ]
+  },
+  {
+   "comune": "Pradalunga",
+   "valori": [
+    1,
+    4,
+    0,
+    1,
+    1,
+    3,
+    4,
+    2
+   ]
+  },
+  {
+   "comune": "Seriate",
+   "valori": [
+    2,
+    0,
+    0,
+    2,
+    0,
+    6,
+    3,
+    1
+   ]
+  },
+  {
+   "comune": "Scanzorosciate",
+   "valori": [
+    0,
+    1,
+    0,
+    1,
+    5,
+    1,
+    5,
+    0
+   ]
+  },
+  {
+   "comune": "Villa di Serio",
+   "valori": [
+    0,
+    0,
+    1,
+    4,
+    1,
+    1,
+    3,
+    0
+   ]
+  },
+  {
+   "comune": "Torre Boldone",
+   "valori": [
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    2,
+    1
+   ]
+  },
+  {
+   "comune": "S. Giovanni Bianco",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    4,
+    1,
+    2,
+    0
+   ]
+  },
+  {
+   "comune": "S. Pellegrino",
+   "valori": [
+    1,
+    0,
+    0,
+    2,
+    1,
+    2,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Ranica",
+   "valori": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Clusone",
+   "valori": [
+    0,
+    2,
+    1,
+    0,
+    2,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Dossena",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    2,
+    2
+   ]
+  },
+  {
+   "comune": "Casnigo",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    2,
+    2,
+    0
+   ]
+  },
+  {
+   "comune": "Gorle",
+   "valori": [
+    0,
+    1,
+    0,
+    1,
+    2,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Colzate",
+   "valori": [
+    0,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Pedrengo",
+   "valori": [
+    1,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Peja",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    2,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Cazzano Sant 'andrea",
+   "valori": [
+    0,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Ornica",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Stezzano",
+   "valori": [
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Gorno",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Sorisole",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0
+   ]
+  },
+  {
+   "comune": "Albano S. Ale",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Orio al Serio",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "comune": "Camerata Cornello",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Villa D'ogna",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Trescore Balneario",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Terno D'isola",
+   "valori": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Albano s. Alessandro",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Olmo al Brembo",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "comune": "Branzi",
+   "valori": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Cazzano s. Andrea",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Sant Omobono Terme",
+   "valori": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Piazzatorre",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Endine Gaiano",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Zanica",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Torre De Roveri",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Almenno S. Salvatore",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Azzano S. Paolo",
+   "valori": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Ponte Nossa",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Brembate di Sopra",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Oneta",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "S.pellegrino Terme",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Albano Sant'alessandro",
+   "valori": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Gavarno",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Gorlago",
+   "valori": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Brembilla",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Orezzo",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ ],
+ "altopiano": [
+  {
+   "anno": 2019,
+   "quota": 0.595,
+   "totale": 333
+  },
+  {
+   "anno": 2020,
+   "quota": 0.454,
+   "totale": 357
+  },
+  {
+   "anno": 2021,
+   "quota": 0.631,
+   "totale": 328
+  },
+  {
+   "anno": 2022,
+   "quota": 0.59,
+   "totale": 468
+  },
+  {
+   "anno": 2023,
+   "quota": 0.536,
+   "totale": 481
+  },
+  {
+   "anno": 2024,
+   "quota": 0.521,
+   "totale": 466
+  },
+  {
+   "anno": 2025,
+   "quota": 0.487,
+   "totale": 517
+  },
+  {
+   "anno": 2026,
+   "quota": 0.563,
+   "totale": 366
+  }
+ ],
+ "km": [
+  {
+   "anno": 2019,
+   "km": 0,
+   "interrotte": 0
+  },
+  {
+   "anno": 2020,
+   "km": 0,
+   "interrotte": 0
+  },
+  {
+   "anno": 2021,
+   "km": 0,
+   "interrotte": 0
+  },
+  {
+   "anno": 2022,
+   "km": 17977,
+   "interrotte": 26
+  },
+  {
+   "anno": 2023,
+   "km": 19315,
+   "interrotte": 24
+  },
+  {
+   "anno": 2024,
+   "km": 18795,
+   "interrotte": 9
+  },
+  {
+   "anno": 2025,
+   "km": 20495,
+   "interrotte": 28
+  },
+  {
+   "anno": 2026,
+   "km": 13284,
+   "interrotte": 20
+  }
+ ],
+ "anniExtra": [
+  2025,
+  2026
+ ],
+ "oreMesi": [
+  {
+   "anno": 2025,
+   "mesi": [
+    107,
+    76,
+    80,
+    120,
+    92,
+    98,
+    346,
+    346,
+    172,
+    42,
+    78,
+    61
+   ],
+   "totale": 1620,
+   "parziale": false
+  },
+  {
+   "anno": 2026,
+   "mesi": [
+    55,
+    161,
+    164,
+    187,
+    158,
+    218,
+    570,
+    302,
+    0,
+    0,
+    0,
+    0
+   ],
+   "totale": 1815,
+   "parziale": true
+  }
+ ],
+ "tipologie": [
+  {
+   "tipo": "Programmate",
+   "valori": [
+    412,
+    498
+   ]
+  },
+  {
+   "tipo": "Manifestazioni",
+   "valori": [
+    422,
+    474
+   ]
+  },
+  {
+   "tipo": "Presidio territorio",
+   "valori": [
+    271,
+    400
+   ]
+  },
+  {
+   "tipo": "Amministrazione",
+   "valori": [
+    275,
+    224
+   ]
+  },
+  {
+   "tipo": "Formazione",
+   "valori": [
+    208,
+    196
+   ]
+  },
+  {
+   "tipo": "Manutenzioni",
+   "valori": [
+    0,
+    23
+   ]
+  },
+  {
+   "tipo": "Non classificato",
+   "valori": [
+    33,
+    0
+   ]
+  }
+ ],
+ "confronto": {
+  "finoAMese": 8,
+  "giorno": 23,
+  "missioni": {
+   "prec": 359,
+   "corr": 366
+  },
+  "ore": {
+   "prec": 1266,
+   "corr": 1815
+  }
+ }
+}

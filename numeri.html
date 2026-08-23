@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I nostri numeri | Ambulanza Selvino-Aviatico</title>
+  <meta name="description" content="Quanti interventi facciamo, dove e quando: le statistiche del servizio di emergenza-urgenza dell'Ambulanza Selvino-Aviatico, aggiornate automaticamente ogni notte." />
+
+  <link rel="canonical" href="https://www.ambulanzaselvinoaviatico.com/numeri.html" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Associazione Ambulanza Selvino-Aviatico" />
+
+  <meta name="geo.region" content="IT-BG" />
+  <meta name="geo.placename" content="Selvino, Bergamo, Lombardia" />
+  <meta name="geo.position" content="45.775;9.760" />
+  <meta name="ICBM" content="45.775, 9.760" />
+
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="apple-touch-icon" href="images/logo.png" />
+
+  <meta property="og:title" content="I nostri numeri | Ambulanza Selvino-Aviatico" />
+  <meta property="og:description" content="Quanti interventi facciamo, dove e quando: le statistiche del servizio, aggiornate ogni notte." />
+  <meta property="og:image" content="https://www.ambulanzaselvinoaviatico.com/images/logo.png" />
+  <meta property="og:url" content="https://www.ambulanzaselvinoaviatico.com/numeri.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="it_IT" />
+  <meta property="og:site_name" content="Ambulanza Selvino-Aviatico" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="I nostri numeri | Ambulanza Selvino-Aviatico" />
+  <meta name="twitter:description" content="Le statistiche del servizio di emergenza-urgenza, aggiornate ogni notte." />
+  <meta name="twitter:image" content="https://www.ambulanzaselvinoaviatico.com/images/logo.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+
+        <a href="index.html" class="header-logo" aria-label="Torna alla home">
+          <img src="images/logo.png" alt="Logo Ambulanza Selvino-Aviatico" />
+          <div class="header-logo-text">
+            <span class="logo-name">Ambulanza</span>
+            <span class="logo-sub">Selvino · Aviatico</span>
+          </div>
+        </a>
+
+        <nav class="header-nav" aria-label="Navigazione principale">
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="associazione.html">Associazione</a></li>
+            <li><a href="servizi.html">Servizi</a></li>
+            <li><a href="contatti.html">Contatti</a></li>
+          </ul>
+
+          <div class="header-social">
+            <a href="https://www.instagram.com/ambulanzaselvinoaviatico/" target="_blank" rel="noopener" class="social-icon instagram" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/ambulanzaselvinoaviatico" target="_blank" rel="noopener" class="social-icon facebook" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+          </div>
+
+          <div class="header-cta">
+            <a href="volontario.html" class="btn btn-orange">Diventa Volontario</a>
+            <a href="volontario.html#dona" class="btn btn-orange-outline">Dona Adesso</a>
+          </div>
+        </nav>
+
+        <button class="hamburger" id="hamburger" aria-label="Apri menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile nav -->
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="associazione.html">Associazione</a></li>
+        <li><a href="servizi.html">Servizi</a></li>
+        <li><a href="contatti.html">Contatti</a></li>
+      </ul>
+      <div class="header-social">
+        <a href="https://www.instagram.com/ambulanzaselvinoaviatico/" target="_blank" rel="noopener" class="social-icon instagram" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.facebook.com/ambulanzaselvinoaviatico" target="_blank" rel="noopener" class="social-icon facebook" aria-label="Facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+      </div>
+      <div class="header-cta">
+        <a href="volontario.html" class="btn btn-orange">Diventa Volontario</a>
+        <a href="volontario.html#dona" class="btn btn-orange-outline">Dona Adesso</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       INTESTAZIONE PAGINA
+  ============================================================ -->
+  <section class="page-hero" style="background-image: url('images/servizi/emergenza/ambulanza3.jpg');" aria-label="Intestazione pagina">
+    <div class="page-hero-content">
+      <h1>I nostri numeri</h1>
+      <p>Quanti interventi facciamo, dove e quando</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       DASHBOARD
+  ============================================================ -->
+  <section class="section-padding">
+    <div class="container">
+      <p class="section-subtitle" style="max-width:70ch;margin:0 auto 34px;text-align:center;">
+        Questi dati arrivano direttamente dal registro delle missioni e si aggiornano
+        da soli ogni notte: non sono stime, sono il lavoro dei volontari messo in fila.
+      </p>
+      <div class="dash" id="dashboard">
+        <p class="dash-caricamento">Caricamento dei dati…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       JOIN BANNER
+  ============================================================ -->
+  <section class="join-banner">
+    <div class="container">
+      <h2>Dietro a ogni numero c'è un volontario</h2>
+      <p>Ogni intervento richiede un equipaggio pronto a partire, giorno e notte. Se vuoi far parte della squadra, ti aspettiamo.</p>
+      <div class="join-buttons">
+        <a href="volontario.html" class="btn btn-white">Diventa Volontario</a>
+        <a href="volontario.html#dona" class="btn btn-white-outline">Sostienici</a>
+      </div>
+    </div>
+  </section>
+
+<footer class="site-footer" aria-label="Piè di pagina">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Brand -->
+        <div class="footer-brand">
+          <img src="images/logo.png" alt="Logo Ambulanza Selvino-Aviatico" class="footer-logo" />
+          <p>Servizio Volontari dell'Altipiano Selvino-Aviatico – Associazione di Volontariato dal 1968.</p>
+          <div class="footer-anpas-badge">
+            <i class="fas fa-shield-halved"></i>
+            <span>Membro ANPAS Lombardia</span>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <div class="footer-col">
+          <h4>Navigazione</h4>
+          <nav class="footer-nav" aria-label="Navigazione footer">
+            <a href="index.html">Home</a>
+            <a href="associazione.html">Associazione</a>
+            <a href="servizi.html">Servizi</a>
+            <a href="contatti.html">Contatti</a>
+            <a href="numeri.html">I nostri numeri</a>
+            <a href="volontario.html">Diventa Volontario</a>
+            <a href="volontario.html#dona">Dona Adesso</a>
+          </nav>
+        </div>
+
+        <!-- Contatti -->
+        <div class="footer-col">
+          <h4>Contatti</h4>
+          <ul class="footer-contact-list">
+            <li>
+              <i class="fas fa-location-dot"></i>
+              <span>Via Monte Alben, 19<br>Selvino (BG) 24020</span>
+            </li>
+            <li>
+              <i class="fas fa-phone"></i>
+              <a href="tel:035764626">035-764626</a>
+            </li>
+            <li>
+              <i class="fas fa-envelope"></i>
+              <a href="mailto:info@ambulanzaselvinoaviatico.com">info@ambulanzaselvinoaviatico.com</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Social -->
+        <div class="footer-col">
+          <h4>Seguici</h4>
+          <div class="footer-social">
+            <a href="https://www.instagram.com/ambulanzaselvinoaviatico/" target="_blank" rel="noopener" class="social-icon instagram" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/ambulanzaselvinoaviatico" target="_blank" rel="noopener" class="social-icon facebook" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <span>&copy; 2026 Servizio Volontari dell'Altipiano Selvino-Aviatico &middot; ANPAS Lombardia &middot; C.F. 95052440161</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      AMB_DASH.carica('dati/statistiche.json', document.getElementById('dashboard'));
+    });
+  </script>
+</body>
+</html>
