@@ -286,22 +286,120 @@ var AMB_DASH = (function () {
     return g;
   }
 
-  function tabella(intestazioni, righe, cls) {
-    var wrap = html('div', 'dash-tabella-wrap');
-    var t = html('table', 'dash-tabella' + (cls ? ' ' + cls : ''));
-    var thead = html('thead'), tr = html('tr');
-    intestazioni.forEach(function (h) { tr.appendChild(html('th', null, h)); });
-    thead.appendChild(tr); t.appendChild(thead);
-    var tb = html('tbody');
-    righe.forEach(function (r) {
-      var x = html('tr');
-      r.forEach(function (c, i) {
-        var td = html('td', i === 0 ? 'dash-td-nome' : null, String(c));
-        x.appendChild(td);
+  /* ── tabella ordinabile e filtrabile ────────────────────── */
+
+  /**
+   * @param colonne  [{ testo, chiave, numerica }]
+   * @param dati     array di oggetti
+   * @param opzioni  { filtroTesto: 'chiave', gruppi: [{valore, testo}], ordine: 'chiave' }
+   */
+  function tabellaOrdinabile(colonne, dati, opzioni) {
+    opzioni = opzioni || {};
+    var wrap = html('div', 'dash-tab-blocco');
+    var stato = { chiave: opzioni.ordine || colonne[0].chiave, crescente: false,
+                  testo: '', gruppo: '' };
+
+    // barra degli strumenti
+    var barra = html('div', 'dash-toolbar');
+    if (opzioni.filtroTesto) {
+      var cerca = document.createElement('input');
+      cerca.type = 'search';
+      cerca.className = 'dash-cerca';
+      cerca.placeholder = 'Cerca nome…';
+      cerca.setAttribute('aria-label', 'Cerca per nome');
+      cerca.addEventListener('input', function () {
+        stato.testo = this.value.trim().toLowerCase();
+        disegna();
       });
-      tb.appendChild(x);
+      barra.appendChild(cerca);
+    }
+    if (opzioni.gruppi && opzioni.gruppi.length > 1) {
+      var sel = document.createElement('select');
+      sel.className = 'dash-filtro';
+      sel.setAttribute('aria-label', 'Filtra per tipo');
+      var tutti = document.createElement('option');
+      tutti.value = ''; tutti.textContent = 'Tutti i tipi';
+      sel.appendChild(tutti);
+      opzioni.gruppi.forEach(function (g) {
+        var o = document.createElement('option');
+        o.value = g.valore; o.textContent = g.testo;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', function () { stato.gruppo = this.value; disegna(); });
+      barra.appendChild(sel);
+    }
+    var conteggio = html('span', 'dash-conteggio');
+    barra.appendChild(conteggio);
+    wrap.appendChild(barra);
+
+    // tabella
+    var scroll = html('div', 'dash-tabella-wrap');
+    var t = html('table', 'dash-tabella');
+    var thead = html('thead'), trh = html('tr');
+    colonne.forEach(function (c) {
+      var th = html('th', 'dash-ord');
+      th.tabIndex = 0;
+      th.setAttribute('role', 'button');
+      th.appendChild(document.createTextNode(c.testo));
+      th.appendChild(html('span', 'dash-freccia'));
+      function ordina() {
+        if (stato.chiave === c.chiave) stato.crescente = !stato.crescente;
+        else { stato.chiave = c.chiave; stato.crescente = !c.numerica; }
+        disegna();
+      }
+      th.addEventListener('click', ordina);
+      th.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ordina(); }
+      });
+      th._col = c;
+      trh.appendChild(th);
     });
-    t.appendChild(tb); wrap.appendChild(t);
+    thead.appendChild(trh); t.appendChild(thead);
+    var tb = html('tbody'); t.appendChild(tb);
+    scroll.appendChild(t); wrap.appendChild(scroll);
+
+    function disegna() {
+      var righe = dati.filter(function (r) {
+        if (stato.gruppo && r._gruppo !== stato.gruppo) return false;
+        if (stato.testo && opzioni.filtroTesto) {
+          return String(r[opzioni.filtroTesto]).toLowerCase().indexOf(stato.testo) >= 0;
+        }
+        return true;
+      });
+      var col = null;
+      colonne.forEach(function (c) { if (c.chiave === stato.chiave) col = c; });
+      righe.sort(function (a, b) {
+        var x = a[stato.chiave], y = b[stato.chiave];
+        var d = col && col.numerica ? (x - y) : String(x).localeCompare(String(y), 'it');
+        return stato.crescente ? d : -d;
+      });
+
+      tb.innerHTML = '';
+      righe.forEach(function (r) {
+        var tr = html('tr');
+        colonne.forEach(function (c) {
+          var v = r[c.chiave];
+          tr.appendChild(html('td', c.numerica ? null : 'dash-td-nome',
+                              c.numerica ? n(v) : String(v)));
+        });
+        tb.appendChild(tr);
+      });
+      if (!righe.length) {
+        var tr = html('tr');
+        var td = html('td', 'dash-vuoto', 'Nessun risultato.');
+        td.colSpan = colonne.length;
+        tr.appendChild(td); tb.appendChild(tr);
+      }
+      conteggio.textContent = righe.length + (righe.length === 1 ? ' persona' : ' persone');
+      Array.prototype.forEach.call(thead.querySelectorAll('th'), function (th) {
+        var attiva = th._col.chiave === stato.chiave;
+        th.classList.toggle('attiva', attiva);
+        th.setAttribute('aria-sort', attiva ? (stato.crescente ? 'ascending' : 'descending') : 'none');
+        th.querySelector('.dash-freccia').textContent = attiva ? (stato.crescente ? '▲' : '▼') : '';
+      });
+    }
+
+    disegna();
     return wrap;
   }
 
@@ -412,15 +510,42 @@ var AMB_DASH = (function () {
 
   /* ── composizione: parte riservata ──────────────────────── */
 
+  // I gruppi seguono la colonna TIPO del tab MATRICOLE. L'ordine qui e'
+  // l'ordine in cui compaiono i grafici.
+  var GRUPPI = [
+    { chiave: 'dipendente',      titolo: 'Dipendenti',      colore: COLORI[1] },
+    { chiave: 'servizio civile', titolo: 'Servizio civile', colore: COLORI[2] },
+    { chiave: 'volontario',      titolo: 'Volontari',       colore: COLORI[0] },
+    { chiave: 'nuovo',           titolo: 'Nuovi',           colore: COLORI[3] },
+    { chiave: '',                titolo: 'Senza tipo',      colore: COLORI[5] }
+  ];
+
+  function normTipo(t) {
+    t = String(t || '').trim().toLowerCase();
+    if (!t) return '';
+    if (t.indexOf('dipend') === 0) return 'dipendente';
+    if (t.indexOf('civil') >= 0 || t === 'sc') return 'servizio civile';
+    if (t.indexOf('volont') === 0) return 'volontario';
+    if (t.indexOf('nuov') === 0) return 'nuovo';
+    return t;
+  }
+
+  function etichettaGruppo(chiave) {
+    for (var i = 0; i < GRUPPI.length; i++) {
+      if (GRUPPI[i].chiave === chiave) return GRUPPI[i].titolo;
+    }
+    return chiave.charAt(0).toUpperCase() + chiave.slice(1);
+  }
+
   function montaRiservata(root, d) {
     if (d.mezzi && d.mezzi.length) {
       var perMezzo = {};
       d.mezzi.forEach(function (r) {
-        perMezzo[r.mezzo] = perMezzo[r.mezzo] || { km: [], interventi: [] };
-        for (var i = 0; i < 12; i++) {
-          if (perMezzo[r.mezzo].km[i] === undefined) perMezzo[r.mezzo].km[i] = 0;
+        if (!perMezzo[r.mezzo]) {
+          perMezzo[r.mezzo] = [];
+          for (var i = 0; i < 12; i++) perMezzo[r.mezzo][i] = 0;
         }
-        perMezzo[r.mezzo].km[r.mese - 1] = r.km;
+        perMezzo[r.mezzo][r.mese - 1] = r.km;
       });
       var c = scheda('Km in convenzione per mezzo – ' + d.annoCorrente,
         'Dato interno: proviene dal tab RIEPILOGO, rigenerato a ogni salvataggio del programma.');
@@ -428,32 +553,87 @@ var AMB_DASH = (function () {
       colonne(c.corpo, {
         etichette: MESI,
         serie: Object.keys(perMezzo).map(function (m, i) {
-          return { nome: m, valori: perMezzo[m].km, colore: COLORI[i % COLORI.length] };
+          return { nome: m, valori: perMezzo[m], colore: COLORI[i % COLORI.length] };
         }),
         etichetta: 'Km per mezzo'
       });
     }
 
-    if (d.volontari && d.volontari.length) {
-      var attivi = d.volontari.filter(function (v) { return v.tot > 0 || v.ore > 0; });
-      var c2 = scheda('Attività per volontario – ' + d.annoCorrente,
-        'Dato interno, non pubblicato. Fonte: tab MATRICOLE, ricalcolato ogni notte.');
+    if (!d.volontari || !d.volontari.length) return;
+
+    d.volontari.forEach(function (v) { v._gruppo = normTipo(v.tipo); });
+    var attivi = d.volontari.filter(function (v) { return v.tot > 0 || v.ore > 0; });
+
+    // un grafico per tipo, nell'ordine di GRUPPI; i tipi non previsti in coda
+    var presenti = GRUPPI.map(function (g) { return g.chiave; });
+    attivi.forEach(function (v) {
+      if (presenti.indexOf(v._gruppo) < 0) presenti.push(v._gruppo);
+    });
+
+    presenti.forEach(function (chiave) {
+      var membri = attivi.filter(function (v) { return v._gruppo === chiave; })
+                         .sort(function (a, b) { return b.tot - a.tot; });
+      if (!membri.length) return;
+      var g = null;
+      GRUPPI.forEach(function (x) { if (x.chiave === chiave) g = x; });
+      var colore = g ? g.colore : COLORI[4];
+      var titolo = etichettaGruppo(chiave);
+      var LIM = 20;
+      var nota = membri.length + (membri.length === 1 ? ' persona con attività nel ' : ' persone con attività nel ') +
+                 d.annoCorrente + '. Barra = interventi 118 + attività registrate.';
+      if (membri.length > LIM) nota += ' Nel grafico i primi ' + LIM + ': l\'elenco completo è nella tabella qui sotto.';
+      var c2 = scheda(titolo + ' – ' + d.annoCorrente, nota);
       root.appendChild(c2);
       barre(c2.corpo, {
-        voci: attivi.slice(0, 15).map(function (v) {
-          return { nome: v.nickname, valore: v.tot };
-        }),
-        colore: COLORI[3], limite: 15, larghezzaEtichette: 130,
-        etichetta: 'Interventi per volontario'
+        voci: membri.map(function (v) { return { nome: v.nickname, valore: v.tot }; }),
+        colore: colore, limite: LIM, larghezzaEtichette: 140,
+        etichetta: 'Attività ' + titolo
       });
-      c2.corpo.appendChild(tabella(
-        ['Volontario', 'Tipo', 'Totale', 'Rossi', 'Gialli', 'Verdi',
-         'Progr.', 'Manif.', 'Manut.', 'Presidio', 'Ore attività'],
-        attivi.map(function (v) {
-          return [v.nickname, v.tipo, n(v.tot), n(v.rossi), n(v.gialli), n(v.verdi),
-                  n(v.prog), n(v.manif), n(v.manut), n(v.presid), n(v.ore)];
-        })));
+    });
+
+    // segnala i nickname doppi: le statistiche sono calcolate per nickname,
+    // quindi due matricole con lo stesso nickname mostrano gli stessi numeri
+    var visti = {}, doppi = {};
+    d.volontari.forEach(function (v) {
+      if (visti[v.nickname]) doppi[v.nickname] = true;
+      visti[v.nickname] = true;
+    });
+    var listaDoppi = Object.keys(doppi);
+
+    var cT = scheda('Tutte le persone – ' + d.annoCorrente,
+      'Clicca un\'intestazione per ordinare, usa i filtri per restringere. ' +
+      'Fonte: tab MATRICOLE, ricalcolato ogni notte. Dato interno, non pubblicato.');
+    root.appendChild(cT);
+
+    if (listaDoppi.length) {
+      var avv = html('p', 'dash-avviso-riga',
+        'Attenzione: ' + listaDoppi.join(', ') +
+        (listaDoppi.length === 1 ? ' compare' : ' compaiono') +
+        ' due volte nel tab MATRICOLE con matricole diverse. Le statistiche sono ' +
+        'calcolate per nickname, quindi le righe doppie riportano gli stessi numeri.');
+      cT.corpo.appendChild(avv);
     }
+
+    var gruppiPresenti = [];
+    presenti.forEach(function (k) {
+      if (attivi.some(function (v) { return v._gruppo === k; })) {
+        gruppiPresenti.push({ valore: k, testo: etichettaGruppo(k) });
+      }
+    });
+
+    cT.corpo.appendChild(tabellaOrdinabile([
+      { testo: 'Nome',        chiave: 'nickname' },
+      { testo: 'Tipo',        chiave: 'tipo' },
+      { testo: 'Totale',      chiave: 'tot',    numerica: true },
+      { testo: 'Rossi',       chiave: 'rossi',  numerica: true },
+      { testo: 'Gialli',      chiave: 'gialli', numerica: true },
+      { testo: 'Verdi',       chiave: 'verdi',  numerica: true },
+      { testo: 'Progr.',      chiave: 'prog',   numerica: true },
+      { testo: 'Manif.',      chiave: 'manif',  numerica: true },
+      { testo: 'Manut.',      chiave: 'manut',  numerica: true },
+      { testo: 'Presidio',    chiave: 'presid', numerica: true },
+      { testo: 'Ore attività', chiave: 'ore',   numerica: true }
+    ], attivi, { filtroTesto: 'nickname', gruppi: gruppiPresenti, ordine: 'tot' }));
   }
 
   /* ── API ────────────────────────────────────────────────── */

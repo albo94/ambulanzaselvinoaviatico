@@ -172,6 +172,69 @@
   padding: 50px 0;
 }
 
+
+/* ── barra strumenti tabella ─────────────────────────────── */
+
+.dash-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 22px 0 12px;
+}
+
+.dash-cerca,
+.dash-filtro {
+  font: inherit;
+  font-size: .9rem;
+  padding: 8px 11px;
+  border: 1px solid var(--dash-bordo);
+  border-radius: 7px;
+  background: #fff;
+  color: inherit;
+}
+
+.dash-cerca { min-width: 190px; }
+.dash-cerca:focus,
+.dash-filtro:focus { outline: 2px solid var(--dash-arancio); outline-offset: 1px; }
+
+.dash-conteggio {
+  font-size: .85rem;
+  color: var(--dash-tenue);
+  margin-left: auto;
+}
+
+/* ── intestazioni ordinabili ─────────────────────────────── */
+
+.dash-tabella th.dash-ord {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.dash-tabella th.dash-ord:hover { background: #2b3a48; }
+.dash-tabella th.dash-ord:focus-visible { outline: 2px solid var(--dash-arancio); outline-offset: -2px; }
+.dash-tabella th.dash-ord.attiva { background: var(--dash-arancio); }
+
+.dash-freccia { font-size: .7em; margin-left: 5px; opacity: .9; }
+
+.dash-tabella td.dash-vuoto {
+  text-align: center;
+  padding: 22px;
+  color: var(--dash-tenue);
+  font-style: italic;
+}
+
+.dash-avviso-riga {
+  background: #fff7ed;
+  border-left: 3px solid var(--dash-arancio);
+  padding: 10px 14px;
+  margin: 0 0 6px;
+  font-size: .85rem;
+  color: #7a4a1d;
+  border-radius: 0 6px 6px 0;
+}
+
 @media (max-width: 640px) {
   .dash-card { padding: 18px 14px 22px; }
   .dash-kpi-num { font-size: 2rem; }
