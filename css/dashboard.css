@@ -48,6 +48,13 @@
 .dash-stato-ok { background: #e6f4ea; color: #157a36; }
 .dash-stato-avviso { background: #fbe3d6; color: #a33a12; }
 
+/* nella pagina riservata l'orario è "adesso": la salute dell'automazione
+   sta in questa nota, non nell'orario */
+.dash-stato-nota {
+  font-size: .82rem;
+  color: var(--dash-testo-tenue, #6b7280);
+}
+
 /* ── KPI ─────────────────────────────────────────────────── */
 
 .dash-kpi-grid {

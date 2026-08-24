@@ -449,6 +449,34 @@ var AMB_DASH = (function () {
    * Se i dati sono fermi da piu' di 36 ore diventa ambra: l'aggiornamento
    * notturno gira alle 2, quindi oltre quella soglia una notte e' saltata.
    */
+  /**
+   * Quando il giro notturno avrebbe dovuto girare l'ultima volta.
+   * Gira alle 2; si lascia un'ora e mezza di margine prima di dire che ha
+   * saltato, cosi' chi apre la pagina alle 2:20 non vede un falso allarme.
+   */
+  function ultimoGiroPrevisto() {
+    var t = new Date();
+    var oggi = new Date(t.getFullYear(), t.getMonth(), t.getDate(), 2, 0, 0);
+    if (t.getHours() < 3 || (t.getHours() === 3 && t.getMinutes() < 30)) {
+      oggi.setDate(oggi.getDate() - 1);
+    }
+    return oggi;
+  }
+
+  function quandoTesto(d) {
+    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }) +
+           ' alle ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  /**
+   * La striscia dello stato. Le due pagine hanno orologi diversi e vanno dette
+   * in modo diverso:
+   *   - pubblica: legge un file riscritto ogni notte, il suo orario E' la salute
+   *     dell'automazione
+   *   - riservata: e' calcolata al momento in cui la apri, quindi il suo orario
+   *     dice solo che ora e'. La salute la dice `pubblicato`, l'ultima volta che
+   *     il giro notturno e' arrivato in fondo
+   */
   function strisciaAggiornamento(dati) {
     var d = new Date(dati.aggiornato);
     var box = html('div', 'dash-stato');
@@ -459,22 +487,41 @@ var AMB_DASH = (function () {
       return box;
     }
 
-    var ore = (Date.now() - d.getTime()) / 3600000;
-    var quando = d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }) +
-                 ' alle ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-
     var etichetta = html('span', 'dash-stato-testo');
-    etichetta.appendChild(html('strong', null, 'Ultimo aggiornamento: '));
-    etichetta.appendChild(document.createTextNode(quando));
-    box.appendChild(etichetta);
+    var riferimento = d;
 
-    if (ore > 36) {
+    if (dati.tempoReale) {
+      etichetta.appendChild(html('strong', null, 'Calcolato adesso: '));
+      etichetta.appendChild(document.createTextNode(quandoTesto(d)));
+      box.appendChild(etichetta);
+      // qui l'orario non e' un segnale: questa pagina rifa' i conti ogni volta
+      riferimento = dati.pubblicato ? new Date(dati.pubblicato) : null;
+      if (riferimento && !isNaN(riferimento.getTime())) {
+        box.appendChild(html('span', 'dash-stato-nota',
+          'ultimo giro notturno ' + quandoTesto(riferimento)));
+      }
+    } else {
+      etichetta.appendChild(html('strong', null, 'Ultimo aggiornamento: '));
+      etichetta.appendChild(document.createTextNode(quandoTesto(d)));
+      box.appendChild(etichetta);
+    }
+
+    // Saltata una notte = qualcosa non gira. La soglia non e' "36 ore fa" ma
+    // "prima dell'ultimo giro previsto": cosi' una notte persa si vede subito
+    // invece che il giorno dopo ancora.
+    var atteso = ultimoGiroPrevisto();
+    if (!riferimento || isNaN(riferimento.getTime())) {
       box.classList.add('vecchio');
-      var giorni = Math.floor(ore / 24);
       box.appendChild(html('span', 'dash-stato-avviso',
-        giorni >= 1
-          ? ('fermi da ' + giorni + (giorni === 1 ? ' giorno' : ' giorni') + ': qualcosa non gira')
-          : 'più vecchi del previsto: qualcosa non gira'));
+        'il giro notturno non risulta mai arrivato in fondo'));
+      return box;
+    }
+    if (riferimento < atteso) {
+      box.classList.add('vecchio');
+      var notti = Math.max(1, Math.round((atteso - riferimento) / 86400000));
+      box.appendChild(html('span', 'dash-stato-avviso',
+        notti === 1 ? 'ha saltato la notte scorsa: qualcosa non gira'
+                    : ('ha saltato ' + notti + ' notti: qualcosa non gira')));
     } else {
       box.classList.add('fresco');
       box.appendChild(html('span', 'dash-stato-ok', 'aggiornato'));
