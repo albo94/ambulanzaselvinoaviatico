@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-08-23T21:25:10+0200",
+ "aggiornato": "2026-08-24T08:49:55+02:00",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -326,19 +326,6 @@
    ]
   },
   {
-   "comune": "Fiorano al Serio",
-   "valori": [
-    2,
-    2,
-    2,
-    6,
-    4,
-    6,
-    8,
-    4
-   ]
-  },
-  {
    "comune": "Zogno",
    "valori": [
     2,
@@ -349,6 +336,19 @@
     5,
     5,
     2
+   ]
+  },
+  {
+   "comune": "Fiorano al Serio",
+   "valori": [
+    2,
+    2,
+    2,
+    6,
+    4,
+    6,
+    8,
+    4
    ]
   },
   {
@@ -508,6 +508,19 @@
    ]
   },
   {
+   "comune": "S. Pellegrino",
+   "valori": [
+    1,
+    0,
+    0,
+    2,
+    1,
+    2,
+    1,
+    0
+   ]
+  },
+  {
    "comune": "S. Giovanni Bianco",
    "valori": [
     0,
@@ -521,15 +534,15 @@
    ]
   },
   {
-   "comune": "S. Pellegrino",
+   "comune": "Clusone",
    "valori": [
-    1,
-    0,
     0,
     2,
     1,
+    0,
     2,
     1,
+    0,
     0
    ]
   },
@@ -547,12 +560,12 @@
    ]
   },
   {
-   "comune": "Clusone",
+   "comune": "Gorle",
    "valori": [
     0,
-    2,
     1,
     0,
+    1,
     2,
     1,
     0,
@@ -569,19 +582,6 @@
     0,
     2,
     2,
-    0
-   ]
-  },
-  {
-   "comune": "Gorle",
-   "valori": [
-    0,
-    1,
-    0,
-    1,
-    2,
-    1,
-    0,
     0
    ]
   },
@@ -638,14 +638,14 @@
    ]
   },
   {
-   "comune": "Gorno",
+   "comune": "Stezzano",
    "valori": [
     0,
-    0,
-    0,
+    1,
     0,
     1,
-    1,
+    0,
+    0,
     0,
     0
    ]
@@ -659,6 +659,19 @@
     0,
     2,
     0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Gorno",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
     0,
     0
    ]
@@ -690,254 +703,20 @@
    ]
   },
   {
-   "comune": "Stezzano",
+   "comune": "Azzano S. Paolo",
    "valori": [
-    0,
-    1,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Gorlago",
-   "valori": [
-    0,
     1,
     0,
     0,
     0,
     0,
     0,
-    0
-   ]
-  },
-  {
-   "comune": "Torre De Roveri",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Endine Gaiano",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Albano s. Alessandro",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "comune": "Zanica",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Villa D'ogna",
-   "valori": [
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Almenno S. Salvatore",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Ponte Nossa",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "comune": "Orio al Serio",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1
-   ]
-  },
-  {
-   "comune": "Terno D'isola",
-   "valori": [
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Trescore Balneario",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "comune": "Oneta",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "comune": "Brembate di Sopra",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "comune": "Camerata Cornello",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Brembilla",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
     0,
     0
    ]
   },
   {
    "comune": "Branzi",
-   "valori": [
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Piazzatorre",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Gavarno",
-   "valori": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "comune": "Azzano S. Paolo",
    "valori": [
     1,
     0,
@@ -963,25 +742,12 @@
    ]
   },
   {
-   "comune": "Cazzano s. Andrea",
+   "comune": "Gorlago",
    "valori": [
-    0,
-    0,
-    0,
-    0,
     0,
     1,
     0,
-    0
-   ]
-  },
-  {
-   "comune": "Orezzo",
-   "valori": [
     0,
-    0,
-    0,
-    1,
     0,
     0,
     0,
@@ -1002,7 +768,163 @@
    ]
   },
   {
-   "comune": "Olmo al Brembo",
+   "comune": "Terno D'isola",
+   "valori": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Orezzo",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Villa D'ogna",
+   "valori": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Camerata Cornello",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Endine Gaiano",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Zanica",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Almenno S. Salvatore",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Brembilla",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Cazzano s. Andrea",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Gavarno",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Piazzatorre",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Torre De Roveri",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "comune": "Trescore Balneario",
    "valori": [
     0,
     0,
@@ -1010,8 +932,60 @@
     0,
     0,
     0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Ponte Nossa",
+   "valori": [
     0,
-    1
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Oneta",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Albano s. Alessandro",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "comune": "Brembate di Sopra",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
    ]
   },
   {
@@ -1025,6 +999,32 @@
     0,
     1,
     0
+   ]
+  },
+  {
+   "comune": "Olmo al Brembo",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "comune": "Orio al Serio",
+   "valori": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
    ]
   }
  ],
@@ -1123,17 +1123,17 @@
     107,
     76,
     80,
-    120,
-    92,
+    121,
+    93,
     98,
-    346,
-    346,
-    172,
+    347,
+    347,
+    173,
     42,
-    78,
+    79,
     61
    ],
-   "totale": 1620,
+   "totale": 1621,
    "parziale": false
   },
   {
@@ -1143,7 +1143,7 @@
     161,
     164,
     187,
-    158,
+    159,
     218,
     570,
     302,
@@ -1175,7 +1175,7 @@
    "tipo": "Presidio territorio",
    "valori": [
     271,
-    400
+    401
    ]
   },
   {
@@ -1188,7 +1188,7 @@
   {
    "tipo": "Formazione",
    "valori": [
-    208,
+    209,
     196
    ]
   },
@@ -1217,21 +1217,21 @@
   },
   {
    "anno": 2026,
-   "ore": 12078,
-   "oreTutti": 21196,
-   "giorni": 234,
-   "al": "2026-08-22"
+   "ore": 12127,
+   "oreTutti": 21286,
+   "giorni": 235,
+   "al": "2026-08-23"
   }
  ],
  "confronto": {
   "finoAMese": 8,
-  "giorno": 23,
+  "giorno": 24,
   "missioni": {
    "prec": 359,
    "corr": 367
   },
   "ore": {
-   "prec": 1266,
+   "prec": 1267,
    "corr": 1815
   }
  }
