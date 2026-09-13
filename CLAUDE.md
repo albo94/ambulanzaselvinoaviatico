@@ -180,16 +180,26 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
   lo script Apps Script "Gestione Missioni 118 - automazioni" (progetto separato, sorgenti
   in `G:\Drive condivisi\MISSIONI 118\AMB_programma missioni\apps-script`) tramite le
   API di GitHub. Ogni notte in cui i dati cambiano arriva un commit automatico su `main`.
+  Chiavi del payload pubblico: `aggiornato`, `annoCorrente`, `anni`, `missioni`, `comuni`,
+  `altopiano`, `km`, `anniExtra`, `oreMesi`, `tipologie`, `oreEmergenza`, `confronto`.
 - **Grafici**: `js/dashboard.js`, SVG disegnato a mano — nessuna libreria, in linea con la
   regola "solo vanilla" del sito. Espone `AMB_DASH.carica(url, contenitore, opzioni)`.
 - **Stili**: `css/dashboard.css`, usa le variabili di `style.css` con fallback propri.
-- **Tipi di personale** (dipendenti, volontari, TS…): l'elenco **non** sta qui. Arriva nel
-  JSON come `tipiPersonale`, generato da `05_tipi.gs` nell'Apps Script, che è anche quello
-  che genera il menu a tendina del foglio. In `dashboard.js` c'è solo un ripiego minimo
-  per payload vecchi: non aggiungere liste di tipi qui.
 - Lo **stesso** CSS e JS sono caricati anche dalla dashboard interna riservata (web app
   Apps Script), che li prende da questo dominio: se rinomini o sposti quei due file,
-  la dashboard interna smette di disegnare i grafici.
+  la dashboard interna smette di disegnare i grafici. In `numeri.html` sono richiamati con
+  un `?v=<data>` di cache busting (oggi `?v=20260824a`): quando si modifica uno dei due file
+  va alzato **anche** nella web app, altrimenti una delle due dashboard resta sul file vecchio.
+- **Un solo file JS, due payload diversi.** `dashboard.js` disegna sia la pagina pubblica sia
+  la dashboard riservata, ma la parte "composizione" (un grafico per tipo di personale +
+  tabella persone) si accende solo se nel payload c'è `volontari`. Nel JSON pubblico
+  `volontari` e `tipiPersonale` **non ci sono di proposito**: stanno solo nel payload che
+  la web app autenticata passa a `AMB_DASH`.
+- **Tipi di personale** (dipendenti, volontari, TS…): l'elenco **non** sta in `dashboard.js`.
+  Arriva nel payload riservato come `tipiPersonale`, generato da `05_tipi.gs` nell'Apps
+  Script, che è anche quello che genera il menu a tendina del foglio. In `dashboard.js` c'è
+  solo un ripiego minimo (`TIPI_RIPIEGO`, dipendenti + volontari) per payload più vecchi del
+  codice: non aggiungere liste di tipi qui.
 - La pagina è raggiungibile dal menu del **footer** di tutte le pagine (non dal menu
   principale) ed è in `sitemap.xml`.
 - Sulla pagina finiscono **solo dati aggregati**: niente nomi di volontari, niente dati
