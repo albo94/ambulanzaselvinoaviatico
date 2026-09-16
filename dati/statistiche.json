@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-09-15T02:43:07+02:00",
+ "aggiornato": "2026-09-16T02:43:09+02:00",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -1160,12 +1160,12 @@
     218,
     570,
     354,
-    35,
+    38,
     0,
     0,
     0
    ],
-   "totale": 1902,
+   "totale": 1905,
    "parziale": true
   }
  ],
@@ -1174,7 +1174,7 @@
    "tipo": "Programmate",
    "valori": [
     412,
-    516
+    519
    ]
   },
   {
@@ -1230,22 +1230,22 @@
   },
   {
    "anno": 2026,
-   "ore": 12956,
-   "oreTutti": 23100,
-   "giorni": 257,
-   "al": "2026-09-14"
+   "ore": 12991,
+   "oreTutti": 23176,
+   "giorni": 258,
+   "al": "2026-09-15"
   }
  ],
  "confronto": {
   "finoAMese": 9,
-  "giorno": 15,
+  "giorno": 16,
   "missioni": {
    "prec": 381,
    "corr": 404
   },
   "ore": {
    "prec": 1439,
-   "corr": 1902
+   "corr": 1905
   }
  }
 }
