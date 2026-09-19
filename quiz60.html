@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="images/logo.png">
+<title>Indovina l'Equipaggio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800;9..144,900&family=Karla:wght@400;500;700;800&display=swap">
+<style>
+  :root {
+    --paper: #FBF6F3;
+    --surface: #FFFFFF;
+    --surface-2: #F3EAE6;
+    --ink: #1C1719;
+    --ink-soft: #6E5F61;
+    --line: #E3D6D1;
+    --rosso: #C8102E;
+    --rosso-ink: #FFFFFF;
+    --blu: #0A6FB5;
+    --verde: #00934A;
+    --oro: #A4762A;
+    --shadow: 0 1px 2px rgba(28,23,25,.06), 0 10px 30px -18px rgba(28,23,25,.35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #161214; --surface: #201A1D; --surface-2: #2A2225;
+      --ink: #F3EAE7; --ink-soft: #AE9C9E; --line: #3B3033;
+      --rosso: #FF5468; --rosso-ink: #24070C;
+      --blu: #57B2F0; --verde: #52C98C; --oro: #E3B55F;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #161214; --surface: #201A1D; --surface-2: #2A2225;
+    --ink: #F3EAE7; --ink-soft: #AE9C9E; --line: #3B3033;
+    --rosso: #FF5468; --rosso-ink: #24070C;
+    --blu: #57B2F0; --verde: #52C98C; --oro: #E3B55F;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.9);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: Karla, "Segoe UI", system-ui, sans-serif;
+    font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding-inline: 18px; padding-block: 0 150px; }
+
+  /* ---------- testata ---------- */
+  .loghi {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    padding-block: 22px 0;
+  }
+  .loghi img { height: 62px; width: auto; display: block; }
+  .loghi .div { width: 1px; align-self: stretch; min-height: 44px; background: var(--line); }
+  .loghi .fallback {
+    font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: 19px;
+    line-height: 1.1; letter-spacing: -.01em;
+  }
+  .loghi .fallback.f-avis { color: var(--blu); }
+  .loghi .fallback.f-serv { color: var(--verde); }
+  .loghi .fallback small { display: block; font-family: Karla, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+
+  header { padding-block: 26px 20px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--rosso); display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  }
+  .eyebrow .sep { width: 24px; height: 2px; background: var(--verde); }
+  .eyebrow .data { color: var(--ink-soft); letter-spacing: .1em; }
+  h1 {
+    font-family: Fraunces, Georgia, serif; font-weight: 900;
+    font-size: clamp(40px, 10vw, 68px); line-height: .95; letter-spacing: -.025em;
+    margin: 14px 0 0; text-wrap: balance;
+  }
+  h1 em { font-style: normal; color: var(--rosso); }
+  .lead { margin: 16px 0 0; max-width: 58ch; color: var(--ink-soft); font-size: 17px; }
+  .lead b { color: var(--ink); font-weight: 700; }
+  .regola {
+    margin-top: 16px; display: inline-flex; align-items: center; gap: 10px;
+    background: var(--surface-2); border-radius: 999px; padding: 8px 16px 8px 12px;
+    font-size: 14px; font-weight: 600;
+  }
+  .regola .b { background: var(--rosso); color: var(--rosso-ink); border-radius: 999px; padding: 2px 9px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+  /* ---------- contatore ---------- */
+  .counter {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+    background: var(--paper); padding-block: 12px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .pips { display: flex; gap: 5px; }
+  .pip { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--line); background: transparent; transition: background .18s, border-color .18s, transform .18s; }
+  .pip.on { background: var(--rosso); border-color: var(--rosso); transform: scale(1.1); }
+  .count-label { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 15px; }
+  .count-hint { color: var(--ink-soft); font-size: 14px; margin-left: auto; text-align: right; }
+
+  /* ---------- comandi ---------- */
+  .search-row { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input[type="search"] {
+    flex: 1 1 220px; min-width: 0; font: inherit; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px;
+  }
+  input[type="search"]::placeholder { color: var(--ink-soft); }
+  input[type="search"]:focus-visible { outline: 2px solid var(--blu); outline-offset: 1px; }
+  .mini {
+    font: inherit; font-size: 14px; font-weight: 700;
+    background: var(--surface); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+  .mini:hover { color: var(--ink); border-color: var(--ink-soft); }
+  .mini[aria-pressed="true"] { color: var(--rosso); border-color: var(--rosso); }
+  .mini:focus-visible { outline: 2px solid var(--blu); outline-offset: 2px; }
+
+  /* ---------- griglia nomi ---------- */
+  .grid { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font: inherit; font-weight: 500; font-size: 15px;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; cursor: pointer;
+    transition: background .14s, color .14s, border-color .14s, transform .12s;
+  }
+  .chip:hover:not(:disabled) { border-color: var(--rosso); transform: translateY(-1px); }
+  .chip[aria-pressed="true"] { background: var(--rosso); border-color: var(--rosso); color: var(--rosso-ink); font-weight: 800; }
+  .chip.pop { animation: pop .26s ease-out; }
+  @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.14); } 100% { transform: scale(1); } }
+  .chip:disabled { opacity: .32; cursor: not-allowed; }
+  .chip:focus-visible { outline: 2px solid var(--blu); outline-offset: 2px; }
+  .empty { color: var(--ink-soft); padding: 22px 2px; }
+
+  /* ---------- barra invio ---------- */
+  .actionbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    background: var(--surface); border-top: 1px solid var(--line);
+    padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -10px 30px -24px rgba(0,0,0,.6);
+  }
+  .actionbar-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 14px; }
+  .status { font-size: 14px; color: var(--ink-soft); }
+  .status b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .btn {
+    font: inherit; font-weight: 800; font-size: 16px;
+    background: var(--rosso); color: var(--rosso-ink);
+    border: 1px solid var(--rosso); border-radius: 10px; padding: 12px 22px; cursor: pointer;
+    margin-left: auto; transition: opacity .15s, transform .12s;
+  }
+  .btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .btn:disabled { opacity: .38; cursor: not-allowed; }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); margin-left: 0; font-weight: 700; }
+  .btn:focus-visible { outline: 2px solid var(--blu); outline-offset: 2px; }
+
+  /* ---------- esito ---------- */
+  .result { padding-block: 34px 10px; position: relative; }
+  #coriandoli { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 50; }
+  .scorecard {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: var(--shadow); padding: 30px 24px 28px; text-align: center; position: relative; overflow: hidden;
+  }
+  .scorecard::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, var(--verde) 0 33%, var(--rosso) 33% 66%, var(--blu) 66% 100%); }
+  .medaglia {
+    display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--oro); border: 1px solid var(--oro); border-radius: 999px; padding: 5px 14px; margin-bottom: 14px;
+  }
+  .score {
+    font-family: Fraunces, Georgia, serif; font-weight: 900;
+    font-size: clamp(66px, 21vw, 116px); line-height: 1; color: var(--rosso);
+    font-variant-numeric: tabular-nums; margin: 0;
+  }
+  .score .su { color: var(--ink-soft); font-size: .32em; font-weight: 600; }
+  .verdict { font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: clamp(23px, 5.6vw, 32px); margin: 8px 0 0; text-wrap: balance; }
+  .verdict-note { color: var(--ink-soft); margin: 12px auto 0; max-width: 46ch; }
+  .barra { display: flex; gap: 5px; justify-content: center; margin: 22px 0 0; }
+  .barra i { width: 22px; height: 8px; border-radius: 4px; background: var(--surface-2); }
+  .barra i.hit { background: var(--rosso); }
+  .segreto {
+    margin: 26px auto 0; padding: 16px 18px; max-width: 54ch;
+    background: var(--surface-2); border-radius: 14px; font-size: 15px; color: var(--ink-soft); text-align: left;
+  }
+  .segreto b { color: var(--ink); }
+  .turno { margin-top: 22px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; }
+  .result-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+  .result-actions .btn { margin-left: 0; }
+
+  .iscrizione {
+    margin-top: 18px; background: var(--surface-2); border: 1px dashed var(--line);
+    border-radius: 18px; padding: 24px 22px; text-align: center;
+  }
+  .isc-domanda { margin: 0; font-size: 18px; color: var(--ink-soft); line-height: 1.45; }
+  .isc-domanda strong { font-family: Fraunces, Georgia, serif; font-size: 24px; font-weight: 800; color: var(--ink); }
+  .isc-btn { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+  .isc-btn .btn { margin-left: 0; background: var(--surface); }
+  .isc-esito { margin: 18px auto 0; max-width: 44ch; font-size: 15px; font-weight: 600; color: var(--ink); }
+
+  footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 13px; }
+
+  /* ---------- telefono ---------- */
+  @media (max-width: 560px) {
+    .wrap { padding-inline: 16px; padding-block: 0 130px; }
+    .loghi { gap: 12px; padding-block: 18px 0; }
+    .loghi img { height: 44px; }
+    .loghi .fallback { font-size: 16px; }
+    .loghi .fallback small { font-size: 9px; letter-spacing: .1em; }
+    header { padding-block: 20px 16px; }
+    .eyebrow { font-size: 11px; gap: 8px; }
+    .lead { font-size: 16px; }
+    .counter { gap: 10px; }
+    .count-hint { flex: 1 1 100%; margin-left: 0; text-align: left; font-size: 13px; }
+    .search-row { gap: 8px; }
+    input[type="search"] { flex: 1 1 100%; }
+    .mini { flex: 1 1 0; text-align: center; padding: 11px 8px; }
+    .chip { padding: 10px 14px; font-size: 15px; }
+    .scorecard { padding: 26px 18px 24px; border-radius: 16px; }
+    .segreto { padding: 15px 16px; font-size: 14px; }
+    .iscrizione { padding: 22px 16px; }
+    .isc-domanda { font-size: 16px; }
+    .isc-domanda strong { font-size: 21px; }
+    .isc-btn { gap: 8px; }
+    .isc-btn .btn { flex: 1 1 0; padding: 11px 6px; font-size: 14px; }
+    .result-actions .btn { flex: 1 1 0; padding: 12px 10px; font-size: 15px; }
+    .actionbar { padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+    .actionbar-inner { gap: 10px; }
+    .btn { padding: 12px 16px; font-size: 15px; }
+    footer { font-size: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="loghi">
+    <img src="images/logo.png" alt="Servizio Volontari Altipiano Selvino-Aviatico" id="logoServ">
+    <span class="div"></span>
+    <img src="images/avis.png" alt="AVIS — Associazione Volontari Italiani Sangue" id="logoAvis">
+  </div>
+
+  <header>
+    <p class="eyebrow">60° Anniversario AVIS <span class="sep"></span> <span class="data">domenica 20 settembre</span></p>
+    <h1>Indovina <em>l'equipaggio</em></h1>
+    <p class="lead">Undici volontari hanno già detto “ci sono” per la festa dei 60 anni. Noi sappiamo chi sono. <b>Tu no.</b> Schiera i tuoi undici nomi, poi ti diciamo quanti ne hai azzeccati — senza mai rivelare quali. Il resto si scopre domani, di persona, con la brioche in mano.</p>
+    <p class="regola"><span class="b">11</span> nomi da schierare, un solo tentativo che conta: il primo.</p>
+  </header>
+
+  <section id="quiz">
+    <div class="counter">
+      <div class="pips" id="pips" aria-hidden="true"></div>
+      <span class="count-label"><span id="n">0</span>/11</span>
+      <span class="count-hint" id="hint">Tocca un nome per arruolarlo</span>
+    </div>
+
+    <div class="search-row">
+      <input type="search" id="cerca" placeholder="Cerca un nickname…" autocomplete="off" aria-label="Cerca un nickname">
+      <button type="button" class="mini" id="btnCaso">Scegli tu per me</button>
+      <button type="button" class="mini" id="soloScelti" aria-pressed="false">Solo i miei 11</button>
+    </div>
+
+    <div class="grid" id="griglia"></div>
+    <p class="empty" id="vuoto" hidden>Nessun nickname con questa ricerca. Prova con meno lettere.</p>
+  </section>
+
+  <section class="result" id="esito" hidden>
+    <div class="scorecard">
+      <span class="medaglia" id="medaglia"></span>
+      <p class="score"><span id="punti">0</span><span class="su"> / 11</span></p>
+      <h2 class="verdict" id="verdetto"></h2>
+      <p class="verdict-note" id="verdettoNota"></p>
+      <div class="barra" id="barra" aria-hidden="true"></div>
+      <div class="segreto">
+        I nomi giusti restano <b>top secret</b> fino a domani: non sono scritti qui dentro e non li trovi nemmeno frugando nella pagina. Puoi rigiocare quante volte vuoi — ma il primo istinto, si sa, è quello che vale.
+      </div>
+      <p class="turno" id="turno"></p>
+      <div class="result-actions">
+        <button type="button" class="btn ghost" id="rivedi">Rivedi le mie scelte</button>
+        <button type="button" class="btn" id="ricomincia">Rigioca</button>
+      </div>
+    </div>
+
+    <div class="iscrizione" id="iscrizione">
+      <p class="isc-domanda">Ultima cosa, la più importante:<br><strong>tu alla festa ti sei iscritto?</strong></p>
+      <div class="isc-btn">
+        <button type="button" class="btn ghost" data-risp="si">Sì, ci sono</button>
+        <button type="button" class="btn ghost" data-risp="no">Non ancora</button>
+        <button type="button" class="btn ghost" data-risp="forse">Boh, forse</button>
+      </div>
+      <p class="isc-esito" id="iscEsito" hidden></p>
+    </div>
+    <footer>Un gioco per i 60 anni dell'AVIS, con il Servizio Volontari Altipiano Selvino-Aviatico. Niente viene salvato o spedito: resta tutto sul tuo telefono.</footer>
+  </section>
+</div>
+
+<div class="actionbar" id="actionbar">
+  <div class="actionbar-inner">
+    <span class="status" id="stato">Scegli <b>11</b> nomi</span>
+    <button type="button" class="btn" id="invia" disabled>Scopri l'esito</button>
+  </div>
+</div>
+
+<canvas id="coriandoli" hidden></canvas>
+
+<script>
+(function () {
+  "use strict";
+
+  var NOMI = ["Agar","Alberto","Alessandro","Alice","Ameris","Angelita","Aurora","Banella","Baratelli","Barbaro","Bau","Beppe","Bianka","Brisso","Brocchi","Candela","Carari","Cavalieri","Ciufy","Cofrancesco","Cortinovis","Crippa","Cristian","Cristina","Danilo","Davide","Dodo","Domenico","Donatella","Elisa","Enrica","Fausto","Federica","Ferruccio","Fifi","Fiore","Fusco","Gae","Gaia","Giada","Gina","Giordano","Giorgia","Giulia","Guffanti","Italo","Jacopo","Lara","Leo","Lory","Luca","Luisella","Maira","Maristella","Marta","Marti","Martin","Martina","Massimo","Matteo","Mattia","Mauro","Mazzola","Michela","Michele","Pia","Piero","Piovanelli","Robi","Ryan","Sarra","Serani","Silvia","Simone","Sissi","Tac","Testa","Tibe","Tina","Tiziana","Vale","Valentina","Walter","Willy","Zucchetti"];
+
+  // Le risposte non stanno in chiaro: qui ci sono solo le impronte dei dieci nomi.
+  var CHIAVI = ["0a2db00a1d8c6e00","6ecd2015425a0749","f443ca34a7fabaa4","f2c81ef58c28d24b","74e9180e5b701712","e099c361baa933c1","736ca64be3603a1f","45f215f7c228b759","47212a5d7acf0ab1","167e6bea3fdecb1a","0311e7742f5d83b0"];
+
+  function impronta(s) {
+    var a = 5381, b = 52711;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      a = (Math.imul(a, 33) ^ c) >>> 0;
+      b = (Math.imul(b, 131) + c) >>> 0;
+    }
+    return ("00000000" + a.toString(16)).slice(-8) + ("00000000" + b.toString(16)).slice(-8);
+  }
+
+  /* --- loghi: se i file non ci sono, al loro posto va una scritta --- */
+  [["logoServ", "f-serv", "Servizio Volontari", "Altipiano Selvino-Aviatico"],
+   ["logoAvis", "f-avis", "AVIS", "Associazione Volontari Italiani Sangue"]].forEach(function (cfg) {
+    var img = document.getElementById(cfg[0]);
+    function sostituisci() {
+      if (!img.parentNode) return;
+      var d = document.createElement("div");
+      d.className = "fallback " + cfg[1];
+      d.innerHTML = cfg[2] + "<small>" + cfg[3] + "</small>";
+      img.parentNode.replaceChild(d, img);
+    }
+    img.addEventListener("error", sostituisci);
+    if (img.complete && img.naturalWidth === 0) sostituisci();
+  });
+
+  function lista(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+  function suSu() {
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+    catch (e) { window.scrollTo(0, 0); }
+  }
+
+  var MAX = 11;
+  var scelti = [];
+  var soloScelti = false;
+
+  var griglia = document.getElementById("griglia");
+  var vuoto = document.getElementById("vuoto");
+  var cerca = document.getElementById("cerca");
+  var btnSolo = document.getElementById("soloScelti");
+  var btnCaso = document.getElementById("btnCaso");
+  var pips = document.getElementById("pips");
+  var nEl = document.getElementById("n");
+  var hint = document.getElementById("hint");
+  var stato = document.getElementById("stato");
+  var invia = document.getElementById("invia");
+  var quiz = document.getElementById("quiz");
+  var esito = document.getElementById("esito");
+  var actionbar = document.getElementById("actionbar");
+
+  for (var p = 0; p < MAX; p++) {
+    var pip = document.createElement("span");
+    pip.className = "pip";
+    pips.appendChild(pip);
+  }
+  var elencoPips = pips.children;
+
+  var bottoni = NOMI.map(function (nome) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.textContent = nome;
+    b.dataset.nome = nome;
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", function () {
+      alterna(nome);
+      if (scelti.indexOf(nome) >= 0) {
+        b.classList.remove("pop");
+        void b.offsetWidth;
+        b.classList.add("pop");
+      }
+    });
+    griglia.appendChild(b);
+    return b;
+  });
+
+  var FRASI = [
+    "Tocca un nome per arruolarlo",
+    "Uno. Si parte sempre da uno.",
+    "Due nomi: l'equipaggio minimo.",
+    "Tre. Adesso è una squadra.",
+    "Quattro. Chi manca all'appello?",
+    "Cinque. Si comincia a fare sul serio.",
+    "Sei. Più della metà.",
+    "Sette. Comincia la parte difficile.",
+    "Otto. Occhio ai colpi di scena.",
+    "Nove. Gli ultimi due sono quelli che pesano.",
+    "Dieci. Manca uno e poi si vede.",
+    "Squadra completa. Respira e invia."
+  ];
+
+  function alterna(nome) {
+    var i = scelti.indexOf(nome);
+    if (i >= 0) scelti.splice(i, 1);
+    else if (scelti.length < MAX) scelti.push(nome);
+    aggiorna();
+  }
+
+  function aggiorna() {
+    var pieno = scelti.length >= MAX;
+    var q = cerca.value.trim().toLowerCase();
+    var visibili = 0;
+
+    bottoni.forEach(function (b) {
+      var nome = b.dataset.nome;
+      var preso = scelti.indexOf(nome) >= 0;
+      b.setAttribute("aria-pressed", preso ? "true" : "false");
+      b.disabled = pieno && !preso;
+      var mostra = (!q || nome.toLowerCase().indexOf(q) >= 0) && (!soloScelti || preso);
+      b.hidden = !mostra;
+      if (mostra) visibili++;
+    });
+    vuoto.hidden = visibili > 0;
+
+    nEl.textContent = String(scelti.length);
+    for (var i = 0; i < elencoPips.length; i++) {
+      elencoPips[i].className = i < scelti.length ? "pip on" : "pip";
+    }
+    hint.textContent = FRASI[scelti.length];
+    stato.innerHTML = pieno ? "Equipaggio al completo" : "Ne mancano <b>" + (MAX - scelti.length) + "</b>";
+    invia.disabled = !pieno;
+  }
+
+  cerca.addEventListener("input", aggiorna);
+
+  btnSolo.addEventListener("click", function () {
+    soloScelti = !soloScelti;
+    btnSolo.setAttribute("aria-pressed", soloScelti ? "true" : "false");
+    btnSolo.textContent = soloScelti ? "Mostra tutti" : "Solo i miei 11";
+    aggiorna();
+  });
+
+  btnCaso.addEventListener("click", function () {
+    var pool = NOMI.slice();
+    scelti = [];
+    for (var i = 0; i < MAX; i++) {
+      scelti.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    }
+    cerca.value = "";
+    soloScelti = true;
+    btnSolo.setAttribute("aria-pressed", "true");
+    btnSolo.textContent = "Mostra tutti";
+    aggiorna();
+    hint.textContent = "Undici nomi a caso. Se esce bene, era strategia.";
+  });
+
+  var VERDETTI = [
+    ["Zero. Tondo come una ruota di scorta.", "Su 85 nickname, non azzeccarne nemmeno uno richiede quasi più talento. In un certo senso, complimenti."],
+    ["Uno. E l'hai pure tirato a caso.", "Però ce l'hai, ed è tuo. Nessuno potrà toglierlo dal verbale."],
+    ["Due, come i posti davanti in ambulanza.", "Ti sei difeso. Poco, ma ti sei difeso."],
+    ["Tre su undici: il podio è un'altra cosa.", "Hai puntato sui soliti noti, e i soliti noti erano a casa."],
+    ["Quattro. Ci stavi prendendo gusto.", "Ancora un paio e diventava una cosa seria."],
+    ["Cinque. Manca un soffio alla metà.", "Turno onesto: qualcuno l'hai visto arrivare, qualcun altro ti ha sorpreso."],
+    ["Sei su undici: sei in maggioranza.", "Più giusti che sbagliati. Da qui in poi si ragiona."],
+    ["Sette. Sufficienza piena.", "Si vede che li frequenti. Ti manca giusto il turno di notte per il pieno."],
+    ["Otto. Tu i turni li leggi davvero.", "Otto su undici non è fortuna: è presenza assidua in sede."],
+    ["Nove. Quasi imbarazzante.", "Ti sei fatto due conti su chi non poteva mancare, e avevi ragione."],
+    ["Dieci. Te n'è scappato uno solo.", "E quando domani scoprirai chi era, ti girerà per una settimana."],
+    ["Undici su undici. Ok, chi ti ha passato la lista?", "En plein perfetto. O li conosci uno per uno, o hai un talento sprecato."]
+  ];
+  var MEDAGLIE = ["Turno saltato", "Turno saltato", "Principiante", "Principiante", "Pari e patta", "Pari e patta", "Pari e patta", "Veterano", "Veterano", "Fuoriclasse", "Fuoriclasse", "En plein"];
+  var CODE = [
+    "Verbale chiuso. Nessun nome rivelato.",
+    "Risultato annotato a matita, come una volta.",
+    "Esito depositato in sede, cassetto in alto.",
+    "Registrato sul turno delle 20–24."
+  ];
+
+  invia.addEventListener("click", function () {
+    var punti = 0;
+    scelti.forEach(function (nome) {
+      if (CHIAVI.indexOf(impronta("avis60:" + nome.toLowerCase())) >= 0) punti++;
+    });
+
+    document.getElementById("punti").textContent = String(punti);
+    document.getElementById("medaglia").textContent = MEDAGLIE[punti];
+    document.getElementById("verdetto").textContent = VERDETTI[punti][0];
+    document.getElementById("verdettoNota").textContent = VERDETTI[punti][1];
+    document.getElementById("turno").textContent = CODE[Math.floor(Math.random() * CODE.length)];
+
+    var barra = document.getElementById("barra");
+    barra.innerHTML = "";
+    for (var i = 0; i < MAX; i++) {
+      var s = document.createElement("i");
+      if (i < punti) s.className = "hit";
+      barra.appendChild(s);
+    }
+
+    quiz.hidden = true;
+    actionbar.hidden = true;
+    esito.hidden = false;
+    suSu();
+    if (punti >= 8) coriandoli();
+  });
+
+  function tornaAlQuiz() {
+    esito.hidden = true;
+    quiz.hidden = false;
+    actionbar.hidden = false;
+    suSu();
+  }
+
+  document.getElementById("rivedi").addEventListener("click", tornaAlQuiz);
+  document.getElementById("ricomincia").addEventListener("click", function () {
+    scelti = [];
+    cerca.value = "";
+    soloScelti = false;
+    btnSolo.setAttribute("aria-pressed", "false");
+    btnSolo.textContent = "Solo i miei 11";
+    aggiorna();
+    tornaAlQuiz();
+  });
+
+  /* --- la domanda che conta davvero --- */
+  var RISPOSTE = {
+    si: "Perfetto. Allora domani sei anche tu tra i nomi che qualcun altro sta cercando di indovinare.",
+    no: "Allora corri: un messaggio in chat o due parole in sede e sei dentro. La festa dei 60 anni capita una volta sola.",
+    forse: "“Forse” alla festa dei 60 anni non è una risposta. Iscriviti e trasformalo in un sì."
+  };
+  var iscEsito = document.getElementById("iscEsito");
+  lista("#iscrizione .isc-btn .btn").forEach(function (b) {
+    b.addEventListener("click", function () {
+      lista("#iscrizione .isc-btn .btn").forEach(function (x) { x.style.opacity = ".45"; });
+      b.style.opacity = "1";
+      iscEsito.textContent = RISPOSTE[b.dataset.risp];
+      iscEsito.hidden = false;
+    });
+  });
+
+  /* --- coriandoli per chi se li merita --- */
+  function coriandoli() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var cv = document.getElementById("coriandoli");
+    var ctx = cv.getContext("2d");
+    cv.hidden = false;
+    cv.width = window.innerWidth;
+    cv.height = window.innerHeight;
+    var tinte = ["#C8102E", "#0A6FB5", "#00934A", "#E8B23A"];
+    var pezzi = [];
+    for (var i = 0; i < 110; i++) {
+      pezzi.push({
+        x: cv.width * (.2 + Math.random() * .6),
+        y: cv.height * .28 + Math.random() * 40,
+        vx: (Math.random() - .5) * 9,
+        vy: -6 - Math.random() * 9,
+        w: 5 + Math.random() * 6,
+        h: 8 + Math.random() * 8,
+        r: Math.random() * Math.PI,
+        vr: (Math.random() - .5) * .3,
+        c: tinte[i % tinte.length]
+      });
+    }
+    var inizio = performance.now();
+    (function passo(t) {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      pezzi.forEach(function (p) {
+        p.vy += .28; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if (t - inizio < 3200) requestAnimationFrame(passo);
+      else { ctx.clearRect(0, 0, cv.width, cv.height); cv.hidden = true; }
+    })(inizio);
+  }
+
+  aggiorna();
+})();
+</script>
+</body>
+</html>
