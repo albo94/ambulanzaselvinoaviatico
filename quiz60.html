@@ -243,21 +243,21 @@
   <header>
     <p class="eyebrow">60° Anniversario AVIS <span class="sep"></span> <span class="data">domenica 20 settembre</span></p>
     <h1>Indovina <em>l'equipaggio</em></h1>
-    <p class="lead">Undici volontari hanno già detto “ci sono” per la festa dei 60 anni. Noi sappiamo chi sono. <b>Tu no.</b> Schiera i tuoi undici nomi, poi ti diciamo quanti ne hai azzeccati — senza mai rivelare quali. Il resto si scopre domani, di persona, con la brioche in mano.</p>
-    <p class="regola"><span class="b">11</span> nomi da schierare, un solo tentativo che conta: il primo.</p>
+    <p class="lead">Dodici volontari hanno già detto “ci sono” per la festa dei 60 anni. Noi sappiamo chi sono. <b>Tu no.</b> Schiera i tuoi dodici nomi, poi ti diciamo quanti ne hai azzeccati — senza mai rivelare quali. Il resto si scopre domani, di persona, con la brioche in mano.</p>
+    <p class="regola"><span class="b">12</span> nomi da schierare, un solo tentativo che conta: il primo.</p>
   </header>
 
   <section id="quiz">
     <div class="counter">
       <div class="pips" id="pips" aria-hidden="true"></div>
-      <span class="count-label"><span id="n">0</span>/11</span>
+      <span class="count-label"><span id="n">0</span>/12</span>
       <span class="count-hint" id="hint">Tocca un nome per arruolarlo</span>
     </div>
 
     <div class="search-row">
       <input type="search" id="cerca" placeholder="Cerca un nickname…" autocomplete="off" aria-label="Cerca un nickname">
       <button type="button" class="mini" id="btnCaso">Scegli tu per me</button>
-      <button type="button" class="mini" id="soloScelti" aria-pressed="false">Solo i miei 11</button>
+      <button type="button" class="mini" id="soloScelti" aria-pressed="false">Solo i miei 12</button>
     </div>
 
     <div class="grid" id="griglia"></div>
@@ -267,7 +267,7 @@
   <section class="result" id="esito" hidden>
     <div class="scorecard">
       <span class="medaglia" id="medaglia"></span>
-      <p class="score"><span id="punti">0</span><span class="su"> / 11</span></p>
+      <p class="score"><span id="punti">0</span><span class="su"> / 12</span></p>
       <h2 class="verdict" id="verdetto"></h2>
       <p class="verdict-note" id="verdettoNota"></p>
       <div class="barra" id="barra" aria-hidden="true"></div>
@@ -296,7 +296,7 @@
 
 <div class="actionbar" id="actionbar">
   <div class="actionbar-inner">
-    <span class="status" id="stato">Scegli <b>11</b> nomi</span>
+    <span class="status" id="stato">Scegli <b>12</b> nomi</span>
     <button type="button" class="btn" id="invia" disabled>Scopri l'esito</button>
   </div>
 </div>
@@ -310,7 +310,7 @@
   var NOMI = ["Agar","Alberto","Alessandro","Alice","Ameris","Angelita","Aurora","Banella","Baratelli","Barbaro","Bau","Beppe","Bianka","Brisso","Brocchi","Candela","Carari","Cavalieri","Ciufy","Cofrancesco","Cortinovis","Crippa","Cristian","Cristina","Danilo","Davide","Dodo","Domenico","Donatella","Elisa","Enrica","Fausto","Federica","Ferruccio","Fifi","Fiore","Fusco","Gae","Gaia","Giada","Gina","Giordano","Giorgia","Giulia","Guffanti","Italo","Jacopo","Lara","Leo","Lory","Luca","Luisella","Maira","Maristella","Marta","Marti","Martin","Martina","Massimo","Matteo","Mattia","Mauro","Mazzola","Michela","Michele","Pia","Piero","Piovanelli","Robi","Ryan","Sarra","Serani","Silvia","Simone","Sissi","Tac","Testa","Tibe","Tina","Tiziana","Vale","Valentina","Walter","Willy","Zucchetti"];
 
   // Le risposte non stanno in chiaro: qui ci sono solo le impronte dei dieci nomi.
-  var CHIAVI = ["0a2db00a1d8c6e00","6ecd2015425a0749","f443ca34a7fabaa4","f2c81ef58c28d24b","74e9180e5b701712","e099c361baa933c1","736ca64be3603a1f","45f215f7c228b759","47212a5d7acf0ab1","167e6bea3fdecb1a","0311e7742f5d83b0"];
+  var CHIAVI = ["0a2db00a1d8c6e00","6ecd2015425a0749","f443ca34a7fabaa4","f2c81ef58c28d24b","74e9180e5b701712","e099c361baa933c1","736ca64be3603a1f","45f215f7c228b759","47212a5d7acf0ab1","167e6bea3fdecb1a","0311e7742f5d83b0","e08f8266bd3582ea"];
 
   function impronta(s) {
     var a = 5381, b = 52711;
@@ -343,7 +343,7 @@
     catch (e) { window.scrollTo(0, 0); }
   }
 
-  var MAX = 11;
+  var MAX = 12;
   var scelti = [];
   var soloScelti = false;
 
@@ -394,11 +394,12 @@
     "Tre. Adesso è una squadra.",
     "Quattro. Chi manca all'appello?",
     "Cinque. Si comincia a fare sul serio.",
-    "Sei. Più della metà.",
-    "Sette. Comincia la parte difficile.",
-    "Otto. Occhio ai colpi di scena.",
-    "Nove. Gli ultimi due sono quelli che pesano.",
-    "Dieci. Manca uno e poi si vede.",
+    "Sei. Metà fatta.",
+    "Sette. Più della metà.",
+    "Otto. Comincia la parte difficile.",
+    "Nove. Occhio ai colpi di scena.",
+    "Dieci. Gli ultimi due sono quelli che pesano.",
+    "Undici. Manca uno e poi si vede.",
     "Squadra completa. Respira e invia."
   ];
 
@@ -439,7 +440,7 @@
   btnSolo.addEventListener("click", function () {
     soloScelti = !soloScelti;
     btnSolo.setAttribute("aria-pressed", soloScelti ? "true" : "false");
-    btnSolo.textContent = soloScelti ? "Mostra tutti" : "Solo i miei 11";
+    btnSolo.textContent = soloScelti ? "Mostra tutti" : "Solo i miei 12";
     aggiorna();
   });
 
@@ -454,24 +455,25 @@
     btnSolo.setAttribute("aria-pressed", "true");
     btnSolo.textContent = "Mostra tutti";
     aggiorna();
-    hint.textContent = "Undici nomi a caso. Se esce bene, era strategia.";
+    hint.textContent = "Dodici nomi a caso. Se esce bene, era strategia.";
   });
 
   var VERDETTI = [
     ["Zero. Tondo come una ruota di scorta.", "Su 85 nickname, non azzeccarne nemmeno uno richiede quasi più talento. In un certo senso, complimenti."],
     ["Uno. E l'hai pure tirato a caso.", "Però ce l'hai, ed è tuo. Nessuno potrà toglierlo dal verbale."],
     ["Due, come i posti davanti in ambulanza.", "Ti sei difeso. Poco, ma ti sei difeso."],
-    ["Tre su undici: il podio è un'altra cosa.", "Hai puntato sui soliti noti, e i soliti noti erano a casa."],
+    ["Tre su dodici: il podio è un'altra cosa.", "Hai puntato sui soliti noti, e i soliti noti erano a casa."],
     ["Quattro. Ci stavi prendendo gusto.", "Ancora un paio e diventava una cosa seria."],
     ["Cinque. Manca un soffio alla metà.", "Turno onesto: qualcuno l'hai visto arrivare, qualcun altro ti ha sorpreso."],
-    ["Sei su undici: sei in maggioranza.", "Più giusti che sbagliati. Da qui in poi si ragiona."],
-    ["Sette. Sufficienza piena.", "Si vede che li frequenti. Ti manca giusto il turno di notte per il pieno."],
-    ["Otto. Tu i turni li leggi davvero.", "Otto su undici non è fortuna: è presenza assidua in sede."],
-    ["Nove. Quasi imbarazzante.", "Ti sei fatto due conti su chi non poteva mancare, e avevi ragione."],
-    ["Dieci. Te n'è scappato uno solo.", "E quando domani scoprirai chi era, ti girerà per una settimana."],
-    ["Undici su undici. Ok, chi ti ha passato la lista?", "En plein perfetto. O li conosci uno per uno, o hai un talento sprecato."]
+    ["Sei su dodici: metà precisa.", "Pareggio in piena regola. Alla peggio dici che era voluto."],
+    ["Sette. Sei in maggioranza.", "Più giusti che sbagliati. Da qui in poi si ragiona."],
+    ["Otto. Sufficienza piena.", "Si vede che li frequenti. Ti manca giusto il turno di notte per il pieno."],
+    ["Nove. Tu i turni li leggi davvero.", "Nove su dodici non è fortuna: è presenza assidua in sede."],
+    ["Dieci. Quasi imbarazzante.", "Ti sei fatto due conti su chi non poteva mancare, e avevi ragione."],
+    ["Undici. Te n'è scappato uno solo.", "E quando domani scoprirai chi era, ti girerà per una settimana."],
+    ["Dodici su dodici. Ok, chi ti ha passato la lista?", "En plein perfetto. O li conosci uno per uno, o hai un talento sprecato."]
   ];
-  var MEDAGLIE = ["Turno saltato", "Turno saltato", "Principiante", "Principiante", "Pari e patta", "Pari e patta", "Pari e patta", "Veterano", "Veterano", "Fuoriclasse", "Fuoriclasse", "En plein"];
+  var MEDAGLIE = ["Turno saltato", "Turno saltato", "Principiante", "Principiante", "Pari e patta", "Pari e patta", "Pari e patta", "Veterano", "Veterano", "Fuoriclasse", "Fuoriclasse", "Fuoriclasse", "En plein"];
   var CODE = [
     "Verbale chiuso. Nessun nome rivelato.",
     "Risultato annotato a matita, come una volta.",
@@ -503,7 +505,7 @@
     actionbar.hidden = true;
     esito.hidden = false;
     suSu();
-    if (punti >= 8) coriandoli();
+    if (punti >= 9) coriandoli();
   });
 
   function tornaAlQuiz() {
@@ -519,7 +521,7 @@
     cerca.value = "";
     soloScelti = false;
     btnSolo.setAttribute("aria-pressed", "false");
-    btnSolo.textContent = "Solo i miei 11";
+    btnSolo.textContent = "Solo i miei 12";
     aggiorna();
     tornaAlQuiz();
   });
