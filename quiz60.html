@@ -99,6 +99,17 @@
   .count-label { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 15px; }
   .count-hint { color: var(--ink-soft); font-size: 14px; margin-left: auto; text-align: right; }
 
+  /* ---------- nome ---------- */
+  .nome-row { margin-top: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .nome-row label { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); }
+  .nome-row label span { text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink-soft); }
+  .nome-row input {
+    font: inherit; color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; max-width: 320px;
+  }
+  .nome-row input::placeholder { color: var(--ink-soft); }
+  .nome-row input:focus-visible { outline: 2px solid var(--blu); outline-offset: 1px; }
+
   /* ---------- comandi ---------- */
   .search-row { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
   input[type="search"] {
@@ -254,6 +265,11 @@
       <span class="count-hint" id="hint">Tocca un nome per arruolarlo</span>
     </div>
 
+    <div class="nome-row" id="nomeRow">
+      <label for="nome">Il tuo nome <span>(così sappiamo chi ha indovinato)</span></label>
+      <input type="text" id="nome" maxlength="40" autocomplete="name" placeholder="Es. Piero">
+    </div>
+
     <div class="search-row">
       <input type="search" id="cerca" placeholder="Cerca un nickname…" autocomplete="off" aria-label="Cerca un nickname">
       <button type="button" class="mini" id="btnCaso">Scegli tu per me</button>
@@ -290,7 +306,7 @@
       </div>
       <p class="isc-esito" id="iscEsito" hidden></p>
     </div>
-    <footer>Un gioco per i 60 anni dell'AVIS, con il Servizio Volontari Altipiano Selvino-Aviatico. Niente viene salvato o spedito: resta tutto sul tuo telefono.</footer>
+    <footer id="notaDati">Un gioco per i 60 anni dell'AVIS, con il Servizio Volontari Altipiano Selvino-Aviatico.</footer>
   </section>
 </div>
 
@@ -337,6 +353,27 @@
     if (img.complete && img.naturalWidth === 0) sostituisci();
   });
 
+  /* Dove finiscono i tentativi. Vuoto = non si invia niente, resta tutto sul telefono.
+     Ci va l'URL della web app Apps Script (vedi apps-script-salvataggio.gs). */
+  var ENDPOINT = "";
+
+  function manda(dati) {
+    if (!ENDPOINT) return;
+    var corpo = JSON.stringify(dati);
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(ENDPOINT, new Blob([corpo], { type: "text/plain;charset=utf-8" }));
+        return;
+      }
+    } catch (e) { /* si prova con XHR */ }
+    try {
+      var x = new XMLHttpRequest();
+      x.open("POST", ENDPOINT, true);
+      x.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
+      x.send(corpo);
+    } catch (e) { /* se non parte, pazienza: il gioco non si ferma */ }
+  }
+
   function lista(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
   function suSu() {
     try { window.scrollTo({ top: 0, behavior: "smooth" }); }
@@ -344,6 +381,7 @@
   }
 
   var MAX = 12;
+  var idTentativo = String(Date.now()) + "-" + Math.random().toString(36).slice(2, 8);
   var scelti = [];
   var soloScelti = false;
 
@@ -501,6 +539,15 @@
       barra.appendChild(s);
     }
 
+    manda({
+      id: idTentativo,
+      evento: "tentativo",
+      nome: document.getElementById("nome").value.trim(),
+      punti: punti,
+      totale: MAX,
+      scelti: scelti.join(", ")
+    });
+
     quiz.hidden = true;
     actionbar.hidden = true;
     esito.hidden = false;
@@ -539,6 +586,12 @@
       b.style.opacity = "1";
       iscEsito.textContent = RISPOSTE[b.dataset.risp];
       iscEsito.hidden = false;
+      manda({
+        id: idTentativo,
+        evento: "iscrizione",
+        nome: document.getElementById("nome").value.trim(),
+        iscritto: b.dataset.risp
+      });
     });
   });
 
@@ -581,6 +634,11 @@
       else { ctx.clearRect(0, 0, cv.width, cv.height); cv.hidden = true; }
     })(inizio);
   }
+
+  var notaDati = document.getElementById("notaDati");
+  notaDati.textContent += ENDPOINT
+    ? " Il tuo nome, il punteggio e i nomi che hai scelto arrivano agli organizzatori: servono solo per la festa."
+    : " Niente viene salvato o spedito: resta tutto sul tuo telefono.";
 
   aggiorna();
 })();
