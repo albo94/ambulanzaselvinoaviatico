@@ -966,14 +966,14 @@ var AMB_DASH = (function () {
 
   /**
    * Somma le righe di kmStorico per anno e mese.
-   * @return { anno: { mesi: [12 × {km, uscite, interrotte, kmManu}], tipi: {tipo: km} } }
+   * @return { anno: { mesi: [12 × {km, uscite, interrotte, kmManu}], mezzi: {nome: km} } }
    */
   function aggregaKm(righe) {
     var out = {};
     righe.forEach(function (r) {
       var a = out[r.anno];
       if (!a) {
-        a = out[r.anno] = { mesi: [], tipi: {} };
+        a = out[r.anno] = { mesi: [], mezzi: {} };
         for (var i = 0; i < 12; i++) a.mesi.push({ km: 0, uscite: 0, interrotte: 0, kmManu: 0 });
       }
       var m = a.mesi[r.mese - 1];
@@ -981,7 +981,7 @@ var AMB_DASH = (function () {
       m.uscite += r.interventi + r.interrotte;
       m.interrotte += r.interrotte;
       m.kmManu += r.kmManu;
-      a.tipi[r.tipo] = (a.tipi[r.tipo] || 0) + r.km;
+      a.mezzi[r.mezzo] = (a.mezzi[r.mezzo] || 0) + r.km;
     });
     return out;
   }
@@ -991,6 +991,19 @@ var AMB_DASH = (function () {
     var t = 0;
     for (var i = 0; i < (fino || 12); i++) t += anno.mesi[i][campo];
     return t;
+  }
+
+  /**
+   * Nome corto e uguale per tutti gli anni: i RIEPILOGO scrivono
+   * "VW CRAFTER VOLSEL_106.01C1", il tab 118 "Mezzo 7 – VW Crafter 007".
+   * Diventano "Crafter 106" e "Crafter 007".
+   */
+  function nomeMezzo(nome) {
+    var s = String(nome || '');
+    var tipo = /crafter/i.test(s) ? 'Crafter' : /t5/i.test(s) ? 'T5' : /ducato/i.test(s) ? 'Ducato' : '';
+    var cod = /VOLSEL_(\d{3})/i.exec(s) || /(\d{3})\s*$/.exec(s);
+    // T5 e Ducato sono uno solo per tipo: se il nome non ha un codice basta il tipo
+    return tipo ? (cod ? tipo + ' ' + cod[1] : tipo) : s;
   }
 
   function kmPerUscita(km, uscite) {
@@ -1099,13 +1112,16 @@ var AMB_DASH = (function () {
     root.appendChild(c4);
     var righe = anni.map(function (a) {
       var x = agg[a], km = somma(x, 'km'), us = somma(x, 'uscite');
-      var crafter = x.tipi['VW Crafter'] || 0;
+      // il mezzo che ha fatto piu' km quell'anno: puo' cambiare da un anno all'altro
+      var princ = Object.keys(x.mezzi).sort(function (p, q) { return x.mezzi[q] - x.mezzi[p]; })[0];
       return [String(a) + (a === annoCorr ? ' (in corso)' : ''), n(us), n(somma(x, 'interrotte')),
               n(km), dec(kmPerUscita(km, us)), n(somma(x, 'kmManu')),
-              km ? Math.round(crafter / km * 100) + '%' : '–'];
+              princ ? nomeMezzo(princ) : '–',
+              princ && km ? Math.round(x.mezzi[princ] / km * 100) + '%' : '–'];
     });
     c4.corpo.appendChild(tabellaSemplice(
-      ['Anno', 'Uscite', 'Interrotte', 'Km convenzione', 'Km/uscita', 'Km manutenzione', 'Km col Crafter'],
+      ['Anno', 'Uscite', 'Interrotte', 'Km convenzione', 'Km/uscita', 'Km manutenzione',
+       'Mezzo principale', 'Sua quota di km'],
       righe, { evidenzia: anni.indexOf(annoCorr) }));
 
     // ── per singolo mezzo, anno in corso

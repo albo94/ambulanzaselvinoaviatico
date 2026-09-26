@@ -188,7 +188,7 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
 - Lo **stesso** CSS e JS sono caricati anche dalla dashboard interna riservata (web app
   Apps Script), che li prende da questo dominio: se rinomini o sposti quei due file,
   la dashboard interna smette di disegnare i grafici. In `numeri.html` sono richiamati con
-  un `?v=<data>` di cache busting (oggi `?v=20260926b`): quando si modifica uno dei due file
+  un `?v=<data>` di cache busting (oggi `?v=20260926c`): quando si modifica uno dei due file
   va alzato **anche** nella web app, altrimenti una delle due dashboard resta sul file vecchio.
 - **Un solo file JS, due payload diversi.** `dashboard.js` disegna sia la pagina pubblica sia
   la dashboard riservata, ma la parte "composizione" (un grafico per tipo di personale +
