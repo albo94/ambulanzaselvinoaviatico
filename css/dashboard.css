@@ -270,6 +270,21 @@
   font-style: italic;
 }
 
+/* sottosezione dentro una scheda (es. boxplot sotto il grafico a linee) */
+.dash-sottotitolo {
+  font-family: 'Titillium Web', system-ui, sans-serif;
+  font-size: 1.05rem;
+  color: #1e2a35;
+  margin: 26px 0 4px;
+}
+
+.dash-spiega {
+  margin: 0 0 10px;
+  font-size: .88rem;
+  color: var(--dash-tenue);
+  max-width: 78ch;
+}
+
 .dash-avviso-riga {
   background: #fff7ed;
   border-left: 3px solid var(--dash-arancio);

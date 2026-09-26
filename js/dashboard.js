@@ -194,7 +194,7 @@ var AMB_DASH = (function () {
       var punti = [];
       se.valori.forEach(function (v, i) {
         if (v === null || v === undefined) return;
-        punti.push([x0 + passoX * i, y1 - (cima ? (v / cima) * (y1 - y0) : 0)]);
+        punti.push([x0 + passoX * i, y1 - (cima ? (v / cima) * (y1 - y0) : 0), i]);
       });
       if (!punti.length) return;
       s.appendChild(el('polyline', {
@@ -202,7 +202,9 @@ var AMB_DASH = (function () {
         fill: 'none', stroke: colore, 'stroke-width': 2.5,
         'stroke-linejoin': 'round', 'stroke-linecap': 'round'
       }));
-      punti.forEach(function (p, i) {
+      punti.forEach(function (p) {
+        // p[2] = indice del mese: con valori mancanti non coincide con la posizione in `punti`
+        var i = p[2];
         var c = el('circle', { cx: p[0], cy: p[1], r: 4, fill: '#fff',
                                stroke: colore, 'stroke-width': 2.5 });
         c.appendChild(el('title', {}, se.nome + ' · ' + o.etichette[i] + ': ' +
@@ -724,6 +726,190 @@ var AMB_DASH = (function () {
     return chiave ? chiave.charAt(0).toUpperCase() + chiave.slice(1) : 'Senza tipo';
   }
 
+  /* ── tempi di partenza (solo riservata) ─────────────────── */
+
+  /** 3.4 minuti -> "3:24". */
+  function mmss(min) {
+    if (min === null || min === undefined) return '–';
+    var s = Math.round(min * 60);
+    return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+  }
+
+  /** Nota del confronto primi/ultimi mesi: scendere è un miglioramento. */
+  function notaConfronto(c, fascia) {
+    if (!c || !c[fascia].prima.n || !c[fascia].dopo.n) return {};
+    var da = c[fascia].prima.mediana, a = c[fascia].dopo.mediana;
+    var diff = a - da;
+    var periodo = function (m) { return MESI[m[0] - 1] + (m.length > 1 ? '–' + MESI[m[m.length - 1] - 1] : ''); };
+    // sotto le 20 partenze per periodo la differenza puo' essere solo caso:
+    // la si scrive, ma senza il colore che la fa sembrare un risultato
+    var pochi = Math.min(c[fascia].prima.n, c[fascia].dopo.n) < 20;
+    return {
+      nota: periodo(c.primi) + ' ' + mmss(da) + ' → ' + periodo(c.ultimi) + ' ' + mmss(a) +
+            (Math.abs(diff) >= 1 / 60 ? ' (' + (diff < 0 ? '−' : '+') + mmss(Math.abs(diff)) + ')' : '') +
+            (pochi ? ' · pochi dati' : ''),
+      // per un tempo, scendere è la buona notizia: verde se cala, rosso se cresce
+      segno: pochi ? null : diff < 0 ? 'su' : diff > 0 ? 'giu' : null
+    };
+  }
+
+  /**
+   * Boxplot orizzontali su un asse comune.
+   * @param o { voci: [{ nome, colore, s: {n, min, q1, mediana, q3, max, fuori: []} }],
+   *            formato, etichetta }
+   */
+  function scatole(host, o) {
+    host.innerHTML = '';
+    var voci = o.voci.filter(function (v) { return v.s && v.s.n; });
+    if (!voci.length) return null;
+    var fmt = o.formato || n;
+    var W = largo(host), stretto = W < 520;
+    var ml = stretto ? 96 : 110, mr = 18, mt = 10, riga = stretto ? 92 : 84, mb = 30;
+    var H = mt + riga * voci.length + mb;
+    var s = tela(host, W, H, o.etichetta);
+    var x0 = ml, x1 = W - mr, y1 = mt + riga * voci.length;
+
+    var max = 0;
+    voci.forEach(function (v) {
+      max = Math.max(max, v.s.max, (v.s.fuori || []).reduce(function (a, x) { return Math.max(a, x); }, 0));
+    });
+    var p = passo(max || 1, stretto ? 4 : 8), cima = Math.ceil((max || 1) / p) * p;
+    var X = function (v) { return x0 + (v / cima) * (x1 - x0); };
+
+    for (var t = 0; t <= cima + 0.0001; t += p) {
+      s.appendChild(el('line', { x1: X(t), x2: X(t), y1: mt, y2: y1,
+                                 stroke: t === 0 ? '#c9d2da' : '#eceff2', 'stroke-width': 1 }));
+      s.appendChild(el('text', { x: X(t), y: y1 + 20, 'text-anchor': 'middle', class: 'dash-tick' }, fmt(t)));
+    }
+
+    voci.forEach(function (v, i) {
+      var st = v.s, colore = v.colore || COLORI[i % COLORI.length];
+      var cy = mt + riga * i + riga * 0.42, alto = 26;
+      s.appendChild(el('text', { x: ml - 12, y: cy - 2, 'text-anchor': 'end', class: 'dash-tick-forte' }, v.nome));
+      s.appendChild(el('text', { x: ml - 12, y: cy + 15, 'text-anchor': 'end', class: 'dash-tick' },
+        n(st.n) + ' partenze'));
+
+      // baffi
+      s.appendChild(el('line', { x1: X(st.min), x2: X(st.q1), y1: cy, y2: cy, stroke: colore, 'stroke-width': 1.5 }));
+      s.appendChild(el('line', { x1: X(st.q3), x2: X(st.max), y1: cy, y2: cy, stroke: colore, 'stroke-width': 1.5 }));
+      [st.min, st.max].forEach(function (x) {
+        s.appendChild(el('line', { x1: X(x), x2: X(x), y1: cy - alto / 4, y2: cy + alto / 4,
+                                   stroke: colore, 'stroke-width': 1.5 }));
+      });
+      // scatola Q1–Q3 e mediana
+      var box = el('rect', { x: X(st.q1), y: cy - alto / 2, width: Math.max(X(st.q3) - X(st.q1), 1),
+                             height: alto, rx: 3, fill: colore, 'fill-opacity': 0.18,
+                             stroke: colore, 'stroke-width': 1.5 });
+      box.appendChild(el('title', {}, v.nome + ' – metà centrale delle partenze: da ' +
+        fmt(st.q1) + ' a ' + fmt(st.q3) + ', mediana ' + fmt(st.mediana)));
+      s.appendChild(box);
+      s.appendChild(el('line', { x1: X(st.mediana), x2: X(st.mediana), y1: cy - alto / 2, y2: cy + alto / 2,
+                                 stroke: colore, 'stroke-width': 3.5 }));
+      // valori anomali
+      (st.fuori || []).forEach(function (x) {
+        var c = el('circle', { cx: X(x), cy: cy, r: 3.5, fill: '#fff', stroke: colore, 'stroke-width': 1.5 });
+        c.appendChild(el('title', {}, v.nome + ' – partenza anomala: ' + fmt(x)));
+        s.appendChild(c);
+      });
+      // i numeri in una riga di testo sotto la scatola: scritti sopra l'asse si
+      // accavallano appena il grafico si stringe
+      s.appendChild(el('text', { x: stretto ? 8 : x0, y: cy + alto / 2 + 20, class: 'dash-tick' },
+        'mediana ' + fmt(st.mediana) + ' · metà centrale ' + fmt(st.q1) + '–' + fmt(st.q3)));
+    });
+    return s;
+  }
+
+  function montaTempi(root, tp, anno) {
+    var notte = tp.notte || [20, 6];
+    var c = scheda('Tempo di partenza – ' + anno,
+      'Minuti dall\'attivazione della centrale alla partenza del mezzo, missioni 118. ' +
+      'Notte = dalle ' + notte[0] + ' alle ' + notte[1] + '. Mediana: metà delle partenze è ' +
+      'più rapida di così. 9 su 10: il tempo entro cui parte il 90% delle missioni. ' +
+      'Il dato si registra da febbraio-marzo ' + anno + '.');
+    root.appendChild(c);
+
+    var cg = notaConfronto(tp.confronto, 'giorno');
+    var cn = notaConfronto(tp.confronto, 'notte');
+    c.corpo.appendChild(kpi([
+      { label: 'Di giorno, mediana', valore: mmss(tp.anno.giorno.mediana),
+        nota: cg.nota || (tp.anno.giorno.n + ' partenze'), segno: cg.segno },
+      { label: 'Di notte, mediana', valore: mmss(tp.anno.notte.mediana),
+        nota: cn.nota || (tp.anno.notte.n + ' partenze'), segno: cn.segno },
+      { label: '9 su 10 partono entro', valore: mmss(tp.anno.giorno.p90),
+        nota: 'di giorno · di notte ' + mmss(tp.anno.notte.p90) }
+    ]));
+
+    // mesi dal primo con dati all'ultimo: i mesi vuoti prima dell'avvio non si disegnano
+    var primo = tp.mesi[0].mese, ultimo = tp.mesi[tp.mesi.length - 1].mese;
+    var perMese = {};
+    tp.mesi.forEach(function (m) { perMese[m.mese] = m; });
+    var etichette = [], serie = { gm: [], nm: [] };
+    for (var m = primo; m <= ultimo; m++) {
+      etichette.push(MESI[m - 1]);
+      var x = perMese[m];
+      serie.gm.push(x && x.giorno.n ? x.giorno.mediana : null);
+      serie.nm.push(x && x.notte.n ? x.notte.mediana : null);
+    }
+    var grafico = html('div');
+    c.corpo.appendChild(grafico);
+    linee(grafico, {
+      etichette: etichette,
+      serie: [
+        { nome: 'Giorno – mediana', valori: serie.gm, colore: COLORI[0] },
+        { nome: 'Notte – mediana',  valori: serie.nm, colore: COLORI[1] }
+      ],
+      formatoAsse: function (v) { return v === null || v === undefined ? '–' : mmss(v); },
+      etichetta: 'Tempo di partenza mediano per mese, giorno e notte'
+    });
+
+    if (tp.anno.giorno.q1 !== undefined) {
+      c.corpo.appendChild(html('h4', 'dash-sottotitolo', 'Come si distribuiscono le partenze'));
+      c.corpo.appendChild(html('p', 'dash-spiega', testo(
+        'La scatola contiene la metà centrale delle partenze (dal primo al terzo quartile), ' +
+        'la riga spessa è la mediana. I baffi arrivano alla partenza più lenta ancora "normale" ' +
+        '(entro 1,5 volte la scatola); i cerchietti sono i casi fuori scala.')));
+      var box = html('div');
+      c.corpo.appendChild(box);
+      scatole(box, {
+        voci: [
+          { nome: 'Giorno', s: tp.anno.giorno, colore: COLORI[0] },
+          { nome: 'Notte',  s: tp.anno.notte,  colore: COLORI[1] }
+        ],
+        formato: mmss,
+        etichetta: 'Boxplot dei tempi di partenza ' + anno + ', giorno e notte'
+      });
+    }
+
+    // tabella mese per mese, con quante partenze ci sono dietro ogni mediana
+    var scroll = html('div', 'dash-tabella-wrap');
+    var t = html('table', 'dash-tabella');
+    var th = html('thead');
+    var r1 = html('tr');
+    ['Mese', 'Giorno: n.', 'mediana', '9 su 10', 'Notte: n.', 'mediana', '9 su 10']
+      .forEach(function (h, i) { r1.appendChild(html('th', i ? null : 'dash-td-nome', h)); });
+    th.appendChild(r1); t.appendChild(th);
+    var tb = html('tbody');
+    tp.mesi.forEach(function (m) {
+      var tr = html('tr');
+      tr.appendChild(html('td', 'dash-td-nome', MESI[m.mese - 1]));
+      [m.giorno, m.notte].forEach(function (f) {
+        tr.appendChild(html('td', null, n(f.n)));
+        tr.appendChild(html('td', null, mmss(f.mediana)));
+        tr.appendChild(html('td', null, mmss(f.p90)));
+      });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); scroll.appendChild(t); c.corpo.appendChild(scroll);
+
+    var avvisi = 'Con meno di 5 partenze in un mese la mediana notturna oscilla molto: ' +
+                 'per il confronto contano più i periodi di tre mesi riportati sopra.';
+    if (tp.scartate) {
+      avvisi += ' Escluse ' + tp.scartate + (tp.scartate === 1 ? ' riga' : ' righe') +
+                ' con orari incoerenti (partenza prima dell\'attivazione o dopo più di un\'ora).';
+    }
+    c.corpo.appendChild(html('p', 'dash-avviso-riga', testo(avvisi)));
+  }
+
   function montaRiservata(root, d) {
     if (d.mezzi && d.mezzi.length) {
       var perMezzo = {};
@@ -745,6 +931,8 @@ var AMB_DASH = (function () {
         etichetta: 'Km per mezzo'
       });
     }
+
+    if (d.tempiPartenza) montaTempi(root, d.tempiPartenza, d.annoCorrente);
 
     if (!d.volontari || !d.volontari.length) return;
 
@@ -770,14 +958,16 @@ var AMB_DASH = (function () {
     // I due modi di leggere lo stesso elenco: quante volte è uscito qualcuno
     // e quanto tempo ci ha messo. Sono numeri diversi — chi fa presidi e
     // manifestazioni ha poche uscite e tante ore — quindi si sceglie.
+    // Il primo dell'elenco è quello mostrato all'apertura: le ore, perché
+    // danno il peso vero di chi fa presidi e manifestazioni.
     var MISURE = [
-      { chiave: 'tot', etichetta: 'Interventi e attività',
-        unita: function (v) { return n(v); },
-        nota: 'Barra = interventi 118 + attività registrate.' },
       { chiave: 'oreTot', etichetta: 'Ore di attività',
         unita: function (v) { return n(v) + ' h'; },
         nota: 'Barra = ore di turno coperte più quelle di tutte le altre ' +
-              'attività, amministrazione e formazione comprese.' }
+              'attività, amministrazione e formazione comprese.' },
+      { chiave: 'tot', etichetta: 'Interventi e attività',
+        unita: function (v) { return n(v); },
+        nota: 'Barra = interventi 118 + attività registrate.' }
     ];
     var misuraAttiva = MISURE[0];
 
