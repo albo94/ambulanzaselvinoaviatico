@@ -188,13 +188,19 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
 - Lo **stesso** CSS e JS sono caricati anche dalla dashboard interna riservata (web app
   Apps Script), che li prende da questo dominio: se rinomini o sposti quei due file,
   la dashboard interna smette di disegnare i grafici. In `numeri.html` sono richiamati con
-  un `?v=<data>` di cache busting (oggi `?v=20260824a`): quando si modifica uno dei due file
+  un `?v=<data>` di cache busting (oggi `?v=20260926b`): quando si modifica uno dei due file
   va alzato **anche** nella web app, altrimenti una delle due dashboard resta sul file vecchio.
 - **Un solo file JS, due payload diversi.** `dashboard.js` disegna sia la pagina pubblica sia
   la dashboard riservata, ma la parte "composizione" (un grafico per tipo di personale +
   tabella persone) si accende solo se nel payload c'è `volontari`. Nel JSON pubblico
   `volontari` e `tipiPersonale` **non ci sono di proposito**: stanno solo nel payload che
   la web app autenticata passa a `AMB_DASH`.
+- **La riservata è a schede** (`montaSchede()`): *Panoramica* (la stessa pagina pubblica),
+  *Tempi di partenza* (`tempiPartenza`), *Mezzi e km* (`kmStorico`), *Persone*
+  (`volontari`). Ogni pannello si disegna la prima volta che viene aperto, perché i grafici
+  prendono la larghezza del contenitore e da nascosto vale zero; l'ultima scheda aperta si
+  ricorda in `localStorage` (`amb-dash-scheda`). La pubblica non ha schede: con
+  `opzioni.riservato` falso `monta()` chiama solo `montaComune()`.
 - **Tipi di personale** (dipendenti, volontari, TS…): l'elenco **non** sta in `dashboard.js`.
   Arriva nel payload riservato come `tipiPersonale`, generato da `05_tipi.gs` nell'Apps
   Script, che è anche quello che genera il menu a tendina del foglio. In `dashboard.js` c'è

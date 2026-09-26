@@ -323,7 +323,45 @@
 .dash-switch-btn.attivo { background: var(--dash-arancio); color: #fff; }
 .dash-switch-btn:focus-visible { outline: 2px solid var(--dash-arancio); outline-offset: -3px; }
 
+/* ── schede della dashboard riservata ────────────────────── */
+
+.dash-schede {
+  display: flex;
+  gap: 4px;
+  margin: 0 0 26px;
+  border-bottom: 2px solid var(--dash-bordo);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #f2f5f8;
+}
+.dash-schede::-webkit-scrollbar { display: none; }
+
+.dash-scheda-btn {
+  font-family: 'Titillium Web', system-ui, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 700;
+  padding: 12px 18px 10px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  background: none;
+  color: var(--dash-tenue);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dash-scheda-btn:hover { color: #1e2a35; }
+.dash-scheda-btn.attivo { color: #1e2a35; border-bottom-color: var(--dash-arancio); }
+.dash-scheda-btn:focus-visible { outline: 2px solid var(--dash-arancio); outline-offset: -3px; }
+
+.dash-pannello[hidden] { display: none; }
+
+.dash-tabella tr.dash-riga-forte td { font-weight: 700; }
+
 @media (max-width: 640px) {
+  .dash-scheda-btn { padding: 11px 12px 9px; font-size: .95rem; }
   .dash-switch { display: flex; width: 100%; }
   .dash-switch-btn { flex: 1; padding: 10px 8px; }
 

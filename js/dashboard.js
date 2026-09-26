@@ -82,6 +82,16 @@ var AMB_DASH = (function () {
     return m * mag;
   }
 
+  /**
+   * Margine sinistro abbastanza largo per l'etichetta piu' lunga dell'asse:
+   * con un margine fisso "20.000" veniva tagliato su telefono.
+   */
+  function margineAsse(max, formato, minimo) {
+    var p = passo(max || 1, 4), cima = Math.ceil((max || 1) / p) * p;
+    var t = formato ? formato(cima) : n(Math.round(cima));
+    return Math.max(minimo, Math.round(String(t).length * 7 + 14));
+  }
+
   function scalaY(g, max, x0, x1, y0, y1, formato) {
     var righe = 4;
     var p = passo(max || 1, righe);
@@ -120,14 +130,14 @@ var AMB_DASH = (function () {
     legenda(host, o.serie);
     var W = largo(host), stretto = W < 520;
     var H = o.altezza || (stretto ? 260 : 320);
-    var ml = stretto ? 40 : 54, mr = 14, mt = 14, mb = 34;
-    var s = tela(host, W, H, o.etichetta);
-    var x0 = ml, x1 = W - mr, y0 = mt, y1 = H - mb;
-
     var max = 0;
     o.serie.forEach(function (se) {
       se.valori.forEach(function (v) { if (v > max) max = v; });
     });
+    var ml = margineAsse(max, o.formatoAsse, stretto ? 40 : 54), mr = 14, mt = 14, mb = 34;
+    var s = tela(host, W, H, o.etichetta);
+    var x0 = ml, x1 = W - mr, y0 = mt, y1 = H - mb;
+
     var cima = scalaY(s, max, x0, x1, y0, y1, o.formatoAsse);
 
     var nCat = o.etichette.length;
@@ -168,14 +178,14 @@ var AMB_DASH = (function () {
     legenda(host, o.serie);
     var W = largo(host), stretto = W < 520;
     var H = o.altezza || (stretto ? 260 : 320);
-    var ml = stretto ? 40 : 54, mr = 14, mt = 14, mb = 34;
-    var s = tela(host, W, H, o.etichetta);
-    var x0 = ml, x1 = W - mr, y0 = mt, y1 = H - mb;
-
     var max = 0;
     o.serie.forEach(function (se) {
       se.valori.forEach(function (v) { if (v !== null && v > max) max = v; });
     });
+    var ml = margineAsse(max, o.formatoAsse, stretto ? 40 : 54), mr = 14, mt = 14, mb = 34;
+    var s = tela(host, W, H, o.etichetta);
+    var x0 = ml, x1 = W - mr, y0 = mt, y1 = H - mb;
+
     var cima = scalaY(s, max, x0, x1, y0, y1, o.formatoAsse);
 
     var nCat = o.etichette.length;
@@ -224,7 +234,13 @@ var AMB_DASH = (function () {
     var H = mt + mb + riga * voci.length;
     // l'etichetta non può prendersi mezzo grafico su telefono
     var ml = Math.min(o.larghezzaEtichette || 150, Math.round(W * 0.38));
+    // spazio a destra per il testo piu' lungo in fondo alle barre: con un margine
+    // fisso "19.296 h · il minimo" usciva dal grafico su telefono
     var mr = W < 520 ? 48 : 60;
+    voci.forEach(function (v) {
+      var t = v.testo || (o.formato ? o.formato(v.valore) : n(v.valore));
+      mr = Math.max(mr, Math.round(String(t).length * 6.8 + 14));
+    });
     var maxCar = Math.max(6, Math.floor((ml - 12) / 6.6));
     var s = tela(host, W, H, o.etichetta);
     var max = 0;
@@ -910,30 +926,298 @@ var AMB_DASH = (function () {
     c.corpo.appendChild(html('p', 'dash-avviso-riga', testo(avvisi)));
   }
 
-  function montaRiservata(root, d) {
-    if (d.mezzi && d.mezzi.length) {
-      var perMezzo = {};
-      d.mezzi.forEach(function (r) {
-        if (!perMezzo[r.mezzo]) {
-          perMezzo[r.mezzo] = [];
-          for (var i = 0; i < 12; i++) perMezzo[r.mezzo][i] = 0;
+  /* ── tabella semplice (non ordinabile) ───────────────────── */
+
+  /**
+   * @param intestazioni  ['Anno', 'Uscite', ...]: la prima colonna è testo, le altre numeri
+   * @param righe         array di array di stringhe già formattate
+   * @param opzioni       { evidenzia: indice della riga da mettere in grassetto }
+   */
+  function tabellaSemplice(intestazioni, righe, opzioni) {
+    opzioni = opzioni || {};
+    var scroll = html('div', 'dash-tabella-wrap');
+    var t = html('table', 'dash-tabella');
+    var tr = html('tr');
+    intestazioni.forEach(function (h, i) { tr.appendChild(html('th', i ? null : 'dash-td-nome', h)); });
+    var th = html('thead'); th.appendChild(tr); t.appendChild(th);
+    var tb = html('tbody');
+    righe.forEach(function (r, k) {
+      var riga = html('tr', k === opzioni.evidenzia ? 'dash-riga-forte' : null);
+      r.forEach(function (v, i) { riga.appendChild(html('td', i ? null : 'dash-td-nome', v)); });
+      tb.appendChild(riga);
+    });
+    t.appendChild(tb); scroll.appendChild(t);
+    return scroll;
+  }
+
+  /** Variazione percentuale "+4,2%" / "−3,1%", '–' se non calcolabile. */
+  function varPct(corr, prec) {
+    if (!prec) return '–';
+    var p = Math.round((corr - prec) / prec * 1000) / 10;
+    return (p >= 0 ? '+' : '−') + Math.abs(p).toLocaleString('it-IT') + '%';
+  }
+
+  /** Un decimale con la virgola, '–' se manca. */
+  function dec(v) {
+    return v === null || v === undefined ? '–' : (Math.round(v * 10) / 10).toLocaleString('it-IT');
+  }
+
+  /* ── mezzi e km (solo riservata) ────────────────────────── */
+
+  /**
+   * Somma le righe di kmStorico per anno e mese.
+   * @return { anno: { mesi: [12 × {km, uscite, interrotte, kmManu}], tipi: {tipo: km} } }
+   */
+  function aggregaKm(righe) {
+    var out = {};
+    righe.forEach(function (r) {
+      var a = out[r.anno];
+      if (!a) {
+        a = out[r.anno] = { mesi: [], tipi: {} };
+        for (var i = 0; i < 12; i++) a.mesi.push({ km: 0, uscite: 0, interrotte: 0, kmManu: 0 });
+      }
+      var m = a.mesi[r.mese - 1];
+      m.km += r.km;
+      m.uscite += r.interventi + r.interrotte;
+      m.interrotte += r.interrotte;
+      m.kmManu += r.kmManu;
+      a.tipi[r.tipo] = (a.tipi[r.tipo] || 0) + r.km;
+    });
+    return out;
+  }
+
+  /** Somma di un campo sui mesi da gennaio a `fino` (compreso). */
+  function somma(anno, campo, fino) {
+    var t = 0;
+    for (var i = 0; i < (fino || 12); i++) t += anno.mesi[i][campo];
+    return t;
+  }
+
+  function kmPerUscita(km, uscite) {
+    return uscite ? km / uscite : null;
+  }
+
+  function montaKm(root, d) {
+    var annoCorr = d.annoCorrente;
+    if (!d.kmStorico || !d.kmStorico.length) {
+      root.appendChild(html('p', 'dash-avviso-riga',
+        testo('I dati dei mezzi arrivano col prossimo aggiornamento della dashboard.')));
+      return;
+    }
+    var agg = aggregaKm(d.kmStorico);
+    var anni = Object.keys(agg).map(Number).sort();
+    var corr = agg[annoCorr], prec = agg[annoCorr - 1];
+    // si confronta fino al mese in corso: quello dopo non è ancora successo
+    var fino = d.confronto ? d.confronto.finoAMese : 12;
+    var alGiorno = d.confronto ? d.confronto.giorno + ' ' + MESI[fino - 1].toLowerCase() : '';
+
+    // ── KPI a parità di periodo
+    if (corr) {
+      var kmC = somma(corr, 'km', fino), usC = somma(corr, 'uscite', fino), manC = somma(corr, 'kmManu', fino);
+      var voci = [{ label: 'Km in convenzione ' + annoCorr, valore: n(kmC),
+                    nota: alGiorno ? 'al ' + alGiorno : '' }];
+      if (prec) {
+        // dell'anno prima si prende il mese in corso solo per i giorni gia' passati
+        // quest'anno: altrimenti settembre intero contro 26 giorni di settembre
+        var quota = d.confronto ? d.confronto.giorno / new Date(annoCorr, fino, 0).getDate() : 1;
+        var finora = function (campo) {
+          return Math.round(somma(prec, campo, fino - 1) + prec.mesi[fino - 1][campo] * quota);
+        };
+        var kmP = finora('km'), usP = finora('uscite'), manP = finora('kmManu');
+        voci.push({ label: 'Rispetto allo stesso periodo ' + (annoCorr - 1),
+                    valore: (kmC >= kmP ? '+' : '−') + n(Math.abs(kmC - kmP)),
+                    nota: varPct(kmC, kmP) + ' · ' + n(kmP) + ' km nel ' + (annoCorr - 1) });
+        voci.push({ label: 'Km medi per uscita', valore: dec(kmPerUscita(kmC, usC)),
+                    nota: n(usC) + ' uscite · nel ' + (annoCorr - 1) + ' ' + dec(kmPerUscita(kmP, usP)) });
+        voci.push({ label: 'Km di manutenzione', valore: n(manC),
+                    nota: 'stesso periodo ' + (annoCorr - 1) + ': ' + n(manP) });
+      }
+      root.appendChild(kpi(voci));
+    }
+
+    // ── andamento cumulato: dove si trova quest'anno rispetto agli altri
+    var c1 = scheda('Km in convenzione cumulati da gennaio',
+      'Ogni linea è un anno: più è ripida, più si è viaggiato in quel periodo. ' +
+      'L\'anno in corso si ferma al mese attuale, ancora parziale.');
+    root.appendChild(c1);
+    linee(c1.corpo, {
+      etichette: MESI,
+      serie: anni.map(function (a, k) {
+        var tot = 0, valori = [];
+        for (var i = 0; i < 12; i++) {
+          tot += agg[a].mesi[i].km;
+          valori.push(a === annoCorr && i >= fino ? null : tot);
         }
-        perMezzo[r.mezzo][r.mese - 1] = r.km;
-      });
-      var c = scheda('Km in convenzione per mezzo – ' + d.annoCorrente,
-        'Dato interno: proviene dal tab RIEPILOGO, rigenerato a ogni salvataggio del programma.');
-      root.appendChild(c);
-      colonne(c.corpo, {
+        // l'anno in corso sempre arancio, gli altri a scalare negli altri colori
+        return { nome: String(a), valori: valori,
+                 colore: a === annoCorr ? COLORI[0]
+                                        : COLORI[(anni.length - 1 - k) % (COLORI.length - 1) + 1] };
+      }),
+      formatoAsse: function (v) { return v === null || v === undefined ? '–' : n(Math.round(v)); },
+      etichetta: 'Km cumulati per anno'
+    });
+
+    if (corr && prec) {
+      // ── mese per mese: quest'anno contro l'anno prima
+      var c2 = scheda('Km per mese – ' + annoCorr + ' e ' + (annoCorr - 1),
+        'Il mese in corso è parziale. D\'estate i km crescono con le missioni: è il picco ' +
+        'turistico dell\'Altopiano.');
+      root.appendChild(c2);
+      colonne(c2.corpo, {
         etichette: MESI,
-        serie: Object.keys(perMezzo).map(function (m, i) {
-          return { nome: m, valori: perMezzo[m], colore: COLORI[i % COLORI.length] };
+        serie: [
+          { nome: String(annoCorr - 1), valori: prec.mesi.map(function (m) { return m.km; }),
+            colore: COLORI[1], tenue: true },
+          { nome: String(annoCorr), valori: corr.mesi.map(function (m, i) { return i < fino ? m.km : 0; }),
+            colore: COLORI[0] }
+        ],
+        etichetta: 'Km per mese, anno in corso e precedente'
+      });
+
+      // ── distanza media: dice se si esce più lontano, non solo più spesso
+      var c3 = scheda('Km medi per uscita, mese per mese',
+        'Quanto è lontano in media ogni intervento, andata e ritorno. Sale quando si esce più ' +
+        'spesso fuori dall\'Altopiano o si va verso ospedali più distanti.');
+      root.appendChild(c3);
+      linee(c3.corpo, {
+        etichette: MESI,
+        serie: [annoCorr - 1, annoCorr].map(function (a, k) {
+          return { nome: String(a), colore: k ? COLORI[0] : COLORI[1],
+                   valori: agg[a].mesi.map(function (m, i) {
+                     return a === annoCorr && i >= fino ? null : kmPerUscita(m.km, m.uscite);
+                   }) };
         }),
-        etichetta: 'Km per mezzo'
+        formatoAsse: dec,
+        etichetta: 'Km medi per uscita per mese'
       });
     }
 
-    if (d.tempiPartenza) montaTempi(root, d.tempiPartenza, d.annoCorrente);
+    // ── anno per anno
+    var c4 = scheda('Anno per anno',
+      'Uscite = interventi H24 più interrotte. Fino al ' + (annoCorr - 1) + ' i numeri vengono dai ' +
+      'RIEPILOGO compilati a mano; dal ' + annoCorr + ' sono calcolati dal tab 118 riga per riga.');
+    root.appendChild(c4);
+    var righe = anni.map(function (a) {
+      var x = agg[a], km = somma(x, 'km'), us = somma(x, 'uscite');
+      var crafter = x.tipi['VW Crafter'] || 0;
+      return [String(a) + (a === annoCorr ? ' (in corso)' : ''), n(us), n(somma(x, 'interrotte')),
+              n(km), dec(kmPerUscita(km, us)), n(somma(x, 'kmManu')),
+              km ? Math.round(crafter / km * 100) + '%' : '–'];
+    });
+    c4.corpo.appendChild(tabellaSemplice(
+      ['Anno', 'Uscite', 'Interrotte', 'Km convenzione', 'Km/uscita', 'Km manutenzione', 'Km col Crafter'],
+      righe, { evidenzia: anni.indexOf(annoCorr) }));
 
+    // ── per singolo mezzo, anno in corso
+    var mezzi = {};
+    d.kmStorico.forEach(function (r) {
+      if (r.anno !== annoCorr) return;
+      var m = mezzi[r.mezzo] || (mezzi[r.mezzo] = { mesi: [], uscite: 0, interrotte: 0, km: 0, kmManu: 0 });
+      m.mesi[r.mese - 1] = (m.mesi[r.mese - 1] || 0) + r.km;
+      m.uscite += r.interventi + r.interrotte;
+      m.interrotte += r.interrotte;
+      m.km += r.km;
+      m.kmManu += r.kmManu;
+    });
+    var nomi = Object.keys(mezzi).sort(function (a, b) { return mezzi[b].km - mezzi[a].km; });
+    if (!nomi.length) return;
+    var c5 = scheda('Per mezzo – ' + annoCorr,
+      'Km in convenzione mese per mese e totali dell\'anno. I km di manutenzione sono ' +
+      'gli spostamenti verso officina e carrozzeria, fuori dalla convenzione.');
+    root.appendChild(c5);
+    var g5 = html('div');
+    c5.corpo.appendChild(g5);
+    colonne(g5, {
+      etichette: MESI,
+      serie: nomi.filter(function (m) { return mezzi[m].km > 0; }).map(function (m, i) {
+        var v = [];
+        for (var k = 0; k < 12; k++) v.push(mezzi[m].mesi[k] || 0);
+        return { nome: m, valori: v, colore: COLORI[i % COLORI.length] };
+      }),
+      etichetta: 'Km per mezzo per mese'
+    });
+    c5.corpo.appendChild(tabellaSemplice(
+      ['Mezzo', 'Uscite', 'Interrotte', 'Km convenzione', 'Km/uscita', 'Km manutenzione'],
+      nomi.map(function (m) {
+        var x = mezzi[m];
+        return [m, n(x.uscite), n(x.interrotte), n(x.km), dec(kmPerUscita(x.km, x.uscite)), n(x.kmManu)];
+      })));
+  }
+
+  /* ── schede della pagina riservata ──────────────────────── */
+
+  var SCHEDA_SALVATA = 'amb-dash-scheda';
+
+  function montaSchede(root, d) {
+    var schede = [
+      { id: 'panoramica', titolo: 'Panoramica', disegna: function (p) { montaComune(p, d); } },
+      { id: 'tempi', titolo: 'Tempi di partenza', disegna: function (p) {
+          if (d.tempiPartenza) montaTempi(p, d.tempiPartenza, d.annoCorrente);
+          else p.appendChild(html('p', 'dash-avviso-riga',
+            testo('I tempi di partenza arrivano col prossimo aggiornamento della dashboard.')));
+        } },
+      { id: 'km', titolo: 'Mezzi e km', disegna: function (p) { montaKm(p, d); } },
+      { id: 'persone', titolo: 'Persone', disegna: function (p) { montaPersone(p, d); } }
+    ];
+
+    // la scheda aperta resta quella anche se la pagina si ridisegna o si riapre
+    var attiva = root._scheda;
+    if (!attiva) {
+      try { attiva = window.localStorage.getItem(SCHEDA_SALVATA); } catch (e) { attiva = null; }
+    }
+    if (!schede.some(function (s) { return s.id === attiva; })) attiva = schede[0].id;
+
+    var barra = html('div', 'dash-schede');
+    barra.setAttribute('role', 'tablist');
+    barra.setAttribute('aria-label', 'Sezioni della dashboard');
+    root.appendChild(barra);
+
+    schede.forEach(function (s) {
+      var b = html('button', 'dash-scheda-btn', s.titolo);
+      b.type = 'button';
+      b.id = 'dash-tab-' + s.id;
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-controls', 'dash-pannello-' + s.id);
+      var p = html('div', 'dash-pannello');
+      p.id = 'dash-pannello-' + s.id;
+      p.setAttribute('role', 'tabpanel');
+      p.setAttribute('aria-labelledby', b.id);
+      s.bottone = b;
+      s.pannello = p;
+      barra.appendChild(b);
+      root.appendChild(p);
+      b.addEventListener('click', function () { mostra(s.id, true); });
+    });
+
+    // tastiera: frecce sinistra/destra fra le schede
+    barra.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var i = schede.map(function (s) { return s.id; }).indexOf(root._scheda);
+      i = (i + (e.key === 'ArrowRight' ? 1 : schede.length - 1)) % schede.length;
+      mostra(schede[i].id, true);
+      schede[i].bottone.focus();
+    });
+
+    // Il pannello si disegna la prima volta che diventa visibile: i grafici
+    // prendono la larghezza del contenitore, che da nascosto vale zero.
+    function mostra(id, scelta) {
+      root._scheda = id;
+      if (scelta) {
+        try { window.localStorage.setItem(SCHEDA_SALVATA, id); } catch (e) { /* va bene anche senza */ }
+      }
+      schede.forEach(function (s) {
+        var on = s.id === id;
+        s.bottone.classList.toggle('attivo', on);
+        s.bottone.setAttribute('aria-selected', on ? 'true' : 'false');
+        s.bottone.tabIndex = on ? 0 : -1;
+        s.pannello.hidden = !on;
+        if (on && !s.disegnata) { s.disegnata = true; s.disegna(s.pannello); }
+      });
+    }
+    mostra(attiva, false);
+  }
+
+  function montaPersone(root, d) {
     if (!d.volontari || !d.volontari.length) return;
 
     var elenco = (d.tipiPersonale && d.tipiPersonale.length) ? d.tipiPersonale : TIPI_RIPIEGO;
@@ -1108,8 +1392,8 @@ var AMB_DASH = (function () {
       root._opzioni = opzioni;
       root.innerHTML = '';
       root.appendChild(strisciaAggiornamento(dati));
-      montaComune(root, dati);
-      if (opzioni.riservato) montaRiservata(root, dati);
+      if (opzioni.riservato) montaSchede(root, dati);
+      else montaComune(root, dati);
       var p = html('p', 'dash-aggiornato');
       p.textContent = testo('I dati si aggiornano da soli ogni notte verso le 2. ' +
         'Se la data qui sopra è vecchia, l\'aggiornamento automatico si è fermato.');
