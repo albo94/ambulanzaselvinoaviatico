@@ -415,6 +415,14 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   | Script ID | `1ndJKi07VYTGEjM5agjVB8ZWzCBNT6uwgvYS7jhzQZI5zKvBNpFXm-ihI` |
   | Deployment "produzione" | `AKfycbzr7TY0vMt0ubZVdbI3nUbpI1KdaBigWT5m-3F95oBc6N3DLcG4cp41VLKOLB_GLCkZ` |
   | Radice clasp | `_materiali/checklist/gas/` (fuori dal repo) |
+  | Registro | `11ncNhZGP6Z-7q2CxY1mOvTNrpxuPpLXzCCigO1FD4u0` (creato da `setup()` il 27/09/2026) |
+
+  **In produzione dal 27/09/2026**: `ENDPOINT` collegato e `MODO_PROVA` a `false`.
+  Le check list di prova fatte prima restano in `_PROVE check list/`: `eliminaProve()` le
+  cancella in blocco, registro compreso.
+  ⚠️ Per provare la web app da riga di comando **non** usare `curl -X POST`: Apps Script
+  risponde 302 e con `-X` forzato curl rispedisce il POST senza `Content-Length` (411).
+  Basta `--data-binary`, che implica POST e sul redirect passa a GET come fa il browser.
 
   Deploy: `cd _materiali/checklist/gas && clasp push --force && clasp create-deployment`.
   ⚠️ `clasp create-script` **sovrascrive `appsscript.json`** con il suo default, che ha
