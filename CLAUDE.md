@@ -433,6 +433,19 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   | CONTROLLI OGNI CHECK LIST | `1q2Jc3qKEdr5vkhgEwXWSX19g77zCqnDZm1ZAeIR8rgQ`, una scheda per mezzo |
   | Progetto `gestionale` (bot `@gestionaleselvinobot`) | `1i8Zk55u393zuUWSWgjhhUZ1YcnbevI2B_qF8zVZsZfZzyg6EI00xGWVY` |
   | Sorgenti del gestionale, clonate in locale | `G:\Drive condivisi\BOT TELEGRAM\GESTIONALE\AMB_gestionale` |
+  | Progetto `Gestione Missioni 118 - automazioni` | `16FKmeZkrO92fNdM86oV0sR93AYmTLBvqXM5I2o82S1TyqvDdOQggSofU` |
+  | Sorgenti missioni, clonate in locale | `G:\Drive condivisi\MISSIONI 118\AMB_programma missioni` |
+
+  La dashboard riservata è `dashboard.html` **dentro il progetto missioni**: è lì che vive il
+  secondo `?v=`, e la scheda Ossigeno si accende da `dashboard.js` (`montaSchede()`), non
+  dall'HTML — cercare "ossigeno" nell'HTML non trova niente ed è normale.
+  ⚠️ La web app gira su una **versione fissata** (la 30 al 27/09/2026), non su HEAD: dopo un
+  `clasp push` la riservata non cambia finché non si ridistribuisce. Per sapere cosa sta
+  davvero servendo si confronta con
+  `script.googleapis.com/v1/projects/<id>/content?versionNumber=<n>`.
+  ⚠️ Il token di clasp scade in un'ora, ma `.clasprc.json` contiene `refresh_token`,
+  `client_id` e `client_secret`: si rinnova da soli contro `oauth2.googleapis.com/token`,
+  senza rifare il login.
 
   ⚠️ Attenzione a trascrivere gli ID **da uno screenshot**: `I` maiuscola e `l` minuscola sono
   identiche in quasi tutti i caratteri, e un carattere sbagliato su 44 dà **404**, che è
