@@ -204,8 +204,7 @@
 
   <div class="avviso" id="avvisoProva" hidden>
     <strong>Modulo in prova</strong>
-    Questa pagina non &egrave; ancora collegata all&rsquo;archivio: i dati compilati
-    <em>non vengono inviati n&eacute; conservati</em>. Serve solo per controllare il modulo.
+    <span id="avvisoTesto"></span>
   </div>
 
   <div class="avanz" id="avanz">
@@ -318,6 +317,13 @@
       <span>Ho letto la dichiarazione e la sottoscrivo.</span>
     </label>
 
+    <label class="consenso" id="okClausoleBox">
+      <input type="checkbox" id="okClausole">
+      <span>Ai sensi degli <b>artt. 1341 e 1342 del codice civile</b> approvo specificamente
+      le clausole &laquo;Assumo e accetto&raquo; (esonero da responsabilit&agrave;) e
+      &laquo;Mi impegno&raquo; (rinuncia ad azioni risarcitorie e manleva).</span>
+    </label>
+
     <div class="firma">
       <div class="firma-testa">
         <label for="c_manleva">Firma</label>
@@ -346,13 +352,14 @@
 
     <label class="consenso" id="okPrivacyBox">
       <input type="checkbox" id="okPrivacy">
-      <span>Esprimo il consenso alla trasmissione del presente documento, comprensivo dei miei dati
-      personali, alla Propriet&agrave; e al Ministero della Cultura.</span>
+      <span>Ho letto l&rsquo;informativa e prendo atto che il presente documento, comprensivo dei miei
+      dati personali, sar&agrave; trasmesso alla Propriet&agrave; del complesso architettonico e al
+      Ministero della Cultura, come previsto dalla Convenzione del 3 dicembre 2019.</span>
     </label>
 
     <div class="firma">
       <div class="firma-testa">
-        <label for="c_consenso">Firma per il consenso</label>
+        <label for="c_consenso">Firma per presa visione</label>
         <span class="firma-chi" id="chiFirmaConsenso"></span>
       </div>
       <div class="tela-box" id="box_consenso">
@@ -366,7 +373,7 @@
     <!-- blocco minorenni -->
     <div id="blkMinore" hidden>
       <fieldset style="margin-top:26px">
-        <legend>Consenso del minore</legend>
+        <legend>Presa visione del minore</legend>
         <p class="sotto" style="margin-bottom:12px">
           Se il bambino &egrave; troppo piccolo per firmare, lascia il riquadro vuoto.
         </p>
@@ -488,20 +495,31 @@
      ============================================================ */
 
   /* URL della web app Apps Script (.../exec).
-     Vuoto = MODALITA' PROVA: la pagina funziona ma non invia niente. */
+     Vuoto = la pagina non invia niente e resta una simulazione. */
   var ENDPOINT = "";
+
+  /* Banda "modulo di prova" in cima alla pagina.
+     E' INDIPENDENTE da ENDPOINT: con MODO_PROVA acceso e ENDPOINT
+     impostato i moduli vengono salvati davvero, ma contrassegnati come
+     prova (codice PROVA-..., cartella separata, riga marcata nel
+     registro) e cancellabili in blocco con eliminaProve() prima di
+     andare in funzione. Serve per far vedere il giro completo al
+     Comune e a SciesopoliLab senza sporcare l'archivio vero.
+     Quando si parte davvero: MODO_PROVA = false. */
+  var MODO_PROVA = true;
 
   /* Versione del testo legale. Va tenuta uguale a quella nello script
      lato server: se non coincidono, il server rifiuta l'invio. Si alza
-     ogni volta che cambia il testo della manleva o dell'informativa. */
-  var VERSIONE_TESTO = "2026-09-comune-v1";
+     ogni volta che cambia il testo della manleva o dell'informativa.
+     "proposta" = testo rivisto dall'ODV, non ancora approvato dal
+     Comune; quando il Comune lo approva diventa "comune-v2". */
+  var VERSIONE_TESTO = "2026-09-proposta-v2";
 
   /* Nome della Proprieta'. Il modulo cartaceo del Comune riporta ancora
-     "Societa' Schiavo & C. S.p.a."; da luglio 2026 il proprietario e'
-     SciesopoliLab Impresa Sociale. Finche' il Comune non consegna il
-     testo aggiornato si resta su quello ufficiale. Si cambia QUI, in un
-     punto solo, e si alza VERSIONE_TESTO. */
-  var PROPRIETA = "Società Schiavo & C. S.p.a. – Vallo di Lucania (SA)";
+     "Societa' Schiavo & C. S.p.a.", ma da luglio 2026 il proprietario
+     e' SciesopoliLab Impresa Sociale. Si cambia QUI, in un punto solo,
+     e si alza VERSIONE_TESTO. */
+  var PROPRIETA = "SciesopoliLab Impresa Sociale";
 
   /* Scadenza della conservazione dei dati (Convenzione del 3/12/2019). */
   var SCADENZA = "2 dicembre 2031";
@@ -540,18 +558,22 @@
     '<p class="dich">Assumo e accetto</p>' +
     '<p>che qualsiasi violazione dell&rsquo;impegno sopra assunto sar&agrave; da considerarsi arbitraria e ' +
     'volontaria e quindi tale da esonerare la Propriet&agrave;, il Comune di Selvino e il Ministero della ' +
-    'Cultura da qualsiasi responsabilit&agrave; civile e/o penale per danni a persone e/o cose.</p>' +
+    'Cultura da ogni responsabilit&agrave; per danni a persone e/o cose che ne siano derivati, ' +
+    '<b>fatti salvi in ogni caso i danni dovuti a dolo o colpa grave</b> (art. 1229 c.c.).</p>' +
     '<p class="dich">Mi impegno</p>' +
     '<ul><li>a non intraprendere nei confronti della Propriet&agrave;, del Comune di Selvino e del ' +
-    'Ministero della Cultura, qualsiasi azione (civile e penale) a tutela dei miei diritti ed interessi ' +
-    'e/o per danni (diretti, indiretti) patiti in conseguenza od occasione dell&rsquo;accesso ai luoghi ' +
-    'di cui sopra;</li>' +
+    'Ministero della Cultura azioni risarcitorie per danni (diretti o indiretti) patiti in conseguenza ' +
+    'od occasione dell&rsquo;accesso ai luoghi di cui sopra, <b>salvo il caso di dolo o colpa grave</b>;</li>' +
     '<li>pertanto manlevo la Propriet&agrave;, il Comune di Selvino e il Ministero della Cultura, senza ' +
     'diritto a rimborsi, rivalse o regressi, da ogni pretesa e richiesta relativa a danni di qualsiasi ' +
     'natura e specie arrecati a terzi e/o occorsi a qualsiasi oggetto o bene, nonch&eacute; a rimborsarla ' +
     '&ndash; a semplice richiesta e senza diritto ad opporre eccezioni &ndash; di qualsiasi somma che ' +
     'questi fossero chiamati a corrispondere a terzi in dipendenza dei fatti, delle situazioni o ' +
-    'dell&rsquo;esercizio dei diritti e delle pretese di cui sopra.</li></ul>';
+    'dell&rsquo;esercizio dei diritti e delle pretese di cui sopra, ' +
+    '<b>sempre salvi i casi di dolo o colpa grave</b>.</li></ul>' +
+    '<p style="margin-top:14px;padding-top:10px;border-top:1px solid var(--line);font-size:.8rem;' +
+    'color:var(--ink-soft)">Nessuna clausola del presente modulo comporta rinuncia a diritti ' +
+    'indisponibili n&eacute; esonero dalla responsabilit&agrave; penale, che resta regolata dalla legge.</p>';
 
   $("#testoPrivacy").innerHTML =
     '<p>Il Comune di Selvino, con sede in Corso Milano 19, Selvino (BG) &ndash; tel. 035 764250 &ndash; ' +
@@ -562,20 +584,24 @@
     'che accedono al complesso architettonico denominato &ldquo;Sciesopoli&rdquo;, sottoposto a tutela ' +
     'con decreto della Commissione regionale per il patrimonio culturale della Lombardia del 25 novembre ' +
     '2015, regolato dall&rsquo;art. 38 del D.Lgs. 42/2004 e s.m.i. e dalla Convenzione del 3 dicembre 2019.</li>' +
-    '<li>La <b>base giuridica</b> &egrave; il consenso del visitatore che, accedendo alla struttura, ' +
-    'autorizza il trattamento e la comunicazione delle informazioni raccolte alla Propriet&agrave; del ' +
-    'complesso architettonico (' + PROPRIETA + ') e al Ministero della Cultura.</li>' +
+    '<li>La <b>base giuridica</b> &egrave; l&rsquo;esecuzione di un compito di interesse pubblico ' +
+    'connesso alla fruizione e alla tutela di un bene culturale (art. 6, par. 1, lett. e del Reg. UE ' +
+    '2016/679, in relazione all&rsquo;art. 38 del D.Lgs. 42/2004). La comunicazione dei dati alla ' +
+    'Propriet&agrave; del complesso architettonico (' + PROPRIETA + ') e al Ministero della Cultura ' +
+    '&egrave; prevista dalla Convenzione del 3 dicembre 2019.</li>' +
     '<li>I suoi dati personali verranno gestiti da tutti i soggetti coinvolti (Comune di Selvino, ' +
     'Propriet&agrave;, Ministero della Cultura) nel completo rispetto dei principi dettati dal Reg. UE ' +
     '679/2016, e saranno trattati al solo fine di permettere la fruizione pubblica di &ldquo;Sciesopoli&rdquo;.</li>' +
-    '<li>Il <b>conferimento</b> dei suoi dati personali ha natura obbligatoria, in quanto indispensabile ' +
-    'per la visita di &ldquo;Sciesopoli&rdquo;; il diniego del consenso non consente l&rsquo;accesso.</li>' +
+    '<li>Il <b>conferimento</b> dei suoi dati personali &egrave; necessario per accedere a ' +
+    '&ldquo;Sciesopoli&rdquo;: in mancanza non &egrave; possibile consentire la visita, perch&eacute; ' +
+    'l&rsquo;identificazione di chi accede &egrave; condizione dell&rsquo;apertura al pubblico.</li>' +
     '<li>La <b>conservazione</b> dei dati personali avverr&agrave; per un periodo non superiore a quello ' +
     'necessario agli scopi per i quali sono stati raccolti e trattati, e comunque <b>non oltre il ' +
     SCADENZA + '</b> (data di scadenza della Convenzione del 3 dicembre 2019).</li>' +
-    '<li>Lei potr&agrave; avvalersi dei <b>diritti</b> previsti dagli artt. da 15 a 22 del Reg. UE 2016/679, ' +
-    'e avr&agrave; il diritto di <b>revocare il consenso</b> in qualsiasi momento senza pregiudicare la ' +
-    'liceit&agrave; del trattamento basata sul consenso prestato prima della revoca (art. 7.3).</li>' +
+    '<li>Lei potr&agrave; avvalersi dei <b>diritti</b> previsti dagli artt. da 15 a 22 del Reg. UE ' +
+    '2016/679 &ndash; accesso, rettifica, cancellazione, limitazione e <b>opposizione</b> al ' +
+    'trattamento (art. 21) &ndash; scrivendo al Comune di Selvino, e ha diritto di proporre reclamo al ' +
+    '<b>Garante per la protezione dei dati personali</b>.</li>' +
     '</ul>' +
     '<p>Eventuali dati di dettaglio potranno essere chiesti al Comune di Selvino &ndash; Ufficio Turismo.</p>' +
     '<p><b>Compilazione online.</b> Il modulo viene compilato su questa pagina e conservato in forma ' +
@@ -596,7 +622,15 @@
   }
   $("#dataVisita").value = oggiISO();
 
-  if (!ENDPOINT) $("#avvisoProva").hidden = false;
+  if (MODO_PROVA) {
+    $("#avvisoProva").hidden = false;
+    $("#avvisoTesto").innerHTML = ENDPOINT
+      ? 'Stiamo provando il modulo prima di aprirlo al pubblico. I dati che inserisci ' +
+        '<b>vengono salvati</b>, ma sono contrassegnati come prova e verranno cancellati: ' +
+        'usa dati di fantasia, non quelli di una persona reale.'
+      : 'Questa pagina non &egrave; ancora collegata all&rsquo;archivio: i dati compilati ' +
+        '<em>non vengono inviati n&eacute; conservati</em>. Serve solo per controllare il modulo.';
+  }
 
   function minorenne() { return $("input[name=tipo]:checked").value === "minore"; }
 
@@ -668,7 +702,16 @@
       return n >= 8 && lung >= 60;
     };
     this.vuota = function () { return tratti.length === 0; };
-    this.png = function () { return this.valida() ? cv.toDataURL("image/png") : ""; };
+    /* Rete di sicurezza: finche' il passo e' nascosto il riquadro misura
+       1x1, e un PNG preso in quel momento sarebbe bianco anche con i
+       tratti registrati. Prima di esportare si controlla che la tela
+       abbia una dimensione vera e, se serve, la si rifa'. */
+    this.png = function () {
+      if (!this.valida()) return "";
+      if (cv.width <= 1 || cv.height <= 1) dimensiona();
+      if (cv.width <= 1 || cv.height <= 1) return "";
+      return cv.toDataURL("image/png");
+    };
     this.box = box;
     dimensiona();
   }
@@ -691,10 +734,16 @@
       $("#barra").style.width = Math.round(n / ULTIMO * 100) + "%";
       $("#avanzTesto").textContent = "Passo " + n + " di " + ULTIMO;
     }
-    /* le tavolette visibili vanno ridimensionate ora che hanno una larghezza vera */
-    setTimeout(function () {
+    /* Le tavolette visibili vanno ridimensionate ORA, non fra 30ms: da
+       nascoste misurano 1x1, e chi firmasse nel frattempo otterrebbe un
+       PNG bianco. Leggere la larghezza forza il ricalcolo del layout,
+       quindi qui il valore e' gia' quello giusto. Il secondo giro
+       ritardato serve solo a riallineare dopo l'animazione d'ingresso. */
+    function ridimensionaVisibili() {
       for (var k in tele) if (tele[k].box.offsetParent) tele[k].dimensiona();
-    }, 30);
+    }
+    ridimensionaVisibili();
+    setTimeout(ridimensionaVisibili, 60);
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); }
   }
 
@@ -807,13 +856,18 @@
 
     if (n === 3) {
       var ok = true;
-      var cb = $("#okManleva");
+      var cb = $("#okManleva"), cc = $("#okClausole");
       $("#okManlevaBox").classList.toggle("ko", !cb.checked);
-      if (!cb.checked) ok = false;
+      $("#okClausoleBox").classList.toggle("ko", !cc.checked);
+      if (!cb.checked || !cc.checked) ok = false;
       var f = tele.c_manleva.valida();
       tele.c_manleva.box.classList.toggle("ko", !f);
       if (!f) ok = false;
-      if (!ok) errore(!cb.checked ? "Spunta la casella e firma per proseguire." : "Manca la firma, oppure il segno è troppo breve.");
+      if (!ok) {
+        errore(!cb.checked || !cc.checked
+          ? "Spunta entrambe le caselle e firma per proseguire."
+          : "Manca la firma, oppure il segno è troppo breve.");
+      }
       return ok;
     }
 
@@ -860,6 +914,8 @@
     var d = {
       versioneTesto: VERSIONE_TESTO,
       proprieta: PROPRIETA,
+      prova: MODO_PROVA,
+      clausoleApprovate: $("#okClausole").checked,
       tipo: m ? "minore" : "adulto",
       dataVisita: testo("dataVisita"),
       visitatore: {
@@ -917,7 +973,7 @@
       return '<figure><img src="' + png + '" alt=""><figcaption>' + tit + "</figcaption></figure>";
     }
     f += fig(d.firmaManleva, "Manleva");
-    f += fig(d.firmaConsenso, "Consenso");
+    f += fig(d.firmaConsenso, "Presa visione");
     f += fig(d.firmaMinore, "Minore");
     f += fig(d.firmaGenitore1, "Genitore 1");
     f += fig(d.firmaGenitore2, "Genitore 2");
@@ -995,20 +1051,23 @@
     if (d.sottoscritto) h += blocco("Il sottoscritto (genitore o tutore)", d.sottoscritto);
     h += blocco("Il visitatore", d.visitatore);
     h += '<div class="legale">' + $("#testoManleva").innerHTML + "</div>";
+    h += "<p style='font-size:10pt'>Ai sensi degli <b>artt. 1341 e 1342 c.c.</b> il sottoscrittore ha "
+       + "approvato specificamente le clausole &laquo;Assumo e accetto&raquo; ed &laquo;Mi impegno&raquo;.</p>";
     h += "<p>Selvino, l&igrave; " + itData(d.dataVisita) + " &nbsp;&nbsp; Firma: " + fImg(d.firmaManleva) + "</p>";
     h += "</div>";
 
     h += '<div class="pagina">';
     h += "<h2>Informativa privacy e consenso</h2>";
     h += '<div class="legale">' + $("#testoPrivacy").innerHTML + "</div>";
-    h += "<p><b>Esprimo il consenso</b> al Comune di Selvino di trasmettere il presente documento, " +
-         "comprensivo dei miei dati personali, alla Propriet&agrave; del complesso architettonico e al " +
-         "Ministero della Cultura &ndash; Segretariato regionale per la Lombardia.</p>";
+    h += "<p><b>Presa visione.</b> Ho letto l&rsquo;informativa e prendo atto che il presente " +
+         "documento, comprensivo dei miei dati personali, sar&agrave; trasmesso alla Propriet&agrave; " +
+         "del complesso architettonico e al Ministero della Cultura &ndash; Segretariato regionale " +
+         "per la Lombardia, come previsto dalla Convenzione del 3 dicembre 2019.</p>";
     h += "<p>Selvino, l&igrave; " + itData(d.dataVisita) + " &nbsp;&nbsp; Firma: " + fImg(d.firmaConsenso) + "</p>";
     if (d.sottoscritto) {
       h += "<h3>Per i soggetti minorenni</h3>";
       h += "<p>Il/la sottoscritto/a soggetto minorenne " + esc(d.visitatore.nome + " " + d.visitatore.cognome) + "</p>";
-      h += "<p>Firma del minore: " + fImg(d.firmaMinore) + "</p>";
+      h += "<p>Firma del minore per presa visione: " + fImg(d.firmaMinore) + "</p>";
       h += "<h3>Autorizzazione di chi esercita la responsabilit&agrave; genitoriale</h3>";
       h += "<p>" + esc(d.sottoscritto.nome + " " + d.sottoscritto.cognome) + " &nbsp; Firma: " + fImg(d.firmaGenitore1) + "</p>";
       if (d.genitore2) {

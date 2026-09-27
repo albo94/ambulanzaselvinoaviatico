@@ -244,21 +244,39 @@ da 2 firme (adulto) a 5 (minore con due genitori).
   (favicon inclusa, disegnata inline in SVG). Una sola richiesta HTTP, la pagina stessa.
   Va tenuta così: serve perché il modulo è del **Comune**, e perché la pagina possa essere
   servita da un dominio breve neutro senza modifiche.
-- **Configurazione** in cima allo `<script>`, quattro costanti: `ENDPOINT` (web app Apps
-  Script; **vuoto = modalità prova**, mostra l'avviso e non invia niente), `VERSIONE_TESTO`,
-  `PROPRIETA`, `SCADENZA`.
+- **Configurazione** in cima allo `<script>`, cinque costanti: `ENDPOINT` (web app Apps
+  Script; vuoto = non invia niente), **`MODO_PROVA`** (fascia "modulo di prova" in cima),
+  `VERSIONE_TESTO`, `PROPRIETA`, `SCADENZA`.
+- **`MODO_PROVA` è indipendente da `ENDPOINT`.** Con entrambi attivi i moduli vengono
+  salvati davvero ma contrassegnati come prova: codice `PROVA-…`, cartella `Moduli-prova/`,
+  riga `PROVA` nel registro, fascia rossa sul PDF, contatore separato. Serve a mostrare il
+  giro completo al Comune senza sporcare l'archivio vero; `eliminaProve()` nel backend
+  cancella tutto in blocco il giorno dell'apertura al pubblico.
+- **Il testo è una proposta, non ancora approvata** (`2026-09-proposta-v2`). Rispetto al
+  cartaceo del Comune: Proprietà aggiornata a SciesopoliLab, esonero e rinuncia limitati
+  con la salvezza di dolo e colpa grave (art. 1229 c.c.), casella di approvazione specifica
+  ex artt. 1341-1342 c.c., base giuridica portata dal consenso all'interesse pubblico
+  (art. 6.1.e). Quando il Comune approva, la versione diventa `comune-v2`.
 - **`VERSIONE_TESTO` sta in due posti** — nella pagina e nello script lato server — e il
   server rifiuta gli invii con versione diversa: si alzano **insieme**, lo stesso giorno,
   ogni volta che cambia il testo legale.
 - **Il PDF lo compone il server**, dal proprio modello: dal browser arrivano solo dati e
   firme. Altrimenti basterebbe modificare la pagina per archiviare un testo diverso.
 - Niente `localStorage`: i dati restano in memoria, si perdono chiudendo la pagina.
+- ⚠️ **Trappola del riquadro firma.** Finché un passo è nascosto il suo `<canvas>` misura
+  **1×1**: un PNG preso in quel momento è bianco, mentre il controllo sulla firma passa lo
+  stesso perché guarda i tratti registrati, non i pixel. Per questo `mostra()` ridimensiona
+  le tavolette **in modo sincrono** appena il passo diventa visibile (non in un `setTimeout`),
+  e `png()` rifà la tela se la trova ancora degenere. Non togliere né l'uno né l'altro:
+  il sintomo sarebbe una firma vuota nell'archivio, senza alcun errore a video.
 - **Materiale non pubblicato**, in `_materiali/sciesopoli/` (ignorata da git):
   `MANLEVA SCIESOPOLI 2026.pdf` (modulo originale del Comune),
   `PIANO modulo digitale manleva.md` (piano di lavoro completo, fasi 0-6) e
   `sciesopoli-manleva.gs` (backend Apps Script: PDF, Drive, registro, cancellazione
-  automatica alla scadenza). Il `.gs` sta lì di proposito: quello che finisce nel repo
-  finisce su GitHub Pages.
+  automatica alla scadenza) e **`ATTIVAZIONE.md`** (come accendere il salvataggio in 15
+  minuti, come si passa in funzione, e il dominio breve con il Worker Cloudflare già
+  scritto). Il `.gs` sta lì di proposito: quello che finisce nel repo finisce su
+  GitHub Pages.
 
 **Non è ancora in funzione.** Prima servono, dal Comune: il testo aggiornato con la
 Proprietà corretta (il modulo cita ancora *Schiavo & C. S.p.a.*, ma da luglio 2026 il
