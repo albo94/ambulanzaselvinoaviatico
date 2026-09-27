@@ -532,7 +532,7 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   pagina chiede al backend i difetti ancora aperti e li disegna già sul mezzo, col bordo
   tratteggiato, insieme a **da quando e da chi** erano stati segnalati. Su ognuno si dice
   «C’è ancora» o «Risolto».
-  - Stanno nella scheda **** del registro, non in un documento a parte. Nessuna riga
+  - Stanno nella scheda **`Difetti`** del registro, non in un documento a parte. Nessuna riga
     viene mai cancellata: lo storico serve a sapere **da quanto** un difetto c'era, che è
     l'informazione che manca oggi (con i soli PDF bisogna aprirli uno per uno).
   - **Un difetto si chiude solo se qualcuno lo marca risolto**, mai per silenzio: chi compila
@@ -544,13 +544,14 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     percorre già verso Apps Script, senza sorprese di CORS sul redirect. Se la chiamata non
     riesce la check list va avanti lo stesso.
   - **Notifica Telegram** all'apertura e alla chiusura, una sola per check list con dentro
-    tutto, al responsabile  (ripiego su ). Vale lo stesso ragionamento
+    tutto, al responsabile `Mezzi` (ripiego su `Dipendenti`). Vale lo stesso ragionamento
     delle scadenze: il nickname non è autenticato, la notifica è il rilevatore.
-  - In  i difetti **non** vengono scritti e non parte nessuna notifica: per
+  - In `MODO_PROVA` i difetti **non** vengono scritti e non parte nessuna notifica: per
     questo il giro completo si prova con un endpoint finto in locale, non in produzione.
 - ⚠️ **Quando si aggiunge o si sposta un passo, si controllano TUTTE le chiamate a
-  **, non solo quelle nella navigazione. Inserendo i danni erano rimaste indietro le
-  due dentro : la check list si salvava davvero ma la schermata di conferma non
+  `mostra()`**, non solo quelle nella navigazione. Inserendo i danni erano
+  rimaste indietro le due dentro `salva()`: la check list si salvava davvero
+  ma la schermata di conferma non
   compariva, e restava il riepilogo con il pulsante «Salva». Il bug è stato in produzione
   qualche ora prima che uscisse in un collaudo.
 - **Danni e segnalazioni** (passo 3, dal 27/09/2026). Ricalca il riquadro *DANNI E
