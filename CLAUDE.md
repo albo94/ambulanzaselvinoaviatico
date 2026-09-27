@@ -394,12 +394,21 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     questo repository è pubblico su GitHub.
   - Le correzioni girano **dopo** il salvataggio e dentro un `try`: una check list compilata
     non si butta via perché una data non quadra. In `MODO_PROVA` non vengono applicate.
-  - ⚠️ **Il nickname non è autenticato.** La pagina è pubblica e chi compila sceglie il nome
-    da un elenco, senza login: chiunque abbia il link può cambiare una scadenza a nome di
-    chiunque. I paracadute sono a valle, non a monte — solo i 3 tipi di scadenza e i 3 mezzi
+  - **Il nickname non è autenticato, ed è una scelta** (27/09/2026). La pagina è pubblica e
+    chi compila sceglie il nome da un elenco, senza login: tecnicamente chiunque abbia il
+    link può cambiare una scadenza a nome di chiunque. Si è deciso di non mettere un login
+    perché **la notifica Telegram è il rilevatore**: ogni modifica arriva subito al gruppo
+    *Dipendenti dall'ambulanza*, che è anche l'insieme delle persone che quelle date le
+    modificano davvero. Una modifica non autorizzata sarebbe vista da 17 persone nel momento
+    in cui avviene.
+    I limiti stanno quindi **a valle e non a monte**: solo i 3 tipi di scadenza e i 3 mezzi
     noti, mai cancellazioni, data entro un intervallo plausibile, e ogni modifica annunciata
-    su Telegram **con il valore precedente** e con la nota che il nome è dichiarato. Un cambio
-    sbagliato resta visibile e si torna indietro; non è impedito.
+    **con il valore precedente** e con la nota che il nome è dichiarato — così si torna
+    indietro senza dover ricostruire niente.
+    ⚠️ Il ragionamento regge finché la notifica funziona: se un domani si toglie l'invio
+    Telegram, o si cambia il responsabile di quelle righe in `CODICI` senza un chat valido,
+    resta la scrittura pubblica **senza più nessuno che se ne accorga**. Se si tocca la
+    notifica, va rimesso un controllo a monte (il pulsante di conferma su Telegram).
   - Il registro ha una colonna `scadenze_corrette` con `tipo: vecchia -> nuova`.
   - Al 27/09/2026 **4 voci su 9 non tornavano**, e non sono state allineate d'ufficio: il
     tagliando del 007 dice 02/09/2027 nella check list (aggiornata quel giorno) e 20/12/2026
