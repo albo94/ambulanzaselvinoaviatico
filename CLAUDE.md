@@ -334,6 +334,20 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   - Chi ha tipologia `Usciti` **non compare** (89 righe su 175 al 27/09/2026). Tutti gli
     altri sì, comprese le tipologie `TS`, `Vacanza` e `Amministrazione`: chi guida un mezzo
     deve poter compilare, ed escludere qualcuno per tipologia lo bloccherebbe in garage.
+  - ⚠️ **I refusi vanno corretti nel generatore, non nella pagina**: la pagina si riscrive a
+    ogni rigenerazione. I nickname si battono a mano nelle celle del tabellone, quindi
+    `Ore Turnisti` raccoglie anche gli errori: `WIlly` con due maiuscole era diventato una
+    riga a sé, con 7 ore sottratte a `Willy`. Il generatore riunisce le grafie che
+    differiscono solo per **maiuscole, accenti o spazi**, somma le ore e tiene la forma del
+    tab **Personale** (l'anagrafica del bot, quella con i chat ID); chi in Personale non c'è
+    — 7 persone al 27/09/2026, es. `Bau`, `Testa`, `Fiore` — tiene la grafia con più ore
+    alle spalle. Per i refusi che **non** sono di sole maiuscole (lettere invertite, nomi
+    diversi) l'automatismo non basta: si aggiungono al dizionario `CORREZIONI` in cima allo
+    script. Lo script stampa sempre le grafie che ha riunito, così si accorge da solo dei
+    doppioni nuovi.
+  - Il refuso resta comunque **nella cella del tabellone**: finché sta lì, il foglio del bot
+    continua a tenere le ore divise fra le due grafie e a ogni notte ricrea la riga doppia.
+    Il generatore la nasconde al sito, non la cura alla fonte.
   - ⚠️ **Nella pagina finiscono solo i nickname, mai le ore.** L'elenco sta in un file
     pubblico su GitHub e la pagina è raggiungibile da chiunque abbia il link: l'ordine porta
     con sé quel tanto che serve a rendere veloce il menu, i numeri di ciascuno no. Vale la
