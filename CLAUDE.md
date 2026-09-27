@@ -352,10 +352,18 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   guida`) non stanno negli Excel dei mezzi: vengono dal file **`CONTROLLI OGNI CHECK LIST
   tutti i mezzi`**, un foglio per mezzo, e si rigenerano con
   `_materiali/checklist/aggiorna_documenti.py`.
-  - ⚠️ Di quel file girano **più copie .xlsx** nelle cartelle dei mezzi e al 27/09/2026 erano
-    tutte disallineate fra loro e col Google Sheet vivo (assicurazione e tagliando del 007
-    con tre date diverse). Fa fede il **Google Sheet**: va riscaricato in .xlsx ogni volta,
-    il `.gsheet` su Drive è solo una scorciatoia e in locale non si legge.
+  - **La sorgente è il file `.xlsx`**, non più un Google Sheet: il 27/09/2026 il foglio Google
+    è stato cestinato e sostituito dall'Excel in
+    `DOC per CONTROLLI/CHECKLIST e CONTROLLI AMBULANZA/CHECK LIST CRAFTER 007/`.
+    Si legge e si scrive in locale, niente da scaricare e niente da condividere.
+  - ⚠️ Di quel file girano **più copie** nelle cartelle degli altri mezzi, e al 27/09/2026 erano
+    disallineate fra loro (assicurazione e tagliando del 007 con tre date diverse). Fa fede
+    quella nella cartella **CRAFTER 007**, che è la più recente; le altre sono avanzi.
+  - ⚠️ Il file contiene un'immagine (`DANNI E SEGNALAZIONI MEZZO`) e sei ancoraggi:
+    **openpyxl in scrittura li perde**. Per correggere una cella conviene sostituire la
+    stringa dentro `xl/sharedStrings.xml` riscrivendo lo zip voce per voce, così tutto il
+    resto resta identico. Nota utile: Excel deduplica le stringhe uguali, quindi una sola
+    sostituzione sistema la stessa voce su più schede.
   - `DATA`, `FIRMA` (campi del cartaceo) e `Tariffario programmate` sono nella lista `FUORI`
     dello script e non devono rientrare. Il tariffario era anche un **articolo fisico** sulla
     mensola del Ducato: tolto anche da lì.
@@ -370,9 +378,9 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   - ⚠️ **Ordine degli script**: `aggiorna_documenti.py` rilegge le date dal foglio
     `CONTROLLI OGNI CHECK LIST`, quindi va lanciato **prima** di `scadenze.py`, altrimenti
     riporta indietro le date già allineate. Al 27/09/2026 quel foglio ha ancora 31/10/2026
-    per i tagliandi di 006 e Ducato, dove il gestionale (e la realtà) dicono 30/10: finché
-    non lo si corregge lì, ogni rigenerazione reintroduce il refuso e `scadenze.py` lo
-    ricorregge.
+    per i tagliandi di 006 e Ducato — **corretto a 30/10 nell'.xlsx il 27/09/2026**, backup
+    accanto al file. Prima di quel fix ogni rigenerazione reintroduceva il refuso e
+    `scadenze.py` doveva ricorreggerlo.
   - La pagina usa quelle date per mettere un cartellino **«scaduta»** (rosso) o **«fra N giorni»**
     (ambra, sotto i 30) accanto alla voce: una revisione scaduta si deve vedere *prima* di
     uscire, non a cose fatte. Senza `scadenze` nei dati non compare niente e la pagina funziona
