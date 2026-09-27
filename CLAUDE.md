@@ -331,6 +331,17 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   - Ogni zona ha «Tutto presente»: 27 tocchi invece di 149, ma **non si può inviare finché
     ogni zona non è stata guardata** — e non c'è un «tutto presente» a livello di gruppo,
     che sarebbe un timbro.
+  - ⚠️ **Le voci con il `+` non vanno divise** (114 su ~365, es. `Garze Sterili 2M + 2P + 10
+    Non`, qta 14). Sembrano elenchi di pezzi separati, ma la quantità non ha un significato
+    unico: a volte è la somma dei pezzi (`2+2+10 = 14`), a volte il numero di gruppi
+    (`Autoprotezione + 2 Ghiaccio + Metallina + Traversa` ha qta 16 e quattro pezzi), a volte
+    è implicita nel testo (`Maschere Ambu AD # 3-4-5 + siringa` = 3 maschere + 1 siringa = 4).
+    In più il `+` non è sempre un separatore: in `Canule Mayo Guedel # 40+50+60` elenca le
+    misure. Dividendo automaticamente, **50 voci su 114 prenderebbero quantità sbagliate** —
+    e su una check list di ambulanza una quantità sbagliata è peggio di una riga da leggere.
+    Decisione del 27/09/2026: **restano come sul cartaceo**, una riga e una quantità. Se un
+    giorno servisse il dettaglio, si dividono negli **Excel dei mezzi**, dove chi sa cosa c'è
+    nelle borse può assegnare la quantità vera a ogni pezzo, e si rigenera con `parse_check.py`.
 - **Le sezioni di testa** (`Controllo carburante`, `Controllo documenti`, `Controllo vano
   guida`) non stanno negli Excel dei mezzi: vengono dal file **`CONTROLLI OGNI CHECK LIST
   tutti i mezzi`**, un foglio per mezzo, e si rigenerano con
