@@ -416,8 +416,10 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   Gli ultimi tre leggono i Google Sheet con il service account di
   `AMB_bot ambulanza 118/strumenti/credentials.json`: i fogli vanno condivisi con
   `pianificatore-turni@xenon-shard-300518.iam.gserviceaccount.com` in **sola lettura**.
-  ⚠️ `parse_check.py` è rimasto al formato piatto e non conosce il Crafter 007: va
-  riscritto prima di rigenerare il corpo della check list, o sovrascrive la gerarchia.
+  `parse_check.py` e `scadenze.py` senza argomenti **confrontano e basta**: modificano la
+  pagina solo con `--scrivi`. Conviene sempre guardare prima cosa cambierebbe.
+  ⚠️ `parse_check.py` tocca solo `gruppi` e `voci`: `documenti`, `targa` e `scadenze`
+  arrivano dagli altri due script e non vanno sovrascritte da qui.
 
 ## SEO
 
