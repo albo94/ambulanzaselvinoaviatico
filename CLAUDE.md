@@ -316,10 +316,46 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   I dati sono **incorporati nella pagina** come JSON (`<script id=dati-checklist>`): la
   pagina non dipende da Drive per funzionare. Se cambiano gli Excel vanno rigenerati con
   `parse_check.py` e `parse_doc.py` in `_materiali/checklist/`.
-- **Si compila per zone**, nell'ordine in cui si gira il mezzo (prima documenti e vano
-  guida, poi zaini, gavoni, vano sanitario). Ogni zona ha «Tutto presente»: 24 tocchi
-  invece di 151, ma **non si può inviare finché ogni zona non è stata guardata** — niente
-  pulsante unico che approva tutto, che sarebbe un timbro.
+- **Si compila a due livelli**, nell'ordine in cui si gira il mezzo (prima carburante,
+  documenti e vano guida, poi zaini, gavoni, vano sanitario). Il **gruppo** è il contenitore
+  che si apre — `BORSA PORTA PARAMETRI`, `LATO SINISTRO` — e dentro ci sono le **zone** da
+  spuntare (`CENTRALE`, `LATO`, `MEDICAZIONE`). Nei dati la gerarchia sta in `gruppi`
+  (`{nome, zone[]}`) e ogni voce porta `gruppo` + `zona`.
+  - I gruppi **senza** sottozone (`LIVELLI BOMBOLE`, i tre blocchi di testa) restano a un
+    livello solo: incartarli in un secondo accordion vuoto sarebbe un tocco in più per niente.
+  - Aprire un gruppo apre subito la prima zona da fare; finita l'ultima zona di un gruppo si
+    salta al gruppo dopo. L'avanzamento conta le **zone**, non i gruppi: 27 sul Crafter 006.
+  - ⚠️ Le regole CSS sulla freccia vanno sul **figlio diretto** (`.gruppo.aperto >
+    .gruppo-testa .freccia`): da discendenti ruotavano anche le frecce delle zone annidate,
+    che sembravano tutte aperte pur essendo chiuse.
+  - Ogni zona ha «Tutto presente»: 27 tocchi invece di 149, ma **non si può inviare finché
+    ogni zona non è stata guardata** — e non c'è un «tutto presente» a livello di gruppo,
+    che sarebbe un timbro.
+- **Le sezioni di testa** (`Controllo carburante`, `Controllo documenti`, `Controllo vano
+  guida`) non stanno negli Excel dei mezzi: vengono dal file **`CONTROLLI OGNI CHECK LIST
+  tutti i mezzi`**, un foglio per mezzo, e si rigenerano con
+  `_materiali/checklist/aggiorna_documenti.py`.
+  - ⚠️ Di quel file girano **più copie .xlsx** nelle cartelle dei mezzi e al 27/09/2026 erano
+    tutte disallineate fra loro e col Google Sheet vivo (assicurazione e tagliando del 007
+    con tre date diverse). Fa fede il **Google Sheet**: va riscaricato in .xlsx ogni volta,
+    il `.gsheet` su Drive è solo una scorciatoia e in locale non si legge.
+  - `DATA`, `FIRMA` (campi del cartaceo) e `Tariffario programmate` sono nella lista `FUORI`
+    dello script e non devono rientrare. Il tariffario era anche un **articolo fisico** sulla
+    mensola del Ducato: tolto anche da lì.
+  - `Controllo carburante` nel foglio è un'intestazione con la sua casella accanto, senza voci
+    sotto: qui diventa una sezione con un controllo solo.
+- **Scadenze collegate al GESTIONALE SCADENZE.** Assicurazione, revisione e tagliando hanno la
+  data scritta dentro il testo della voce *e* nel foglio `GESTIONALE SCADENZE`, che è quello
+  che si guarda quando si rinnova. Due elenchi a mano divergono in silenzio: al 27/09/2026
+  **quattro voci su nove non tornavano**, col tagliando del Crafter 007 sfasato di oltre un anno.
+  - `_materiali/checklist/scadenze.py` confronta i due e segnala le differenze; con `--scrivi`
+    riscrive le date nella pagina e incorpora `scadenze` nei dati del mezzo. Il gestionale fa fede.
+  - La pagina usa quelle date per mettere un cartellino **«scaduta»** (rosso) o **«fra N giorni»**
+    (ambra, sotto i 30) accanto alla voce: una revisione scaduta si deve vedere *prima* di
+    uscire, non a cose fatte. Senza `scadenze` nei dati non compare niente e la pagina funziona
+    lo stesso.
+  - ⚠️ Serve condividere il foglio in lettura con il service account
+    `pianificatore-turni@xenon-shard-300518.iam.gserviceaccount.com`, altrimenti 404.
 - **Chi compila si sceglie da un elenco di nickname**, non si scrive a mano: i nickname sono
   quelli del tab `Ore Turnisti` del foglio **Riepilogo** del bot 118 (stessa grafia del
   tabellone, così il registro è confrontabile con i turni). L'elenco è **incorporato nella
@@ -373,7 +409,15 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   le righe nuove da 12 valori finiscono disallineate: va svuotato o rifatto.
   Con `MODO_PROVA` le check list finiscono in `_PROVE check list/` e in registro con stato
   `PROVA`; `eliminaProve()` le cancella in blocco.
-- Backend, parser e `genera_turnisti.py` in `_materiali/checklist/` (fuori dal repo pubblicato).
+- Backend e script in `_materiali/checklist/` (fuori dal repo pubblicato):
+  `parse_check.py` (corpo della check list dagli Excel dei mezzi),
+  `aggiorna_documenti.py` (sezioni carburante/documenti/vano guida),
+  `scadenze.py` (confronto col GESTIONALE SCADENZE), `genera_turnisti.py` (nickname).
+  Gli ultimi tre leggono i Google Sheet con il service account di
+  `AMB_bot ambulanza 118/strumenti/credentials.json`: i fogli vanno condivisi con
+  `pianificatore-turni@xenon-shard-300518.iam.gserviceaccount.com` in **sola lettura**.
+  ⚠️ `parse_check.py` è rimasto al formato piatto e non conosce il Crafter 007: va
+  riscritto prima di rigenerare il corpo della check list, o sovrascrive la gerarchia.
 
 ## SEO
 
