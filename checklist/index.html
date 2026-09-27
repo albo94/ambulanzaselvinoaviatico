@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="../images/logo.png">
+<title>Check list mezzi</title>
+<style>
+  :root {
+    --paper:#F4F6F8; --surface:#FFFFFF; --surface-2:#E9EDF1;
+    --ink:#16202B; --ink-soft:#5C6B7A; --line:#D3DCE4;
+    --accent:#E8601C; --accent-dark:#C04D14; --accent-ink:#FFFFFF;
+    --ok:#1A8B3C; --ok-bg:#E6F4EA; --ko:#B3261E; --ko-bg:#FCE9E7;
+    --warn:#A8710A; --warn-bg:#FCF3E2;
+    --radius:10px; --shadow:0 1px 2px rgba(22,32,43,.06), 0 8px 22px -16px rgba(22,32,43,.4);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#12171C; --surface:#1B2229; --surface-2:#242D36;
+      --ink:#EDF1F5; --ink-soft:#9AA8B5; --line:#33404C;
+      --accent:#FF7A3D; --accent-dark:#E8601C; --accent-ink:#221004;
+      --ok:#5BC77E; --ok-bg:#16301F; --ko:#FF6B61; --ko-bg:#331614;
+      --warn:#E0AE55; --warn-bg:#2E2512;
+    }
+  }
+  *,*::before,*::after { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--paper); color:var(--ink);
+         font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+  .wrap { max-width:780px; margin:0 auto; padding:14px 14px 96px; }
+
+  .testata { display:flex; justify-content:space-between; align-items:baseline;
+             gap:12px; padding:10px 0 14px; border-bottom:1px solid var(--line); margin-bottom:16px; }
+  .testata h1 { margin:0; font-size:1.1rem; font-weight:700; }
+  .testata .sub { font-size:.8rem; color:var(--ink-soft); }
+
+  h2 { font-size:1.15rem; margin:0 0 4px; }
+  .sotto { margin:0 0 16px; color:var(--ink-soft); font-size:.88rem; }
+
+  .passo { display:none; } .passo.attivo { display:block; }
+
+  /* ---- scelta mezzo ---- */
+  .mezzi { display:grid; gap:10px; margin:0 0 18px; }
+  .mezzo { display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+           border:1px solid var(--line); background:var(--surface); border-radius:var(--radius);
+           padding:14px; cursor:pointer; font:inherit; color:inherit; min-height:auto; }
+  .mezzo.sel { border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+  .mezzo .n { font-weight:700; font-size:1rem; }
+  .mezzo .t { font-size:.82rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .mezzo .c { margin-left:auto; font-size:.78rem; color:var(--ink-soft); text-align:right; }
+
+  .campo { margin:0 0 14px; }
+  label { display:block; font-size:.85rem; font-weight:600; margin:0 0 5px; }
+  input[type=text], input[type=date], textarea, select {
+    width:100%; padding:11px 12px; font:inherit; color:var(--ink); background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius); min-height:46px; }
+  textarea { min-height:78px; resize:vertical; }
+  input:focus-visible, button:focus-visible, select:focus-visible {
+    outline:2px solid var(--accent); outline-offset:2px; }
+  .errore { color:var(--ko); font-size:.8rem; margin:4px 0 0; display:none; }
+  .campo.ko input { border-color:var(--ko); } .campo.ko .errore { display:block; }
+
+  /* ---- avanzamento ---- */
+  .barra-box { position:sticky; top:0; z-index:5; background:var(--paper);
+               padding:8px 0 10px; margin:0 0 12px; border-bottom:1px solid var(--line); }
+  .barra { height:6px; background:var(--surface-2); border-radius:99px; overflow:hidden; }
+  .barra i { display:block; height:100%; width:0; background:var(--accent); transition:width .25s; }
+  .barra-testo { display:flex; justify-content:space-between; gap:10px;
+                 margin:6px 0 0; font-size:.78rem; color:var(--ink-soft); }
+  .barra-testo b { color:var(--ink); }
+
+  /* ---- zone ---- */
+  .zona { border:1px solid var(--line); background:var(--surface);
+          border-radius:var(--radius); margin:0 0 10px; overflow:hidden; }
+  .zona.fatta { border-color:var(--ok); }
+  .zona.problemi { border-color:var(--warn); }
+  .zona-testa { display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+                padding:13px 14px; background:none; border:0; font:inherit; color:inherit; cursor:pointer; }
+  .zona-nome { font-weight:700; font-size:.92rem; flex:1; }
+  .zona-stato { font-size:.75rem; font-weight:700; padding:3px 8px; border-radius:99px;
+                background:var(--surface-2); color:var(--ink-soft); white-space:nowrap; }
+  .zona.fatta .zona-stato { background:var(--ok-bg); color:var(--ok); }
+  .zona.problemi .zona-stato { background:var(--warn-bg); color:var(--warn); }
+  .freccia { transition:transform .2s; color:var(--ink-soft); }
+  .zona.aperta .freccia { transform:rotate(90deg); }
+  .zona-corpo { display:none; border-top:1px solid var(--line); }
+  .zona.aperta .zona-corpo { display:block; }
+  .tutto-ok { display:block; width:100%; padding:10px 14px; border:0; border-bottom:1px solid var(--line);
+              background:var(--surface-2); color:var(--ink); font:600 .82rem/1 inherit; cursor:pointer; }
+
+  .voce { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid var(--line); }
+  .voce:last-child { border-bottom:0; }
+  .voce-q { flex:0 0 auto; min-width:30px; height:26px; padding:0 7px; border-radius:6px;
+            background:var(--surface-2); color:var(--ink-soft);
+            font:700 .8rem/26px system-ui; text-align:center; font-variant-numeric:tabular-nums; }
+  .voce-n { flex:1; font-size:.88rem; line-height:1.4; }
+  .voce-b { display:flex; gap:5px; flex:0 0 auto; }
+  .sb { border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+        border-radius:7px; padding:6px 9px; font:700 .76rem/1 inherit; cursor:pointer; min-width:38px; }
+  .sb.on-ok { background:var(--ok); border-color:var(--ok); color:#fff; }
+  .sb.on-ko { background:var(--ko); border-color:var(--ko); color:#fff; }
+  .voce.ko { background:var(--ko-bg); }
+  .voce-nota { padding:0 14px 10px; }
+  .voce-nota input { min-height:40px; font-size:.85rem; }
+
+  /* ---- riepilogo ---- */
+  .riq { border:1px solid var(--line); background:var(--surface);
+         border-radius:var(--radius); padding:14px; margin:0 0 14px; }
+  .riq h3 { margin:0 0 8px; font-size:.95rem; }
+  .riq.ko { border-color:var(--ko); background:var(--ko-bg); }
+  .riq.ok { border-color:var(--ok); background:var(--ok-bg); }
+  .mancanti { margin:0; padding-left:18px; font-size:.88rem; }
+  .mancanti li { margin:0 0 5px; }
+  .mancanti .dove { color:var(--ink-soft); font-size:.8rem; }
+  dl.dati { margin:0; display:grid; grid-template-columns:auto 1fr; gap:6px 12px; font-size:.88rem; }
+  dl.dati dt { color:var(--ink-soft); } dl.dati dd { margin:0; font-weight:600; }
+
+  /* ---- barra azioni ---- */
+  .azioni { position:fixed; left:0; right:0; bottom:0; z-index:10;
+            display:flex; gap:10px; padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+            background:var(--surface); border-top:1px solid var(--line); }
+  .azioni-in { display:flex; gap:10px; max-width:780px; margin:0 auto; width:100%; }
+  button.big { flex:1; font:700 .95rem/1 inherit; border-radius:var(--radius);
+               border:1px solid transparent; padding:14px 16px; min-height:50px; cursor:pointer; }
+  .btn-pri { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .btn-pri:hover { background:var(--accent-dark); }
+  .btn-pri:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-sec { background:transparent; color:var(--ink); border-color:var(--line); flex:0 0 auto; }
+
+  .stato { margin:10px 0 0; font-size:.88rem; display:none; }
+  .stato.ko { color:var(--ko); display:block; } .stato.lav { color:var(--ink-soft); display:block; }
+
+  .avviso { border:1px solid var(--line); border-left:4px solid var(--accent);
+            background:var(--surface-2); border-radius:var(--radius);
+            padding:11px 13px; margin:0 0 16px; font-size:.85rem; }
+  .avviso b { display:block; margin-bottom:2px; }
+
+  .esito { text-align:center; padding:26px 12px; }
+  .esito .segno { width:58px; height:58px; border-radius:50%; background:var(--ok); color:#fff;
+                  display:flex; align-items:center; justify-content:center; font-size:29px; margin:0 auto 14px; }
+  .esito .file { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.9rem;
+                 background:var(--surface-2); padding:6px 10px; border-radius:6px;
+                 display:inline-block; margin:8px 0; word-break:break-all; }
+
+  @media print {
+    .azioni, .barra-box, .zona-testa .freccia, .tutto-ok, .voce-b { display:none !important; }
+    body { background:#fff; } .zona-corpo { display:block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="testata">
+    <div>
+      <h1>Check list mezzi</h1>
+      <div class="sub">Volontari Selvino Aviatico ODV &ndash; uso interno</div>
+    </div>
+    <div class="sub" id="oggiTxt"></div>
+  </div>
+
+  <div class="avviso" id="avvisoProva" hidden>
+    <b>Modulo in prova</b>
+    <span id="avvisoTxt"></span>
+  </div>
+
+  <!-- ===================== 1. MEZZO ===================== -->
+  <section class="passo attivo" data-passo="1">
+    <h2>Quale mezzo controlli?</h2>
+    <p class="sotto">La check list si adatta al mezzo scelto.</p>
+    <div class="mezzi" id="mezzi"></div>
+
+    <div class="campo">
+      <label for="data">Data del controllo</label>
+      <input type="date" id="data">
+      <p class="errore">Indica la data.</p>
+    </div>
+    <div class="campo">
+      <label for="operatore">Chi compila</label>
+      <input type="text" id="operatore" autocomplete="name" placeholder="Nome e cognome">
+      <p class="errore">Indica chi compila.</p>
+    </div>
+    <div class="campo">
+      <label for="km">Km del mezzo <span style="font-weight:400;color:var(--ink-soft)">(facoltativo)</span></label>
+      <input type="text" id="km" inputmode="numeric" placeholder="es. 84500">
+    </div>
+    <p class="stato" id="stato1"></p>
+  </section>
+
+  <!-- ===================== 2. CONTROLLI ===================== -->
+  <section class="passo" data-passo="2">
+    <div class="barra-box">
+      <div class="barra"><i id="barra"></i></div>
+      <p class="barra-testo">
+        <span><b id="zFatte">0</b> di <b id="zTot">0</b> zone</span>
+        <span id="contaKo"></span>
+      </p>
+    </div>
+    <div id="zone"></div>
+    <p class="stato" id="stato2"></p>
+  </section>
+
+  <!-- ===================== 3. RIEPILOGO ===================== -->
+  <section class="passo" data-passo="3">
+    <h2>Controlla e salva</h2>
+    <p class="sotto">Verifica prima di salvare: il documento finisce nella cartella del mezzo.</p>
+
+    <div class="riq"><dl class="dati" id="riepDati"></dl></div>
+    <div id="riepEsiti"></div>
+
+    <div class="campo">
+      <label for="note">Note generali <span style="font-weight:400;color:var(--ink-soft)">(facoltative)</span></label>
+      <textarea id="note" placeholder="Segnalazioni, interventi fatti, cose da ordinare&hellip;"></textarea>
+    </div>
+    <p class="stato" id="stato3"></p>
+  </section>
+
+  <!-- ===================== 4. ESITO ===================== -->
+  <section class="passo" data-passo="4">
+    <div class="esito">
+      <div class="segno" aria-hidden="true">&#10003;</div>
+      <h2 id="esitoTit">Check list salvata</h2>
+      <div class="file" id="esitoFile">&mdash;</div>
+      <p class="sotto" id="esitoNota"></p>
+    </div>
+  </section>
+
+  <div class="azioni" id="barraAzioni">
+    <div class="azioni-in">
+      <button type="button" class="big btn-sec" id="btnIndietro" hidden>Indietro</button>
+      <button type="button" class="big btn-pri" id="btnAvanti">Avanti</button>
+    </div>
+  </div>
+</div>
+
+<script id="dati-checklist" type="application/json">{"crafter006":{"nome":"Crafter 006","titolo":"CHECK LIST VW CRAFTER - VOLSEL 006","zone":["BORSA PORTA PARAMETRI / ESTER","BORSA PORTA PARAMETRI / POST","BORSA PORTA PARAMETRI / CENTRALE","BORSA PORTA PARAMETRI / LATO","BORSA PORTA PARAMETRI / MEDICAZIONE","ZAINO RIANIMAZIONE / INTERNO GRANDE","ZAINO RIANIMAZIONE / ROSSA","ZAINO PEDIATRICO / TRAUMA","ZAINO PEDIATRICO / RIANIMAZIONE","ZAINO PEDIATRICO / PARAMETRI","LATO SINISTRO / GAVONE","LATO SINISTRO / ALTO SX","LATO SINISTRO / BASSO SX","LATO SINISTRO / 1° CASS","LATO SINISTRO / 2°","LATO SINISTRO / 3°","PENSILE SOPRA PORTA SCORREVOLE","LIVELLI BOMBOLE","LATO DESTRO / PENSILE","LATO DESTRO / ZAINO DAE","LATO DESTRO / PANCA","VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","VANO SANITARIO E FUNZIONAMENTI / PULIZIA"],"voci":[{"zona":"BORSA PORTA PARAMETRI / ESTER","qta":1,"articolo":"Cicalino monossido"},{"zona":"BORSA PORTA PARAMETRI / ESTER","qta":1,"articolo":"Cicalino ossigeno"},{"zona":"BORSA PORTA PARAMETRI / POST","qta":16,"articolo":"Autoprotezione + 2 Ghiaccio +  Metallina + Traversa"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":3,"articolo":"Maschera O2 con reservoir + Maschera O2 + Occhialini O2"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":11,"articolo":"Termometro timpanico con membrane"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":1,"articolo":"Prova Pressione Manuale"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":1,"articolo":"SpO2 Funzionamento e Carica"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":1,"articolo":"Cardioline + cell + 30 elettrodi + Alimentatore + Rasoio + 2 bat AAA"},{"zona":"BORSA PORTA PARAMETRI / LATO","qta":3,"articolo":"DTX + 5 aghetti + 10 strisce"},{"zona":"BORSA PORTA PARAMETRI / LATO","qta":1,"articolo":"Contenitore taglienti 0.35"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":14,"articolo":"Garze Sterili 2M + 2P + 10 Non"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":3,"articolo":"Cerotto a Nastro + 2 Bende Selfix"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":1,"articolo":"Telo sterile"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":2,"articolo":"Fisio da 250 ml + Disinfettante"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":3,"articolo":"Laccio emo + Tourniquet + Forbice"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":1,"articolo":"Bombola O2"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":1,"articolo":"Maschera con reservoir"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":1,"articolo":"Pallone Ambu AD completo"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":4,"articolo":"Maschere Ambu AD # 3-4-5 + siringa"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":3,"articolo":"Canule Mayo Guedel # 80-90-100"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":1,"articolo":"Filtro"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":8,"articolo":"2 X Sondini # 12-14-16-20"},{"zona":"ZAINO RIANIMAZIONE / ROSSA","qta":1,"articolo":"Batteria scorta DAE"},{"zona":"ZAINO RIANIMAZIONE / ROSSA","qta":2,"articolo":"Traversa + Metallina"},{"zona":"ZAINO RIANIMAZIONE / ROSSA","qta":2,"articolo":"Telo Portaferiti + Forbice Robin"},{"zona":"ZAINO PEDIATRICO / TRAUMA","qta":4,"articolo":"2 Fermacapo PED + 2 Laccetti"},{"zona":"ZAINO PEDIATRICO / TRAUMA","qta":2,"articolo":"Collare cervicale PED mis 0 - 1"},{"zona":"ZAINO PEDIATRICO / TRAUMA","qta":1,"articolo":"Cinghia Ragno PED"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":1,"articolo":"Pallone Ambu NEONATALE completo"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":1,"articolo":"Pallone Ambu PED completo"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":5,"articolo":"Maschere Ambu PED # 0-1-2-3 + siringa"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":3,"articolo":"Canule Mayo Guedel # 40+50+60 + abbassalingua"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":2,"articolo":"Maschera PED con reservoir + Maschera PED O2"},{"zona":"ZAINO PEDIATRICO / PARAMETRI","qta":1,"articolo":"Bracciale PED per prova pressione elettrico"},{"zona":"ZAINO PEDIATRICO / PARAMETRI","qta":1,"articolo":"Prova Pressione Manuale PED"},{"zona":"ZAINO PEDIATRICO / PARAMETRI","qta":1,"articolo":"Sonda SpO2 Neonatale"},{"zona":"ZAINO PEDIATRICO / PARAMETRI","qta":1,"articolo":"Sonda SpO2 Pediatrica"},{"zona":"LATO SINISTRO / GAVONE","qta":1,"articolo":"Pompa per materassino"},{"zona":"LATO SINISTRO / GAVONE","qta":1,"articolo":"Materasso a depressione + Valvola"},{"zona":"LATO SINISTRO / ALTO SX","qta":10,"articolo":"2 X ragno + 4 X Fermacapi + 4 X Laccetti"},{"zona":"LATO SINISTRO / ALTO SX","qta":4,"articolo":"Collare cervicale small/medium/tall/neckless"},{"zona":"LATO SINISTRO / ALTO SX","qta":1,"articolo":"Cinghie cucchiaio"},{"zona":"LATO SINISTRO / ALTO SX","qta":10,"articolo":"Traverse"},{"zona":"LATO SINISTRO / ALTO SX","qta":2,"articolo":"Pannolone AD"},{"zona":"LATO SINISTRO / ALTO SX","qta":1,"articolo":"Sacco vomito confezione"},{"zona":"LATO SINISTRO / ALTO SX","qta":2,"articolo":"Fisiologica + Disinfettante"},{"zona":"LATO SINISTRO / ALTO SX","qta":3,"articolo":"2 Cerotti a nastro + Benda triangolare"},{"zona":"LATO SINISTRO / ALTO SX","qta":5,"articolo":"Disinfettanti Monodose"},{"zona":"LATO SINISTRO / ALTO SX","qta":3,"articolo":"Bende Selfix"},{"zona":"LATO SINISTRO / ALTO SX","qta":1,"articolo":"Cerotti varie misure"},{"zona":"LATO SINISTRO / ALTO SX","qta":4,"articolo":"2 Lacci emo + Fascia emo + Tourniquet"},{"zona":"LATO SINISTRO / ALTO SX","qta":8,"articolo":"Garze sterili 2M + 6P"},{"zona":"LATO SINISTRO / ALTO SX","qta":10,"articolo":"Garze non sterili"},{"zona":"LATO SINISTRO / ALTO SX","qta":3,"articolo":"Telo sterile"},{"zona":"LATO SINISTRO / ALTO SX","qta":5,"articolo":"Ghiaccio"},{"zona":"LATO SINISTRO / ALTO SX","qta":2,"articolo":"Metalline"},{"zona":"LATO SINISTRO / BASSO SX","qta":5,"articolo":"Coperta antifiamma + Cavo traino + 3 Paia guanti lavoro"},{"zona":"LATO SINISTRO / BASSO SX","qta":1,"articolo":"Cestello flebo"},{"zona":"LATO SINISTRO / BASSO SX","qta":30,"articolo":"6 Tute + 6 Chirurgiche + 6 FFP2 + 3 FFP3 + 3 cuffie + 3 occhiali + 3 Copriscarpe"},{"zona":"LATO SINISTRO / 1° CASS","qta":2,"articolo":"Termometro digitale ed infrarossi"},{"zona":"LATO SINISTRO / 1° CASS","qta":2,"articolo":"Prova pressione manuale + digitale"},{"zona":"LATO SINISTRO / 1° CASS","qta":1,"articolo":"SpO2 Funzionamento e Carica"},{"zona":"LATO SINISTRO / 2°","qta":4,"articolo":"Maschera O2 con reservoir + 2 Maschera O2 +  Occhialini O2"},{"zona":"LATO SINISTRO / 2°","qta":12,"articolo":"10 Aghi per DTX + Fasce scorta + Garzine + 2 Pile"},{"zona":"LATO SINISTRO / 2°","qta":5,"articolo":"Forbice punte smusse + Robin + Bottonuta + 2 Pinze Klemmer"},{"zona":"LATO SINISTRO / 3°","qta":5,"articolo":"Sacchetti Immondizia"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":7,"articolo":"Kit con 5 Lenzuola monouso + 2 Federe monouso"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Kit Parto"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Coperta"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":2,"articolo":"Cuscino con federa monouso"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":5,"articolo":"Set completo steccobende"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Pedi-mate"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":2,"articolo":"Pappagallo + Padella monouso"},{"zona":"LIVELLI BOMBOLE","qta":1,"articolo":"Bombola 2l Zaino atm"},{"zona":"LIVELLI BOMBOLE","qta":1,"articolo":"Bombola 2l Vano atm"},{"zona":"LIVELLI BOMBOLE","qta":1,"articolo":"Bombola 2l Vano atm"},{"zona":"LIVELLI BOMBOLE","qta":1,"articolo":"Bombola 7l Vano atm"},{"zona":"LIVELLI BOMBOLE","qta":1,"articolo":"Bombola 7l Vano atm"},{"zona":"LATO DESTRO / PENSILE","qta":1,"articolo":"Pallone Ambu AD completo"},{"zona":"LATO DESTRO / PENSILE","qta":3,"articolo":"Maschere Ambu AD # 3-4-5 + siringa"},{"zona":"LATO DESTRO / PENSILE","qta":3,"articolo":"Canule Mayo Guedel # 80-90-100"},{"zona":"LATO DESTRO / PENSILE","qta":2,"articolo":"Set piastre DAE AD + Scheda SD scorta"},{"zona":"LATO DESTRO / PENSILE","qta":1,"articolo":"Busta elettrodi di scorta"},{"zona":"LATO DESTRO / PENSILE","qta":1,"articolo":"Pocket mask"},{"zona":"LATO DESTRO / PENSILE","qta":4,"articolo":"2 X Sacchetto monouso + 2x Tubo per aspiratore con valvola"},{"zona":"LATO DESTRO / PENSILE","qta":4,"articolo":"Sondini # 12-14-16-20"},{"zona":"LATO DESTRO / PENSILE","qta":2,"articolo":"Cavo alimentatore aspiratore"},{"zona":"LATO DESTRO / ZAINO DAE","qta":1,"articolo":"DAE + Verifica Funzionamento"},{"zona":"LATO DESTRO / ZAINO DAE","qta":2,"articolo":"Telo + Rasoio"},{"zona":"LATO DESTRO / ZAINO DAE","qta":1,"articolo":"Set piastre PED + scadenza"},{"zona":"LATO DESTRO / ZAINO DAE","qta":1,"articolo":"Set piastre AD + scadenza"},{"zona":"LATO DESTRO / PANCA","qta":3,"articolo":"Alcool + Liquido Biologico + Scottex"},{"zona":"LATO DESTRO / PANCA","qta":4,"articolo":"3 Steccobende a depressione + pompa"},{"zona":"LATO DESTRO / PANCA","qta":1,"articolo":"Ked"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Contenitore rifiuti taglienti"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":5,"articolo":"Maschere chirurgiche"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Liquido lavamani"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Guanti monouso XL"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Supporti porta flebo"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Estintore"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Sedia cardiopatica"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Spinale AD"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Barella Cucchiaio"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":4,"articolo":"Caschi protettivi"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Spinale PED"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Barella + Telo portaferiti"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Coperta"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":3,"articolo":"Guanti monouso: S/M/L"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Bombole O2 7L"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Bombole O2 2L"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Prese 12V"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Prese 220V"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Imp. O2 con 2 prese"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Aereazione (Immissione ed Emissione)"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":4,"articolo":"Aspiratore Portatile + sacchetto + tubo con valvola + funzionamento con e senza caricatore"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":3,"articolo":"Aspiratore Fisso + sacchetto + funzionamento"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Climatizzazione"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Riscaldamento"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Inverter"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Luci interne"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / PULIZIA","qta":1,"articolo":"Pulizia mezzo interno"}],"targa":"GG107BB","documenti":[{"titolo":"Controllo documenti","voci":["Tessera carburante","Libretto","Assicurazione (annuale scadenza 31/12/2026)","Revisione (annuale scadenza 31/07/2027)","Tagliando (annuale scadenza 31/10/2026)","Modello 75 (iop 43 A/B)","Modello 127","Check-list","Atto autorizzativo del mezzo","Scheda matricole","Scheda manifestazioni","Tariffario programmate","Protocollo Maxiemergenza","Relazioni di soccorso (almeno 10)","Scheda tecnica caschi protettivi","IOP 17 + DOC 37 + MOD 74A","DATA","FIRMA"]},{"titolo":"Controllo vano guida","voci":["Estintore","Lampada portatile funzionamento e carica","Gilet catarinfrangente e triangolo","Crick","Controllo radio e volume","Controllo cellulare AUT volume e login","Controllo cellulare CS volume e login","Alipak","Body cam con calamita e cavo di ricarica","Catene da neve","Kit maxiemergenza","Stato pulizia mezzo esterno"]}]},"crafter007":{"nome":"Crafter 007","titolo":"CHECK LIST VW CRAFTER - VOLSEL 007","zone":["BORSA PORTA PARAMETRI / ESTERNO","BORSA PORTA PARAMETRI / POST","BORSA PORTA PARAMETRI / CENTRALE","BORSA PORTA PARAMETRI / LATO","BORSA PORTA PARAMETRI / MEDICAZIONE","ZAINO RIANIMAZIONE / INTERNO GRANDE","ZAINO RIANIMAZIONE / ROSSA","ZAINO PEDIATRICO / TRAUMA","ZAINO PEDIATRICO / RIANIMAZIONE","ZAINO PEDIATRICO / PARAMETRI","LATO SINISTRO / GAVONE","LATO SINISTRO / ARMADIETTO","LATO SINISTRO / PENSILE ALTO","LATO SINISTRO / ANTE","LATO SINISTRO / 1° CASS","LATO SINISTRO / 2°","LATO SINISTRO / 3°","LATO SINISTRO / 4°","LATO SINISTRO / CES","PENSILE SOPRA PORTA SCORREVOLE","LATO DESTRO / PENSILE ALTO","LATO DESTRO / ZAINO DAE","VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","VANO SANITARIO E FUNZIONAMENTI / PULIZIA"],"voci":[{"zona":"BORSA PORTA PARAMETRI / ESTERNO","qta":1,"articolo":"Cicalino monossido"},{"zona":"BORSA PORTA PARAMETRI / ESTERNO","qta":1,"articolo":"Cicalino ossigeno"},{"zona":"BORSA PORTA PARAMETRI / POST","qta":16,"articolo":"Autoprotezione + 2 Ghiaccio +  Metallina + Traversa"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":3,"articolo":"Maschera O2 con reservoir + Maschera O2 + Occhialini O2"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":11,"articolo":"Termometro timpanico con membrane"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":1,"articolo":"Prova Pressione Manuale"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":1,"articolo":"SpO2 Funzionamento e Carica"},{"zona":"BORSA PORTA PARAMETRI / CENTRALE","qta":1,"articolo":"Cardioline + cell + 30 elettrodi + Alimentatore + Rasoio + 2 bat AAA"},{"zona":"BORSA PORTA PARAMETRI / LATO","qta":4,"articolo":"DTX + 5 Aghetti + 10 Strisce + Garzine"},{"zona":"BORSA PORTA PARAMETRI / LATO","qta":1,"articolo":"Contenitore taglienti 0.35"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":14,"articolo":"Garze Sterili 2M + 2P + 10 Non"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":3,"articolo":"Cerotto a Nastro + 2 Bende Selfix"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":1,"articolo":"Telo sterile"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":2,"articolo":"Fisio da 250 ml + Disinfettante"},{"zona":"BORSA PORTA PARAMETRI / MEDICAZIONE","qta":3,"articolo":"Laccio emo + Tourniquet + Forbice"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":1,"articolo":"Bombola O2"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":1,"articolo":"Maschera con reservoir"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":1,"articolo":"Pallone Ambu AD completo"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":4,"articolo":"Maschere Ambu AD # 3-4-5       +siringa"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":3,"articolo":"Canule Mayo Guedel # 80-90-100"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":1,"articolo":"Filtro"},{"zona":"ZAINO RIANIMAZIONE / INTERNO GRANDE","qta":8,"articolo":"2 X Sondini # 12-14-16-20"},{"zona":"ZAINO RIANIMAZIONE / ROSSA","qta":1,"articolo":"Batteria scorta DAE"},{"zona":"ZAINO RIANIMAZIONE / ROSSA","qta":2,"articolo":"Traversa + Metallina"},{"zona":"ZAINO RIANIMAZIONE / ROSSA","qta":2,"articolo":"Telo Portaferiti + Forbice Robin"},{"zona":"ZAINO PEDIATRICO / TRAUMA","qta":4,"articolo":"2 Fermacapo PED + 2 Laccetti"},{"zona":"ZAINO PEDIATRICO / TRAUMA","qta":2,"articolo":"Collare cervicale PED mis 0 - 1"},{"zona":"ZAINO PEDIATRICO / TRAUMA","qta":1,"articolo":"Cinghia Ragno PED"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":1,"articolo":"Pallone Ambu NEONATALE completo"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":1,"articolo":"Pallone Ambu PED completo"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":5,"articolo":"Maschere Ambu PED # 0-1-2-3 + siringa"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":3,"articolo":"Canule Mayo Guedel # 40+50+60 + abbassalingua"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":2,"articolo":"Maschera O2 PED con reservoir + Maschera PED O2"},{"zona":"ZAINO PEDIATRICO / PARAMETRI","qta":1,"articolo":"Bracciale PED per prova pressione elettrico"},{"zona":"ZAINO PEDIATRICO / PARAMETRI","qta":1,"articolo":"Prova Pressione Manuale PED + NEONATALE"},{"zona":"ZAINO PEDIATRICO / PARAMETRI","qta":1,"articolo":"Sonda SpO2 Neonatale"},{"zona":"ZAINO PEDIATRICO / PARAMETRI","qta":1,"articolo":"Sonda SpO2 Pediatrica"},{"zona":"LATO SINISTRO / GAVONE","qta":1,"articolo":"Pompa per materassino"},{"zona":"LATO SINISTRO / GAVONE","qta":1,"articolo":"Materasso a depressione + Valvola"},{"zona":"LATO SINISTRO / GAVONE","qta":1,"articolo":"Spinale AD"},{"zona":"LATO SINISTRO / ARMADIETTO","qta":1,"articolo":"Ked"},{"zona":"LATO SINISTRO / ARMADIETTO","qta":3,"articolo":"2 Steccobende a depressione + pompa"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":8,"articolo":"4 X Fermacapi + 4 X Laccetti"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":2,"articolo":"Ragno"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":4,"articolo":"Collare cervicale small/medium/tall/neckless"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":1,"articolo":"Chinghie cucchiaio"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":5,"articolo":"Sacco vomito confezione + 2 traverse"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":2,"articolo":"Metalline"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":5,"articolo":"Ghiaccio"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":2,"articolo":"Fisiologica 250 ml + Disinfettante"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":5,"articolo":"Disinfettanti Monodose"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":3,"articolo":"Bende Selfix"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":3,"articolo":"2 Cerotti a nastro + Benda triangolare"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":1,"articolo":"Cerotti varie misure"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":4,"articolo":"2 Lacci emo + Fascia emo + Tourniquet"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":8,"articolo":"Garze sterili 2M + 6P"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":10,"articolo":"Garze non sterili"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":3,"articolo":"Telo Sterile"},{"zona":"LATO SINISTRO / ANTE","qta":30,"articolo":"6 Tute + 6 Chirurgiche + 6 FFP2 + 3 FFP3 + 3 cuffie + 3 occhiali + 3 copriscarpe"},{"zona":"LATO SINISTRO / ANTE","qta":2,"articolo":"Pannolone AD"},{"zona":"LATO SINISTRO / ANTE","qta":8,"articolo":"Traverse"},{"zona":"LATO SINISTRO / 1° CASS","qta":2,"articolo":"Termometro digitale ed infrarossi"},{"zona":"LATO SINISTRO / 1° CASS","qta":2,"articolo":"Prova pressione manuale + digitale"},{"zona":"LATO SINISTRO / 1° CASS","qta":1,"articolo":"SpO2 Funzionamento e Carica"},{"zona":"LATO SINISTRO / 2°","qta":4,"articolo":"Maschera O2 con reservoir + 2 Maschera O2 +  Occhialini O2"},{"zona":"LATO SINISTRO / 2°","qta":4,"articolo":"10 Aghi per DTX + Fasce scorta + Garzine + 2 Pile"},{"zona":"LATO SINISTRO / 3°","qta":5,"articolo":"Forbice punte smusse + Robin + Bottonuta + 2 Pinze Klemmer"},{"zona":"LATO SINISTRO / 4°","qta":7,"articolo":"2x Cestello flebo + Coperta antifiamma + Cavo traino + 3 Paia guanti lavoro"},{"zona":"LATO SINISTRO / CES","qta":5,"articolo":"Sacchetti Immondizia"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":7,"articolo":"Kit con 5 Lenzuola monouso + 2 Federe monouso"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":5,"articolo":"Set completo steccobende"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":2,"articolo":"Cuscino con federa monouso"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":2,"articolo":"Scoop + Pedi-mate"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Coperta"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Kit Parto"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":2,"articolo":"Pappagallo + Padella monouso"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Bombola 2lt Zaino atm"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Bombola 2lt Vano atm"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Bombola 2lt Vano atm"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Bombola 7lt Vano atm"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Bombola 7lt Vano atm"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":1,"articolo":"Pallone Ambu AD completo"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":3,"articolo":"Maschere Ambu AD # 3-4-5 + siringa"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":3,"articolo":"Canule Mayo Guedel # 80-90-100"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":1,"articolo":"Pocket mask"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":1,"articolo":"Busta elettrodi di scorta"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":1,"articolo":"Set piastre DAE AD"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":4,"articolo":"2 X Sacchetto monouso + 2x Tubo per aspiratore con valvola"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":4,"articolo":"Sondini # 12-14-16-20"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":2,"articolo":"Cavo alimentatore aspiratore"},{"zona":"LATO DESTRO / ZAINO DAE","qta":1,"articolo":"DAE + Verifica Funzionamento"},{"zona":"LATO DESTRO / ZAINO DAE","qta":2,"articolo":"Telo + Rasoio"},{"zona":"LATO DESTRO / ZAINO DAE","qta":1,"articolo":"Chiavetta Riduttore PED"},{"zona":"LATO DESTRO / ZAINO DAE","qta":1,"articolo":"Set piastre AD + Controllo scadenza"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Contenitore rifiuti taglienti"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":5,"articolo":"Maschere chirurgiche"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Liquido lavamani"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Guanti monouso XL"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Supporti porta flebo"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Estintore"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Sedia cardiopatica"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Barella Cucchiaio"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Barella + Telo portaferiti"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Spinale PED"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Coperta"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":3,"articolo":"Guanti monouso: S/M/L"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Bombole O2 7L"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Bombole O2 2L"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":3,"articolo":"Alcool + Liquido Biologico      +Scottex"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Prese 12V + USB-c"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Prese 220V"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Imp. O2 con 2 prese"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Aereazione (Immissione ed Emissione)"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":3,"articolo":"Aspiratore Portatile + sacchetto + tubo con valvola + funzionamento con e senza caricatore"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":3,"articolo":"Aspiratore Fisso + sacchetto + funzionamento"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Climatizzazione"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Riscaldamento"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Inverter"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Imp. Flussimetro"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Luci interne"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / PULIZIA","qta":1,"articolo":"Pulizia mezzo interno"}],"targa":"HA765XA","documenti":[{"titolo":"Controllo documenti","voci":["Tessera carburante","Libretto","Assicurazione (scadenza 31/12/2026)","Revisione","Tagliando (scadenza annuale 20/12/26)","Modello 75 (iop 43 A/B)","Modello 127","Check-list","Atto autorizzativo del mezzo","Scheda matricole","Tariffario programmate","Protocollo Maxiemergenza","Relazioni di soccorso (almeno 10)","Scheda tecnica caschi protettivi","IOP 17 + DOC 37 + MOD 74A","DATA","FIRMA"]},{"titolo":"Controllo vano guida","voci":["Caschi protettivi (3)","Lampada portatile funzionamento e carica","Gilet catarinfrangente e triangolo","Crick","Controllo radio e volume","Controllo cellulare AUT volume e login","Controllo cellulare CS volume e login","Alipak","Body cam con calamita e cavo di ricarica","Catene da neve","Estintore","Kit maxiemergenza","Stato pulizia mezzo esterno"]}]},"ducato":{"nome":"Ducato","titolo":"CHECK LIST FIAT DUCATO - VOLSEL J00","zone":["ZAINO ADULTO / ESTERNO","ZAINO ADULTO / TAS SUPERIORE","ZAINO ADULTO / TAS INFERIORE","ZAINO ADULTO / GRANDE","ZAINO PEDIATRICO / TASCHE ESTERNE","ZAINO PEDIATRICO / RIANIMAZIONE","ZAINO DAE","LIVELLI BOMBOLE E IMPIANTO","LATO SINISTRO / GAVONE","LATO SINISTRO / PENSILE ALTO","LATO SINISTRO / MENSOLA","LATO SINISTRO / 1° CASSETTO","LATO SINISTRO / 2°","LATO SINISTRO / 3°","LATO SINISTRO / BASSO","PENSILE SOPRA PORTA SCORREVOLE","LATO DESTRO / GAVONE SOPRA","LATO DESTRO / SOTTO","LATO DESTRO / PENSILE ALTO","VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","VANO SANITARIO E FUNZIONAMENTI / PULIZIA"],"voci":[{"zona":"ZAINO ADULTO / ESTERNO","qta":1,"articolo":"Cicalino monossido"},{"zona":"ZAINO ADULTO / TAS SUPERIORE","qta":3,"articolo":"Mascherine Chirurgiche"},{"zona":"ZAINO ADULTO / TAS SUPERIORE","qta":1,"articolo":"Termometro a infrarossi"},{"zona":"ZAINO ADULTO / TAS SUPERIORE","qta":1,"articolo":"Prova Pressione Manuale"},{"zona":"ZAINO ADULTO / TAS SUPERIORE","qta":1,"articolo":"SpO2 Funzionamento e Carica"},{"zona":"ZAINO ADULTO / TAS INFERIORE","qta":1,"articolo":"Forbice bottonuta"},{"zona":"ZAINO ADULTO / TAS INFERIORE","qta":2,"articolo":"Cerotti a nastro 2,5cm"},{"zona":"ZAINO ADULTO / TAS INFERIORE","qta":1,"articolo":"Laccio emostatico"},{"zona":"ZAINO ADULTO / TAS INFERIORE","qta":2,"articolo":"Benda selfix"},{"zona":"ZAINO ADULTO / TAS INFERIORE","qta":9,"articolo":"Garze Sterili 2M + 2P + 5 Non"},{"zona":"ZAINO ADULTO / TAS INFERIORE","qta":1,"articolo":"Telo sterile"},{"zona":"ZAINO ADULTO / TAS INFERIORE","qta":1,"articolo":"Fisiologica 250 ml"},{"zona":"ZAINO ADULTO / TAS INFERIORE","qta":1,"articolo":"Disinfettante"},{"zona":"ZAINO ADULTO / GRANDE","qta":1,"articolo":"Forbice Robin"},{"zona":"ZAINO ADULTO / GRANDE","qta":1,"articolo":"Traversa"},{"zona":"ZAINO ADULTO / GRANDE","qta":2,"articolo":"Ghiaccio"},{"zona":"ZAINO ADULTO / GRANDE","qta":2,"articolo":"Metallina"},{"zona":"ZAINO ADULTO / GRANDE","qta":1,"articolo":"Telo portaferiti"},{"zona":"ZAINO ADULTO / GRANDE","qta":1,"articolo":"Pallone Ambu AD completo"},{"zona":"ZAINO ADULTO / GRANDE","qta":4,"articolo":"2x Maschere O2 adulto reservoir + Maschera O2 + Occhialini O2"},{"zona":"ZAINO ADULTO / GRANDE","qta":1,"articolo":"Filtro"},{"zona":"ZAINO ADULTO / GRANDE","qta":4,"articolo":"Mschere Ambu AD # 3-4-5 + siringa"},{"zona":"ZAINO ADULTO / GRANDE","qta":4,"articolo":"Sondini # 12-14-16-20"},{"zona":"ZAINO ADULTO / GRANDE","qta":3,"articolo":"Cannule # 80-90-100"},{"zona":"ZAINO ADULTO / GRANDE","qta":1,"articolo":"Bombola O2 2l (50 atm)"},{"zona":"ZAINO PEDIATRICO / TASCHE ESTERNE","qta":1,"articolo":"Sonda SpO2 Pediatrica"},{"zona":"ZAINO PEDIATRICO / TASCHE ESTERNE","qta":1,"articolo":"Prova pressione manuale pediatrico"},{"zona":"ZAINO PEDIATRICO / TASCHE ESTERNE","qta":1,"articolo":"Bracciale PED per prova pressione elettrico"},{"zona":"ZAINO PEDIATRICO / TASCHE ESTERNE","qta":2,"articolo":"Maschera PED O2 con reservoir + Maschera PED O2"},{"zona":"ZAINO PEDIATRICO / TASCHE ESTERNE","qta":1,"articolo":"Set piastre PED"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":1,"articolo":"Pallone Ambu PED completo"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":5,"articolo":"Maschere Ambu PED # 0-1-2-3 + siringa"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":3,"articolo":"Canule Mayo Guedel # 40+50+60 + abbassalingua"},{"zona":"ZAINO PEDIATRICO / RIANIMAZIONE","qta":1,"articolo":"Pallone Ambu NEONATALE completo"},{"zona":"ZAINO DAE","qta":1,"articolo":"Set piastre AD + Controllo scadenza"},{"zona":"ZAINO DAE","qta":1,"articolo":"DAE + verifica funzionamento"},{"zona":"ZAINO DAE","qta":1,"articolo":"Telo + rasoio"},{"zona":"LIVELLI BOMBOLE E IMPIANTO","qta":1,"articolo":"Bombola 2lt Zaino atm"},{"zona":"LIVELLI BOMBOLE E IMPIANTO","qta":1,"articolo":"Bombola 2l Vano atm"},{"zona":"LIVELLI BOMBOLE E IMPIANTO","qta":1,"articolo":"Bombola 2lt Vano atm"},{"zona":"LIVELLI BOMBOLE E IMPIANTO","qta":1,"articolo":"Bombola 7lt Vano atm"},{"zona":"LIVELLI BOMBOLE E IMPIANTO","qta":1,"articolo":"Bombola 7lt Vano atm"},{"zona":"LATO SINISTRO / GAVONE","qta":1,"articolo":"Pompa per materassino"},{"zona":"LATO SINISTRO / GAVONE","qta":1,"articolo":"Materasso a depressione + Valvola"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":1,"articolo":"Pallone Ambu AD completo"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":3,"articolo":"Maschere Ambu AD # 3-4-5"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":3,"articolo":"Canule Mayo Guedel # 80-90-100"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":1,"articolo":"Pocket mask"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":8,"articolo":"Traverse"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":2,"articolo":"Pannolone AD"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":1,"articolo":"Sacchi vomito confezione"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":6,"articolo":"Tute monouso"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":1,"articolo":"Set piastre DAE AD"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":5,"articolo":"Cavo aspiratore + Shuko + Busta elettrodi"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":4,"articolo":"Sondini # 12-14-16-20"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":2,"articolo":"Sacchetto monouso + Tubo per aspiratore con valvola"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":1,"articolo":"Scottex"},{"zona":"LATO SINISTRO / PENSILE ALTO","qta":2,"articolo":"Alcool + Liquido biologico"},{"zona":"LATO SINISTRO / MENSOLA","qta":6,"articolo":"Mascherine chirurgiche"},{"zona":"LATO SINISTRO / MENSOLA","qta":1,"articolo":"Liquido lavamani"},{"zona":"LATO SINISTRO / MENSOLA","qta":1,"articolo":"Cellulare GAMES + VOLUME"},{"zona":"LATO SINISTRO / MENSOLA","qta":1,"articolo":"Guanti XL"},{"zona":"LATO SINISTRO / MENSOLA","qta":1,"articolo":"Tariffario programmate"},{"zona":"LATO SINISTRO / MENSOLA","qta":1,"articolo":"Protocollo ossigeno"},{"zona":"LATO SINISTRO / 1° CASSETTO","qta":2,"articolo":"Termometro digitale ed infrarossi"},{"zona":"LATO SINISTRO / 1° CASSETTO","qta":2,"articolo":"Prova pressione manuale + digitale"},{"zona":"LATO SINISTRO / 1° CASSETTO","qta":1,"articolo":"SpO2 Funzionamento e Carica"},{"zona":"LATO SINISTRO / 2°","qta":4,"articolo":"Maschera con reservoir + 2 Maschera O2 +  Occhialini O2"},{"zona":"LATO SINISTRO / 2°","qta":4,"articolo":"DTX + 10 Aghi + Fasce + Garzine"},{"zona":"LATO SINISTRO / 2°","qta":5,"articolo":"Forbice punte smusse + Robin + Bottonuta + 2 Pinze Klemmer"},{"zona":"LATO SINISTRO / 3°","qta":5,"articolo":"Sacchetti Immondizia"},{"zona":"LATO SINISTRO / BASSO","qta":3,"articolo":"Paia guanti da lavoro"},{"zona":"LATO SINISTRO / BASSO","qta":1,"articolo":"Kit scasso"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":7,"articolo":"Kit con 5 Lenzuola monouso + 2 Federe monouso"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":2,"articolo":"Cuscino con federa monouso"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Pedi-mate + adattatore cinture"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":10,"articolo":"2X ragno + 4X Fermacapi + 4X Laccetti"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"sgabello"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":3,"articolo":"Cinghie cucchiao"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":1,"articolo":"Kit parto"},{"zona":"PENSILE SOPRA PORTA SCORREVOLE","qta":2,"articolo":"Pappagallo + Padella monouso"},{"zona":"LATO DESTRO / GAVONE SOPRA","qta":1,"articolo":"Set completo Steccobende"},{"zona":"LATO DESTRO / GAVONE SOPRA","qta":1,"articolo":"KED"},{"zona":"LATO DESTRO / GAVONE SOPRA","qta":4,"articolo":"2 Fermacapo PED + 2 Laccetti"},{"zona":"LATO DESTRO / GAVONE SOPRA","qta":1,"articolo":"Collare cervicale PED mis 0 - 1"},{"zona":"LATO DESTRO / GAVONE SOPRA","qta":1,"articolo":"Cinghia Ragno PED"},{"zona":"LATO DESTRO / SOTTO","qta":2,"articolo":"Bombola O2 2l (50 atm)"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":2,"articolo":"Fisiologica 250 ml + Disinfettante"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":5,"articolo":"Disinfettanti monodose"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":4,"articolo":"Bende selfix"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":1,"articolo":"Benda triangolare"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":28,"articolo":"Garze sterili 2M + 6P + 20 non"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":1,"articolo":"Cerotti varie misure"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":3,"articolo":"Telo sterile"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":2,"articolo":"Cerotti a nastro 2,5cm"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":2,"articolo":"Fascia emo + Laccio emo"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":2,"articolo":"Metallina"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":5,"articolo":"Ghiaccio"},{"zona":"LATO DESTRO / PENSILE ALTO","qta":24,"articolo":"6 Chirurgiche + 6 FFP2 + 3 FFP3 + 3 cuffie + 3 occhiali + 3 copriscarpe"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Barella + Telo Portaferiti"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Spinale AD"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Barella cucchiaio"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Cardiopatica"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Estintore"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Coperta"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":3,"articolo":"Collare cervicale piccolo/medio/grande"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":3,"articolo":"Guanti monouso: S/M/L"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":1,"articolo":"Spinale PED"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Supporti porta flebo"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":3,"articolo":"Caschi protettivi"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / VANO SANITARIO","qta":2,"articolo":"Bombola O2 7l (150 atm)"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Prese 12V"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Prese 220W"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Imp. O2 con 2 prese"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Aereazione (Immisione + Emissione)"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":3,"articolo":"Aspiratore Portatile + Sacchetto + Tubo con valvola + Funz con e senza caricatore"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Aspiratore Fisso con sacchetto monouso"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Climatizzazione"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Riscaldamento"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Funzione Inverter"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":2,"articolo":"Funzione Imp. Flussimetro"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / IMPIANTI","qta":1,"articolo":"Luci interne"},{"zona":"VANO SANITARIO E FUNZIONAMENTI / PULIZIA","qta":1,"articolo":"Pulizia mezzo interno"}],"targa":"FH827CZ","documenti":[{"titolo":"Controllo documenti","voci":["Tessera carburante","Libretto","Assicurazione (annuale scadenza 31/12/2026)","Revisione (annuale scadenza 31/07/2026)","Tagliando (annuale scadenza 31/10/2026)","Modello 75 (iop 43 A/B)","Modello 127","Check-list","Atto autorizzativo del mezzo","Scheda manifestazioni","Scheda matricole","Tariffario programmate","Relazioni di soccorso (almeno 10)","Scheda tecnica caschi protettivi","DATA","FIRMA"]},{"titolo":"Controllo vano guida","voci":["Estintore","Lampada portatile funzionamento e carica","Gilet catarinfrangente e triangolo","Crick","Controllo cellulare GAMES","Catene da neve","Alipak","Stato pulizia mezzo esterno"]}]}}</script>
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     CONFIGURAZIONE
+     ============================================================ */
+
+  /* URL della web app Apps Script (.../exec).
+     Vuoto = la pagina non invia niente e resta una simulazione. */
+  var ENDPOINT = "";
+
+  /* Fascia "modulo in prova". Indipendente da ENDPOINT: con entrambi
+     attivi le check list vengono salvate davvero, ma in una cartella
+     di prova e marcate come tali. */
+  var MODO_PROVA = true;
+
+  var VERSIONE = "2026-09-v1";
+
+  /* ============================================================ */
+
+  var $  = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  var DATI = JSON.parse($("#dati-checklist").textContent);
+
+  var mezzo = null;          /* chiave del mezzo scelto */
+  var lista = [];            /* voci del mezzo, con stato */
+  var zone  = [];            /* nomi zona, in ordine */
+  var passo = 1;
+
+  function oggiISO() {
+    var d = new Date(), m = d.getMonth() + 1, g = d.getDate();
+    return d.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (g < 10 ? "0" : "") + g;
+  }
+  function itData(iso) {
+    var p = String(iso || "").split("-");
+    return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : iso;
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  $("#data").value = oggiISO();
+  $("#oggiTxt").textContent = itData(oggiISO());
+
+  if (MODO_PROVA) {
+    $("#avvisoProva").hidden = false;
+    $("#avvisoTxt").innerHTML = ENDPOINT
+      ? "Le check list compilate <b>vengono salvate</b> in una cartella di prova, separata dall’archivio vero."
+      : "La pagina non è ancora collegata al Drive: <em>non salva nulla</em>. Serve per provare il modulo.";
+  }
+
+  /* ---------- scelta del mezzo ---------- */
+
+  var chiaviMezzi = Object.keys(DATI).filter(function (k) { return DATI[k].nome; });
+  $("#mezzi").innerHTML = chiaviMezzi.map(function (k) {
+    var m = DATI[k];
+    var n = (m.voci || []).length + contaDoc(m);
+    return '<button type="button" class="mezzo" data-m="' + k + '">' +
+           '<span><span class="n">' + esc(m.nome) + '</span><br>' +
+           '<span class="t">' + esc(m.targa || "") + '</span></span>' +
+           '<span class="c">' + n + ' controlli</span></button>';
+  }).join("");
+
+  function contaDoc(m) {
+    return (m.documenti || []).reduce(function (a, s) { return a + s.voci.length; }, 0);
+  }
+
+  $$(".mezzo").forEach(function (b) {
+    b.addEventListener("click", function () {
+      $$(".mezzo").forEach(function (x) { x.classList.remove("sel"); });
+      b.classList.add("sel");
+      mezzo = b.dataset.m;
+      pulisciStato();
+    });
+  });
+
+  /* ---------- costruzione della check list ---------- */
+
+  function preparaLista() {
+    var m = DATI[mezzo];
+    lista = [];
+    /* prima i documenti e il vano guida: si controllano davanti, salendo */
+    (m.documenti || []).forEach(function (s) {
+      s.voci.forEach(function (v) {
+        lista.push({ zona: s.titolo, qta: null, nome: v, stato: null, nota: "" });
+      });
+    });
+    (m.voci || []).forEach(function (v) {
+      lista.push({ zona: v.zona, qta: v.qta, nome: v.articolo, stato: null, nota: "" });
+    });
+    zone = [];
+    lista.forEach(function (v) { if (zone.indexOf(v.zona) < 0) zone.push(v.zona); });
+    $("#zTot").textContent = zone.length;
+  }
+
+  function disegnaZone() {
+    $("#zone").innerHTML = zone.map(function (z, iz) {
+      var voci = lista.filter(function (v) { return v.zona === z; });
+      var righe = voci.map(function (v) {
+        var i = lista.indexOf(v);
+        return '<div class="voce" id="voce' + i + '">' +
+          '<span class="voce-q">' + (v.qta == null ? "&middot;" : v.qta) + '</span>' +
+          '<span class="voce-n">' + esc(v.nome) + '</span>' +
+          '<span class="voce-b">' +
+            '<button type="button" class="sb" data-i="' + i + '" data-s="ok">OK</button>' +
+            '<button type="button" class="sb" data-i="' + i + '" data-s="ko">!</button>' +
+          '</span></div>' +
+          '<div class="voce-nota" id="nota' + i + '" hidden>' +
+          '<input type="text" data-nota="' + i + '" placeholder="Cosa manca o cosa non va">' +
+          '</div>';
+      }).join("");
+      return '<div class="zona" id="zona' + iz + '">' +
+        '<button type="button" class="zona-testa" data-z="' + iz + '">' +
+          '<span class="freccia">&#9656;</span>' +
+          '<span class="zona-nome">' + esc(z) + '</span>' +
+          '<span class="zona-stato" id="zs' + iz + '">0/' + voci.length + '</span>' +
+        '</button>' +
+        '<div class="zona-corpo">' +
+          '<button type="button" class="tutto-ok" data-tutto="' + iz + '">' +
+          '&#10003; Tutto presente in questa zona</button>' + righe +
+        '</div></div>';
+    }).join("");
+
+    $$(".zona-testa").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var z = $("#zona" + b.dataset.z);
+        var era = z.classList.contains("aperta");
+        $$(".zona").forEach(function (x) { x.classList.remove("aperta"); });
+        if (!era) z.classList.add("aperta");
+      });
+    });
+    $$("[data-tutto]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var z = zone[+b.dataset.tutto];
+        lista.forEach(function (v, i) {
+          if (v.zona === z) { v.stato = "ok"; v.nota = ""; segnaVoce(i); }
+        });
+        aggiorna();
+        apriProssima(+b.dataset.tutto);
+      });
+    });
+    $$(".sb").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var i = +b.dataset.i;
+        lista[i].stato = b.dataset.s;
+        if (b.dataset.s === "ok") lista[i].nota = "";
+        segnaVoce(i);
+        aggiorna();
+      });
+    });
+    $$("[data-nota]").forEach(function (inp) {
+      inp.addEventListener("input", function () { lista[+inp.dataset.nota].nota = inp.value; });
+    });
+
+    if (zone.length) $("#zona0").classList.add("aperta");
+    aggiorna();
+  }
+
+  function segnaVoce(i) {
+    var v = lista[i];
+    var riga = $("#voce" + i);
+    riga.classList.toggle("ko", v.stato === "ko");
+    $$(".sb", riga).forEach(function (b) {
+      b.classList.toggle("on-ok", v.stato === "ok" && b.dataset.s === "ok");
+      b.classList.toggle("on-ko", v.stato === "ko" && b.dataset.s === "ko");
+    });
+    $("#nota" + i).hidden = v.stato !== "ko";
+  }
+
+  function apriProssima(iz) {
+    for (var i = iz + 1; i < zone.length; i++) {
+      if (!zonaCompleta(zone[i])) {
+        $$(".zona").forEach(function (x) { x.classList.remove("aperta"); });
+        var el = $("#zona" + i);
+        el.classList.add("aperta");
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
+  }
+
+  function zonaCompleta(z) {
+    return lista.filter(function (v) { return v.zona === z; })
+                .every(function (v) { return v.stato; });
+  }
+
+  function aggiorna() {
+    var fatte = 0;
+    zone.forEach(function (z, iz) {
+      var voci = lista.filter(function (v) { return v.zona === z; });
+      var n = voci.filter(function (v) { return v.stato; }).length;
+      var ko = voci.filter(function (v) { return v.stato === "ko"; }).length;
+      var el = $("#zona" + iz);
+      var completa = n === voci.length;
+      if (completa) fatte++;
+      el.classList.toggle("fatta", completa && !ko);
+      el.classList.toggle("problemi", ko > 0);
+      $("#zs" + iz).textContent = ko ? (ko + " da sistemare") : (n + "/" + voci.length);
+    });
+    $("#zFatte").textContent = fatte;
+    $("#barra").style.width = Math.round(fatte / Math.max(1, zone.length) * 100) + "%";
+    var ko = lista.filter(function (v) { return v.stato === "ko"; }).length;
+    $("#contaKo").textContent = ko ? (ko + " da sistemare") : "";
+    $("#contaKo").style.color = ko ? "var(--ko)" : "";
+  }
+
+  /* ---------- riepilogo ---------- */
+
+  function riepiloga() {
+    var m = DATI[mezzo];
+    $("#riepDati").innerHTML =
+      "<dt>Mezzo</dt><dd>" + esc(m.nome) + (m.targa ? " &middot; " + esc(m.targa) : "") + "</dd>" +
+      "<dt>Data</dt><dd>" + itData($("#data").value) + "</dd>" +
+      "<dt>Compilata da</dt><dd>" + esc($("#operatore").value) + "</dd>" +
+      ($("#km").value ? "<dt>Km</dt><dd>" + esc($("#km").value) + "</dd>" : "") +
+      "<dt>Controlli</dt><dd>" + lista.length + "</dd>";
+
+    var ko = lista.filter(function (v) { return v.stato === "ko"; });
+    $("#riepEsiti").innerHTML = ko.length
+      ? '<div class="riq ko"><h3>' + ko.length + ' voci da sistemare</h3><ul class="mancanti">' +
+        ko.map(function (v) {
+          return "<li>" + esc(v.nome) +
+                 (v.nota ? " &ndash; " + esc(v.nota) : "") +
+                 '<br><span class="dove">' + esc(v.zona) + "</span></li>";
+        }).join("") + "</ul></div>"
+      : '<div class="riq ok"><h3>Nessuna mancanza</h3>Tutti i ' + lista.length +
+        " controlli risultano a posto.</div>";
+  }
+
+  /* ---------- navigazione ---------- */
+
+  function mostra(n) {
+    passo = n;
+    $$(".passo").forEach(function (s) { s.classList.toggle("attivo", +s.dataset.passo === n); });
+    $("#btnIndietro").hidden = (n === 1 || n === 4);
+    $("#btnAvanti").textContent = n === 3 ? "Salva la check list" : "Avanti";
+    $("#barraAzioni").hidden = (n === 4);
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); }
+  }
+
+  function errore(id, msg) { var s = $(id); s.textContent = msg; s.className = "stato ko"; }
+  function pulisciStato() { $$(".stato").forEach(function (s) { s.className = "stato"; s.textContent = ""; }); }
+
+  $("#btnIndietro").addEventListener("click", function () { if (passo > 1) mostra(passo - 1); });
+
+  $("#btnAvanti").addEventListener("click", function () {
+    pulisciStato();
+    if (passo === 1) {
+      var ok = true;
+      [["data", "#data"], ["operatore", "#operatore"]].forEach(function (p) {
+        var vuoto = !$(p[1]).value.trim();
+        $(p[1]).closest(".campo").classList.toggle("ko", vuoto);
+        if (vuoto) ok = false;
+      });
+      if (!mezzo) { errore("#stato1", "Scegli il mezzo da controllare."); return; }
+      if (!ok) { errore("#stato1", "Compila data e nome di chi controlla."); return; }
+      preparaLista(); disegnaZone(); mostra(2); return;
+    }
+    if (passo === 2) {
+      var mancano = zone.filter(function (z) { return !zonaCompleta(z); });
+      if (mancano.length) {
+        errore("#stato2", "Mancano " + mancano.length + " zone: " + mancano.slice(0, 3).join(", ") +
+               (mancano.length > 3 ? "…" : ""));
+        var iz = zone.indexOf(mancano[0]);
+        $$(".zona").forEach(function (x) { x.classList.remove("aperta"); });
+        $("#zona" + iz).classList.add("aperta");
+        $("#zona" + iz).scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      riepiloga(); mostra(3); return;
+    }
+    if (passo === 3) salva();
+  });
+
+  /* ---------- salvataggio ---------- */
+
+  var inCorso = false;
+
+  function raccogli() {
+    var m = DATI[mezzo];
+    return {
+      versione: VERSIONE, prova: MODO_PROVA,
+      mezzo: mezzo, mezzoNome: m.nome, targa: m.targa || "",
+      data: $("#data").value, operatore: $("#operatore").value.trim(),
+      km: $("#km").value.trim(), note: $("#note").value.trim(),
+      totale: lista.length,
+      mancanti: lista.filter(function (v) { return v.stato === "ko"; })
+                     .map(function (v) { return { zona: v.zona, voce: v.nome, nota: v.nota }; }),
+      voci: lista.map(function (v) {
+        return { zona: v.zona, qta: v.qta, voce: v.nome, stato: v.stato, nota: v.nota };
+      }),
+      dispositivo: navigator.userAgent
+    };
+  }
+
+  function nomeFile(d) {
+    var p = d.data.split("-");
+    return p[0] + "_" + p[1] + "_" + p[2] + " " + d.mezzoNome + ".pdf";
+  }
+
+  function salva() {
+    if (inCorso) return;
+    var d = raccogli();
+
+    if (!ENDPOINT) {
+      $("#esitoTit").textContent = "Prova completata";
+      $("#esitoFile").textContent = nomeFile(d);
+      $("#esitoNota").textContent =
+        "Modalità prova: non è stato salvato niente. Con l’indirizzo del Drive impostato, " +
+        "il documento verrebbe salvato con questo nome." +
+        (d.mancanti.length ? " " + d.mancanti.length + " voci da sistemare." : "");
+      mostra(4); return;
+    }
+
+    inCorso = true;
+    $("#btnAvanti").disabled = true;
+    var s = $("#stato3"); s.className = "stato lav"; s.textContent = "Salvataggio in corso…";
+
+    var x = new XMLHttpRequest();
+    x.open("POST", ENDPOINT, true);
+    x.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
+    x.timeout = 30000;
+    x.onload = function () {
+      inCorso = false; $("#btnAvanti").disabled = false;
+      var r = null;
+      try { r = JSON.parse(x.responseText); } catch (e) {}
+      if (x.status >= 200 && x.status < 300 && r && r.ok) {
+        $("#esitoFile").textContent = r.file || nomeFile(d);
+        $("#esitoNota").textContent = "Salvata nella cartella del mezzo e annotata nel registro." +
+          (d.mancanti.length ? " " + d.mancanti.length + " voci da sistemare." : "");
+        pulisciStato(); mostra(4);
+      } else {
+        errore("#stato3", (r && r.errore) ? r.errore :
+               "Salvataggio non riuscito. I dati sono ancora qui: riprova.");
+      }
+    };
+    x.onerror = x.ontimeout = function () {
+      inCorso = false; $("#btnAvanti").disabled = false;
+      errore("#stato3", "Connessione assente o troppo lenta. Nulla è andato perso: riprova.");
+    };
+    try { x.send(JSON.stringify(d)); }
+    catch (e) { inCorso = false; $("#btnAvanti").disabled = false; errore("#stato3", "Invio non riuscito."); }
+  }
+
+  mostra(1);
+})();
+</script>
+</body>
+</html>

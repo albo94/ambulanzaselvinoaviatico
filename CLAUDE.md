@@ -16,6 +16,7 @@ Repository: `https://github.com/albo94/ambulanzaselvinoaviatico`
 ├── numeri.html         – Dashboard statistiche pubblica (vedi sezione dedicata)
 ├── quiz60.html         – Pagina nascosta: quiz del 60° AVIS (vedi *Pagine nascoste*)
 ├── sciesopoli/         – Pagina nascosta: modulo di manleva visitatori (vedi *Pagine nascoste*)
+├── checklist/          – Pagina nascosta: check list dei mezzi, uso interno (vedi *Pagine nascoste*)
 ├── sitemap.xml
 ├── robots.txt
 ├── css/style.css       – Unico foglio di stile (tutto il sito)
@@ -221,7 +222,7 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
 
 ## Pagine nascoste (fuori dal menu)
 
-Due pagine del sito **non** sono raggiungibili dalla navigazione, **non** stanno in
+Tre pagine del sito **non** sono raggiungibili dalla navigazione, **non** stanno in
 `sitemap.xml` e portano `<meta name="robots" content="noindex, nofollow, noarchive">`.
 Ci si arriva solo con un link diretto o un QR code.
 
@@ -295,6 +296,34 @@ proprietario è **SciesopoliLab Impresa Sociale**), la nomina a responsabile ex 
 GDPR se l'archivio lo tiene l'ODV, e l'accettazione della firma elettronica semplice.
 Dettagli e clausole da far rivedere a un legale: §2 del piano.
 
+### `checklist/index.html` — check list dei mezzi (uso interno)
+
+Sostituisce la compilazione a mano della check list settimanale. Si sceglie il mezzo e la
+lista si adatta; alla fine il PDF finisce **nella cartella d'archivio che si usa già**, con
+lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro dedicato.
+
+- **Tre mezzi**, dati estratti dagli Excel reali in
+  `DOC per CONTROLLI/CHECKLIST e CONTROLLI AMBULANZA`:
+  Crafter 006 (GG107BB) 151 controlli, Crafter 007 (HA765XA) 151, Ducato (FH827CZ) 147.
+  I dati sono **incorporati nella pagina** come JSON (`<script id=dati-checklist>`): la
+  pagina non dipende da Drive per funzionare. Se cambiano gli Excel vanno rigenerati con
+  `parse_check.py` e `parse_doc.py` in `_materiali/checklist/`.
+- **Si compila per zone**, nell'ordine in cui si gira il mezzo (prima documenti e vano
+  guida, poi zaini, gavoni, vano sanitario). Ogni zona ha «Tutto presente»: 24 tocchi
+  invece di 151, ma **non si può inviare finché ogni zona non è stata guardata** — niente
+  pulsante unico che approva tutto, che sarebbe un timbro.
+- Le **mancanze** vanno in testa al PDF con la zona dove si trovano, perché è la parte che
+  serve leggere subito; l'esito completo delle 151 voci viene dopo.
+- **Il registro è un documento a sé** (`REGISTRO CHECK LIST MEZZI`, creato dal backend nella
+  cartella CHECKLIST): non tocca `SCADENZARIO MEZZI` né gli altri fogli esistenti. Serve a
+  rispondere a «quando è stata rilevata l'ultima volta questa mancanza» senza aprire i PDF
+  uno per uno.
+- Se si ricompila lo stesso giorno il file **non viene sovrascritto**: prende ` (2)`.
+- `ENDPOINT`, `MODO_PROVA` e `VERSIONE` in cima allo script, come in `sciesopoli/`.
+  Con `MODO_PROVA` le check list finiscono in `_PROVE check list/` e in registro con stato
+  `PROVA`; `eliminaProve()` le cancella in blocco.
+- Backend e parser in `_materiali/checklist/` (fuori dal repo pubblicato).
+
 ## SEO
 
 - Canonical, geo meta, Open Graph, Twitter Card su tutte le pagine
@@ -328,7 +357,7 @@ Dettagli e clausole da far rivedere a un legale: §2 del piano.
   come `foto.jpg` funziona in locale e si rompe online
 - Le immagini stanno nella sottocartella della sezione che le usa (vedi *Struttura immagini*),
   non nella radice di `images/`
-- Le pagine nascoste (`quiz60.html`, `sciesopoli/`) non vanno aggiunte a `sitemap.xml`
+- Le pagine nascoste (`quiz60.html`, `sciesopoli/`, `checklist/`) non vanno aggiunte a `sitemap.xml`
   né linkate dal menu; `sciesopoli/` non deve caricare nulla dal resto del sito
 - Date: **1993** è l'associazione, **1968/oltre 55 anni** sono il servizio dei volontari
   (vedi *Dati associazione*) — vale anche in `<title>`, meta description, OG/Twitter e JSON-LD
