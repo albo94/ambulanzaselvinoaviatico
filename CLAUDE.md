@@ -361,6 +361,12 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   **quattro voci su nove non tornavano**, col tagliando del Crafter 007 sfasato di oltre un anno.
   - `_materiali/checklist/scadenze.py` confronta i due e segnala le differenze; con `--scrivi`
     riscrive le date nella pagina e incorpora `scadenze` nei dati del mezzo. Il gestionale fa fede.
+  - ⚠️ **Ordine degli script**: `aggiorna_documenti.py` rilegge le date dal foglio
+    `CONTROLLI OGNI CHECK LIST`, quindi va lanciato **prima** di `scadenze.py`, altrimenti
+    riporta indietro le date già allineate. Al 27/09/2026 quel foglio ha ancora 31/10/2026
+    per i tagliandi di 006 e Ducato, dove il gestionale (e la realtà) dicono 30/10: finché
+    non lo si corregge lì, ogni rigenerazione reintroduce il refuso e `scadenze.py` lo
+    ricorregge.
   - La pagina usa quelle date per mettere un cartellino **«scaduta»** (rosso) o **«fra N giorni»**
     (ambra, sotto i 30) accanto alla voce: una revisione scaduta si deve vedere *prima* di
     uscire, non a cose fatte. Senza `scadenze` nei dati non compare niente e la pagina funziona
