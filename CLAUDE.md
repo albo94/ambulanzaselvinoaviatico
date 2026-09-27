@@ -312,6 +312,28 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   guida, poi zaini, gavoni, vano sanitario). Ogni zona ha «Tutto presente»: 24 tocchi
   invece di 151, ma **non si può inviare finché ogni zona non è stata guardata** — niente
   pulsante unico che approva tutto, che sarebbe un timbro.
+- **Chi compila si sceglie da un elenco di nickname**, non si scrive a mano: i nickname sono
+  quelli del tab `Ore Turnisti` del foglio **Riepilogo** del bot 118 (stessa grafia del
+  tabellone, così il registro è confrontabile con i turni). L'elenco è **incorporato nella
+  pagina** (`<script id=dati-turnisti>`) e si rigenera con
+  `_materiali/checklist/genera_turnisti.py`, che legge il foglio con il service account di
+  `AMB_bot ambulanza 118/strumenti/credentials.json`.
+  - **Ordinati per ore fatte, non alfabeticamente**: chi gira di più sta in cima e di norma
+    non deve nemmeno cercare. Criterio: ore dell'anno in corso, poi `TOTALE`, poi alfabetico.
+    Il `TOTALE` come secondo criterio serve a gennaio, quando le ore dell'anno sono quasi
+    tutte a zero e da solo l'anno in corso non ordinerebbe niente. **Non riordinare l'elenco
+    nella pagina**: il JS lo usa nell'ordine in cui lo trova.
+  - Chi ha tipologia `Usciti` **non compare** (89 righe su 175 al 27/09/2026). Tutti gli
+    altri sì, comprese le tipologie `TS`, `Vacanza` e `Amministrazione`: chi guida un mezzo
+    deve poter compilare, ed escludere qualcuno per tipologia lo bloccherebbe in garage.
+  - ⚠️ **Nella pagina finiscono solo i nickname, mai le ore.** L'elenco sta in un file
+    pubblico su GitHub e la pagina è raggiungibile da chiunque abbia il link: l'ordine porta
+    con sé quel tanto che serve a rendere veloce il menu, i numeri di ciascuno no. Vale la
+    stessa logica dei dati aggregati di `numeri.html`.
+- **Nessun campo km.** Toglierlo dalla pagina ha voluto dire toglierlo anche da `COLONNE`,
+  dal PDF e dalla riga di registro nel backend. ⚠️ In `setup()` le larghezze delle colonne
+  del registro ora si ricavano da `COLONNE.indexOf(...)`: erano indici fissi (9 e 10) che
+  contavano anche i km e dopo la rimozione avrebbero allargato le colonne sbagliate.
 - Le **mancanze** vanno in testa al PDF con la zona dove si trovano, perché è la parte che
   serve leggere subito; l'esito completo delle 151 voci viene dopo.
 - **Il registro è un documento a sé** (`REGISTRO CHECK LIST MEZZI`, creato dal backend nella
@@ -320,9 +342,16 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   uno per uno.
 - Se si ricompila lo stesso giorno il file **non viene sovrascritto**: prende ` (2)`.
 - `ENDPOINT`, `MODO_PROVA` e `VERSIONE` in cima allo script, come in `sciesopoli/`.
+  `VERSIONE` sta **sia nella pagina sia nel backend** e va alzata in entrambi quando cambia
+  il payload (a `2026-09-v2` con i nickname e la rimozione dei km). Qui non c'è il controllo
+  rigido di `sciesopoli/`: la versione viene solo annotata in registro, quindi disallinearla
+  non dà errore, rende solo illeggibile lo storico.
+- ⚠️ Il registro riscrive l'intestazione **solo se il foglio è vuoto** (`getLastRow() === 0`).
+  Se esiste già un `REGISTRO CHECK LIST MEZZI` compilato con le vecchie 13 colonne (con i km),
+  le righe nuove da 12 valori finiscono disallineate: va svuotato o rifatto.
   Con `MODO_PROVA` le check list finiscono in `_PROVE check list/` e in registro con stato
   `PROVA`; `eliminaProve()` le cancella in blocco.
-- Backend e parser in `_materiali/checklist/` (fuori dal repo pubblicato).
+- Backend, parser e `genera_turnisti.py` in `_materiali/checklist/` (fuori dal repo pubblicato).
 
 ## SEO
 
