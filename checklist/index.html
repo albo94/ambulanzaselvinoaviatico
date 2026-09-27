@@ -176,6 +176,36 @@
   .voce-nota { padding:0 14px 10px; }
   .voce-nota input { min-height:40px; font-size:.85rem; }
 
+
+  /* ---- danni e segnalazioni ---- */
+  .tipi { display:flex; flex-wrap:wrap; gap:7px; margin:0 0 12px; }
+  .tipo { display:flex; align-items:center; gap:6px; border:1px solid var(--line);
+          background:var(--surface); color:var(--ink); border-radius:99px;
+          padding:7px 12px 7px 7px; font:600 .8rem/1 inherit; cursor:pointer; min-height:0; }
+  .tipo .pal { width:20px; height:20px; border-radius:50%; color:#fff; flex:0 0 auto;
+               font:700 .72rem/20px system-ui; text-align:center; }
+  .tipo.sel { border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); }
+  .disegno { position:relative; border:1px solid var(--line); border-radius:var(--radius);
+             background:#fff; overflow:hidden; touch-action:manipulation; }
+  .disegno img { display:block; width:100%; height:auto; user-select:none; -webkit-user-drag:none; }
+  .segni { position:absolute; inset:0; }
+  .segno-d { position:absolute; width:26px; height:26px; margin:-13px 0 0 -13px;
+             border-radius:50%; color:#fff; border:2px solid #fff; cursor:grab;
+             font:700 .78rem/22px system-ui; text-align:center; touch-action:none;
+             box-shadow:0 1px 4px rgba(0,0,0,.45); }
+  .segno-d.presa { cursor:grabbing; transform:scale(1.15); }
+  .aiuto { margin:8px 0 0; font-size:.8rem; color:var(--ink-soft); }
+  .elenco-danni { list-style:none; margin:12px 0 0; padding:0; }
+  .elenco-danni li { display:flex; align-items:flex-start; gap:9px; padding:9px 11px;
+                     border:1px solid var(--line); border-radius:var(--radius);
+                     background:var(--surface); margin:0 0 7px; }
+  .elenco-danni .pal { width:22px; height:22px; border-radius:50%; color:#fff; flex:0 0 auto;
+                       font:700 .75rem/22px system-ui; text-align:center; }
+  .elenco-danni .testo { flex:1; font-size:.86rem; }
+  .elenco-danni input { min-height:38px; font-size:.84rem; margin-top:5px; }
+  .elenco-danni .via { flex:0 0 auto; border:0; background:none; color:var(--ko);
+                       font:700 1.1rem/1 inherit; cursor:pointer; padding:2px 6px; min-height:0; }
+
   /* ---- riepilogo ---- */
   .riq { border:1px solid var(--line); background:var(--surface);
          border-radius:var(--radius); padding:14px; margin:0 0 14px; }
@@ -284,24 +314,43 @@
     <p class="stato" id="stato2"></p>
   </section>
 
-  <!-- ===================== 3. RIEPILOGO ===================== -->
+  <!-- ===================== 3. DANNI ===================== -->
   <section class="passo" data-passo="3">
+    <h2>Danni e segnalazioni</h2>
+    <p class="sotto">Scegli il tipo, poi tocca il punto sul disegno. Se sbagli, trascina il
+    segno o toccalo per toglierlo. Se non c'&egrave; niente da segnalare, vai avanti.</p>
+
+    <div class="tipi" id="tipiDanno"></div>
+
+    <div class="disegno" id="disegno">
+      <img src="mezzo-danni.png" alt="Viste del mezzo: fiancata sinistra, fiancata destra, frontale, posteriore" id="imgMezzo">
+      <div class="segni" id="segni"></div>
+    </div>
+    <p class="aiuto" id="aiutoDanni">Nessun danno segnalato.</p>
+
+    <ul class="elenco-danni" id="elencoDanni"></ul>
+    <p class="stato" id="stato3d"></p>
+  </section>
+
+  <!-- ===================== 4. RIEPILOGO ===================== -->
+  <section class="passo" data-passo="4">
     <h2>Controlla e salva</h2>
     <p class="sotto">Verifica prima di salvare: il documento finisce nella cartella del mezzo.</p>
 
     <div class="riq"><dl class="dati" id="riepDati"></dl></div>
     <div id="riepCorrezioni"></div>
+    <div id="riepDanni"></div>
     <div id="riepEsiti"></div>
 
     <div class="campo">
       <label for="note">Note generali <span style="font-weight:400;color:var(--ink-soft)">(facoltative)</span></label>
       <textarea id="note" placeholder="Segnalazioni, interventi fatti, cose da ordinare&hellip;"></textarea>
     </div>
-    <p class="stato" id="stato3"></p>
+    <p class="stato" id="stato4"></p>
   </section>
 
   <!-- ===================== 4. ESITO ===================== -->
-  <section class="passo" data-passo="4">
+  <section class="passo" data-passo="5">
     <div class="esito">
       <div class="segno" aria-hidden="true">&#10003;</div>
       <h2 id="esitoTit">Check list salvata</h2>
@@ -781,6 +830,137 @@
     $("#contaKo").style.color = ko ? "var(--ko)" : "";
   }
 
+
+  /* ---------- danni e segnalazioni ----------
+     Ricalca il riquadro del cartaceo: stessi cinque codici, stesse quattro
+     viste. Si sceglie il tipo una volta e si tocca dove serve, cosi' per
+     piu' danni dello stesso genere basta un tocco a testa. */
+
+  var TIPI_DANNO = [
+    { n: 1, nome: "Graffio",        col: "#1565C0" },
+    { n: 2, nome: "Ammaccatura",    col: "#6A1B9A" },
+    { n: 3, nome: "Rottura",        col: "#B3261E" },
+    { n: 4, nome: "Malfunzionamento", col: "#A8710A" },
+    { n: 5, nome: "Altro",          col: "#37474F" }
+  ];
+  var tipoScelto = 1;
+  var danni = [];          /* {id, tipo, x, y, nota}  x/y in % dell'immagine */
+  var idDanno = 0;
+
+  function tipoInfo(t) {
+    for (var i = 0; i < TIPI_DANNO.length; i++) if (TIPI_DANNO[i].n === t) return TIPI_DANNO[i];
+    return TIPI_DANNO[0];
+  }
+
+  $("#tipiDanno").innerHTML = TIPI_DANNO.map(function (t) {
+    return '<button type="button" class="tipo' + (t.n === 1 ? ' sel' : '') + '" data-tipo="' + t.n + '">' +
+           '<span class="pal" style="background:' + t.col + '">' + t.n + '</span>' + t.nome + '</button>';
+  }).join("");
+
+  $$("[data-tipo]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      tipoScelto = +b.dataset.tipo;
+      $$("[data-tipo]").forEach(function (x) { x.classList.toggle("sel", x === b); });
+    });
+  });
+
+  /* un tocco sul disegno mette il segno; sul segno stesso no, altrimenti
+     spostandolo se ne creerebbe un altro sotto */
+  $("#disegno").addEventListener("click", function (ev) {
+    if (ev.target.classList.contains("segno-d")) return;
+    if (trascinato) { trascinato = false; return; }
+    var r = $("#imgMezzo").getBoundingClientRect();
+    var x = (ev.clientX - r.left) / r.width * 100;
+    var y = (ev.clientY - r.top) / r.height * 100;
+    if (x < 0 || x > 100 || y < 0 || y > 100) return;
+    danni.push({ id: ++idDanno, tipo: tipoScelto, x: x, y: y, nota: "" });
+    disegnaDanni();
+  });
+
+  var trascinato = false;
+
+  function disegnaDanni() {
+    $("#segni").innerHTML = danni.map(function (d, i) {
+      var t = tipoInfo(d.tipo);
+      return '<div class="segno-d" data-d="' + d.id + '" title="' + esc(t.nome) + '" ' +
+             'style="left:' + d.x.toFixed(2) + '%;top:' + d.y.toFixed(2) + '%;background:' + t.col + '">' +
+             (i + 1) + '</div>';
+    }).join("");
+
+    $("#aiutoDanni").textContent = danni.length
+      ? (danni.length === 1 ? "1 danno segnalato. Trascina il segno per spostarlo, toccalo per toglierlo."
+                            : danni.length + " danni segnalati. Trascina i segni per spostarli, toccali per toglierli.")
+      : "Nessun danno segnalato.";
+
+    $("#elencoDanni").innerHTML = danni.map(function (d, i) {
+      var t = tipoInfo(d.tipo);
+      return '<li><span class="pal" style="background:' + t.col + '">' + (i + 1) + '</span>' +
+             '<span class="testo"><b>' + esc(t.nome) + '</b>' +
+             '<input type="text" data-nd="' + d.id + '" value="' + esc(d.nota) + '" ' +
+             'placeholder="Dove e cosa (facoltativo)"></span>' +
+             '<button type="button" class="via" data-via="' + d.id + '" ' +
+             'aria-label="Togli">&times;</button></li>';
+    }).join("");
+
+    $$("[data-nd]").forEach(function (inp) {
+      inp.addEventListener("input", function () {
+        var d = trova(+inp.dataset.nd); if (d) d.nota = inp.value;
+      });
+    });
+    $$("[data-via]").forEach(function (b) {
+      b.addEventListener("click", function () { togli(+b.dataset.via); });
+    });
+    $$(".segno-d").forEach(prendi);
+  }
+
+  function trova(id) {
+    for (var i = 0; i < danni.length; i++) if (danni[i].id === id) return danni[i];
+    return null;
+  }
+  function togli(id) {
+    danni = danni.filter(function (d) { return d.id !== id; });
+    disegnaDanni();
+  }
+
+  /* trascinamento del segno: sul telefono e' l'unico modo per aggiustare
+     un tocco impreciso senza rifarlo */
+  function prendi(el) {
+    var giu = false, mosso = false;
+    el.addEventListener("pointerdown", function (ev) {
+      ev.preventDefault(); ev.stopPropagation();
+      giu = true; mosso = false;
+      el.classList.add("presa");
+      try { el.setPointerCapture(ev.pointerId); } catch (e) {}
+    });
+    el.addEventListener("pointermove", function (ev) {
+      if (!giu) return;
+      mosso = true;
+      var r = $("#imgMezzo").getBoundingClientRect();
+      var d = trova(+el.dataset.d); if (!d) return;
+      d.x = Math.min(100, Math.max(0, (ev.clientX - r.left) / r.width * 100));
+      d.y = Math.min(100, Math.max(0, (ev.clientY - r.top) / r.height * 100));
+      el.style.left = d.x.toFixed(2) + "%";
+      el.style.top = d.y.toFixed(2) + "%";
+    });
+    function su(ev) {
+      if (!giu) return;
+      giu = false; el.classList.remove("presa");
+      if (mosso) { trascinato = true; }
+      else { ev.stopPropagation(); togli(+el.dataset.d); }
+    }
+    el.addEventListener("pointerup", su);
+    el.addEventListener("pointercancel", function () { giu = false; el.classList.remove("presa"); });
+  }
+
+  function danniPerInvio() {
+    return danni.map(function (d, i) {
+      return { n: i + 1, tipo: d.tipo, tipoNome: tipoInfo(d.tipo).nome,
+               x: +d.x.toFixed(2), y: +d.y.toFixed(2), nota: d.nota.trim() };
+    });
+  }
+
+  disegnaDanni();
+
   /* ---------- riepilogo ---------- */
 
   function riepiloga() {
@@ -807,6 +987,16 @@
         '</div>'
       : "";
 
+    var dn = danniPerInvio();
+    $("#riepDanni").innerHTML = dn.length
+      ? '<div class="riq ko"><h3>' + dn.length +
+        (dn.length === 1 ? ' danno segnalato' : ' danni segnalati') + '</h3><ul class="mancanti">' +
+        dn.map(function (d) {
+          return "<li><b>" + d.n + ". " + esc(d.tipoNome) + "</b>" +
+                 (d.nota ? " &ndash; " + esc(d.nota) : "") + "</li>";
+        }).join("") + "</ul></div>"
+      : "";
+
     var ko = lista.filter(function (v) { return v.stato === "ko"; });
     $("#riepEsiti").innerHTML = ko.length
       ? '<div class="riq ko"><h3>' + ko.length + ' voci da sistemare</h3><ul class="mancanti">' +
@@ -824,9 +1014,9 @@
   function mostra(n) {
     passo = n;
     $$(".passo").forEach(function (s) { s.classList.toggle("attivo", +s.dataset.passo === n); });
-    $("#btnIndietro").hidden = (n === 1 || n === 4);
-    $("#btnAvanti").textContent = n === 3 ? "Salva la check list" : "Avanti";
-    $("#barraAzioni").hidden = (n === 4);
+    $("#btnIndietro").hidden = (n === 1 || n === 5);
+    $("#btnAvanti").textContent = n === 4 ? "Salva la check list" : "Avanti";
+    $("#barraAzioni").hidden = (n === 5);
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); }
   }
 
@@ -859,14 +1049,17 @@
         apri(mancano[0], true);
         return;
       }
-      riepiloga(); mostra(3); return;
+      mostra(3); return;
     }
     if (passo === 3) {
+      riepiloga(); mostra(4); return;
+    }
+    if (passo === 4) {
       /* senza spunta il backend scarterebbe la correzione senza dire niente:
          meglio fermarsi qui, dove si puo' ancora spiegare perche' */
       var daConf = lista.filter(function (v) { return v.scadNuova; });
       if (daConf.length && !$("#okCorrezioni").checked) {
-        errore("#stato3", daConf.length === 1
+        errore("#stato4", daConf.length === 1
           ? "Hai cambiato una scadenza: conferma la casella, oppure rimetti la data di prima."
           : "Hai cambiato " + daConf.length + " scadenze: conferma la casella, oppure rimetti le date di prima.");
         $("#okCorrezioni").focus();
@@ -898,6 +1091,7 @@
       voci: lista.map(function (v) {
         return { zona: parti[v.p].etichetta, qta: v.qta, voce: v.nome, stato: v.stato, nota: v.nota };
       }),
+      danni: danniPerInvio(),
       dispositivo: navigator.userAgent
     };
   }
@@ -923,7 +1117,7 @@
 
     inCorso = true;
     $("#btnAvanti").disabled = true;
-    var s = $("#stato3"); s.className = "stato lav"; s.textContent = "Salvataggio in corso…";
+    var s = $("#stato4"); s.className = "stato lav"; s.textContent = "Salvataggio in corso…";
 
     var x = new XMLHttpRequest();
     x.open("POST", ENDPOINT, true);
@@ -939,16 +1133,16 @@
           (d.mancanti.length ? " " + d.mancanti.length + " voci da sistemare." : "");
         pulisciStato(); mostra(4);
       } else {
-        errore("#stato3", (r && r.errore) ? r.errore :
+        errore("#stato4", (r && r.errore) ? r.errore :
                "Salvataggio non riuscito. I dati sono ancora qui: riprova.");
       }
     };
     x.onerror = x.ontimeout = function () {
       inCorso = false; $("#btnAvanti").disabled = false;
-      errore("#stato3", "Connessione assente o troppo lenta. Nulla è andato perso: riprova.");
+      errore("#stato4", "Connessione assente o troppo lenta. Nulla è andato perso: riprova.");
     };
     try { x.send(JSON.stringify(d)); }
-    catch (e) { inCorso = false; $("#btnAvanti").disabled = false; errore("#stato3", "Invio non riuscito."); }
+    catch (e) { inCorso = false; $("#btnAvanti").disabled = false; errore("#stato4", "Invio non riuscito."); }
   }
 
   mostra(1);

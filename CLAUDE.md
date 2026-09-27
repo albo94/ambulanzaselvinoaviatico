@@ -499,6 +499,23 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   dal PDF e dalla riga di registro nel backend. ⚠️ In `setup()` le larghezze delle colonne
   del registro ora si ricavano da `COLONNE.indexOf(...)`: erano indici fissi (9 e 10) che
   contavano anche i km e dopo la rimozione avrebbero allargato le colonne sbagliate.
+- **Danni e segnalazioni** (passo 3, dal 27/09/2026). Ricalca il riquadro *DANNI E
+  SEGNALAZIONI MEZZO* del cartaceo: stessi cinque codici (graffio, ammaccatura, rottura,
+  malfunzionamento, altro) e le stesse quattro viste del mezzo.
+  - Si sceglie il tipo **una volta** e poi si tocca il disegno dove serve: per più danni
+    dello stesso genere basta un tocco a testa. Il segno si **trascina** per aggiustare un
+    tocco impreciso (sul telefono è l'unico modo per correggere senza rifare) e si toglie
+    con un tocco singolo.
+  - ⚠️ Il click che segue un trascinamento va **ignorato**, altrimenti sotto il segno
+    appena spostato ne nasce un altro: serve la sentinella `trascinato`.
+  - Le posizioni sono in **percentuale** dell'immagine, non in pixel: così valgono su
+    qualunque schermo e si ridisegnano identiche nel PDF, che usa una copia ridotta.
+  - L'immagine viene dal file `CONTROLLI OGNI CHECK LIST` (`xl/media/image1.png`), ripulita
+    della fascia del titolo e del riquadro della legenda, che nella pagina sono pulsanti.
+    Sta in `checklist/mezzo-danni.png` per lo schermo e incorporata in base64 nel backend
+    per il PDF (Apps Script non scarica immagini da internet).
+  - Il passo si può saltare: se non c'è niente da segnalare si va avanti.
+  - Nel registro c'è la colonna `danni`.
 - Le **mancanze** vanno in testa al PDF con la zona dove si trovano, perché è la parte che
   serve leggere subito; l'esito completo delle 151 voci viene dopo.
 - **Il registro è un documento a sé** (`REGISTRO CHECK LIST MEZZI`, creato dal backend nella
@@ -532,9 +549,13 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   il payload (a `2026-09-v2` con i nickname e la rimozione dei km). Qui non c'è il controllo
   rigido di `sciesopoli/`: la versione viene solo annotata in registro, quindi disallinearla
   non dà errore, rende solo illeggibile lo storico.
-- ⚠️ Il registro riscrive l'intestazione **solo se il foglio è vuoto** (`getLastRow() === 0`).
-  Se esiste già un `REGISTRO CHECK LIST MEZZI` compilato con le vecchie 13 colonne (con i km),
-  le righe nuove da 12 valori finiscono disallineate: va svuotato o rifatto.
+- **Il registro si scrive per nome di colonna, non per posizione** (dal 27/09/2026).
+  Prima la riga era un array nell'ordine di `COLONNE`: bastava aggiungere un dato al modulo
+  per spostare di una casella tutti i valori delle check list già archiviate, e il foglio
+  riscriveva l'intestazione **solo se vuoto**. Ora `perIntestazione_()` legge l'intestazione
+  vera del foglio, dispone i valori secondo quella e **aggiunge in coda** le colonne nuove
+  che non ci sono ancora, senza toccare le righe vecchie. Aggiungere un campo al modulo non
+  richiede più di svuotare o rifare il registro.
   Con `MODO_PROVA` le check list finiscono in `_PROVE check list/` e in registro con stato
   `PROVA`; `eliminaProve()` le cancella in blocco.
 - Backend e script in `_materiali/checklist/` (fuori dal repo pubblicato):
