@@ -44,6 +44,14 @@
 
   /* ---------- intestazione ---------- */
   .testata { padding:14px 0 18px; border-bottom:1px solid var(--line); margin-bottom:18px; }
+  .testata-riga { display:flex; gap:14px; align-items:flex-start; justify-content:space-between; }
+  .lingue { display:flex; flex:0 0 auto; border:1px solid var(--line);
+            border-radius:var(--radius); overflow:hidden; }
+  .lng { flex:0 0 auto; padding:7px 12px; min-height:0; border:0; border-radius:0;
+         font:700 .78rem/1 system-ui,sans-serif; letter-spacing:.06em;
+         background:var(--surface); color:var(--ink-soft); }
+  .lng + .lng { border-left:1px solid var(--line); }
+  .lng.sel { background:var(--accent); color:var(--accent-ink); }
   .testata h1 { margin:0; font-size:1.15rem; line-height:1.25; font-weight:700; letter-spacing:.01em; }
   .testata p { margin:3px 0 0; font-size:.84rem; color:var(--ink-soft); }
 
@@ -196,14 +204,20 @@
 <div class="wrap">
 
   <div class="testata">
-    <div>
-      <h1>Sciesopoli &ndash; modulo di visita</h1>
-      <p>Dichiarazione di assunzione di rischio e di manleva</p>
+    <div class="testata-riga">
+      <div>
+        <h1 data-t="h1">Sciesopoli &ndash; modulo di visita</h1>
+        <p data-t="sottotitolo">Dichiarazione di assunzione di rischio e di manleva</p>
+      </div>
+      <div class="lingue" role="group" aria-label="Lingua / Language">
+        <button type="button" class="lng sel" data-lng="it" lang="it">IT</button>
+        <button type="button" class="lng" data-lng="en" lang="en">EN</button>
+      </div>
     </div>
   </div>
 
   <div class="avviso" id="avvisoProva" hidden>
-    <strong>Modulo in prova</strong>
+    <strong id="avvisoTit">Modulo in prova</strong>
     <span id="avvisoTesto"></span>
   </div>
 
@@ -474,10 +488,10 @@
   </section>
 
   <footer>
-    <p><strong>Complesso architettonico &ldquo;Sciesopoli&rdquo;</strong> &ndash; via Cardo 26, Selvino (BG).
+    <p id="pie1"><strong>Complesso architettonico &ldquo;Sciesopoli&rdquo;</strong> &ndash; via Cardo 26, Selvino (BG).
        Tutelato con decreto della Commissione regionale per il patrimonio culturale della Lombardia
        del 25 novembre 2015. Apertura al pubblico ai sensi dell&rsquo;art. 38 del D.Lgs. 42/2004.</p>
-    <p>Titolare del trattamento: Comune di Selvino, Corso Milano 19, Selvino (BG) &ndash;
+    <p id="pie2">Titolare del trattamento: Comune di Selvino, Corso Milano 19, Selvino (BG) &ndash;
        tel. 035 764250 &ndash; protocollo@comunediselvino.it</p>
     <p id="pieVersione"></p>
   </footer>
@@ -531,7 +545,7 @@
 
   /* ---------- testi legali ---------- */
 
-  $("#testoManleva").innerHTML =
+  var MANLEVA_IT =
     '<h3>Selvino (BG) &ndash; complesso architettonico denominato &ldquo;Sciesopoli&rdquo;, via Cardo 26</h3>' +
     '<p>Sottoposto a tutela con decreto della Commissione regionale per il patrimonio culturale della ' +
     'Lombardia del 25 novembre 2015. Apertura al pubblico ai sensi dell&rsquo;art. 38 del D.Lgs. 42/2004 ' +
@@ -575,7 +589,7 @@
     'color:var(--ink-soft)">Nessuna clausola del presente modulo comporta rinuncia a diritti ' +
     'indisponibili n&eacute; esonero dalla responsabilit&agrave; penale, che resta regolata dalla legge.</p>';
 
-  $("#testoPrivacy").innerHTML =
+  var PRIVACY_IT =
     '<p>Il Comune di Selvino, con sede in Corso Milano 19, Selvino (BG) &ndash; tel. 035 764250 &ndash; ' +
     'email protocollo@comunediselvino.it, in qualit&agrave; di titolare del trattamento dei dati ' +
     'personali, desidera informarla che:</p>' +
@@ -608,7 +622,311 @@
     'digitale per conto del titolare; la firma apposta sullo schermo &egrave; una firma elettronica ' +
     'semplice.</p>';
 
-  $("#pieVersione").textContent = "Versione del testo: " + VERSIONE_TESTO;
+
+  /* Traduzione di cortesia. Il testo che fa fede resta l'italiano, ed e'
+     sempre quello che il server archivia nel PDF. */
+  var MANLEVA_EN =
+    '<h3>Selvino (BG) &ndash; architectural complex known as &ldquo;Sciesopoli&rdquo;, via Cardo 26</h3>' +
+    '<p>Protected by decree of the Regional Commission for the Cultural Heritage of Lombardy of ' +
+    '25 November 2015. Open to the public pursuant to art. 38 of Legislative Decree 42/2004 and ' +
+    'subsequent amendments &ndash; Agreement of 3 December 2019, art. 5.</p>' +
+    '<h3>Declaration of assumption of risk and waiver of liability towards:</h3>' +
+    '<p>' + PROPRIETA + ' (the Owner); the Municipality of Selvino (organiser of the opening to the ' +
+    'public); the Ministry of Culture.</p>' +
+    '<p>The purpose of this release is to govern access to the protected architectural complex known ' +
+    'as &ldquo;Sciesopoli&rdquo; by visitors interested in the history of this building.</p>' +
+    '<p class="dich">I declare</p>' +
+    '<ul><li>that I am taking part voluntarily, under no obligation, for information purposes only ' +
+    'and without receiving any payment in money or in kind, in the visit to the following areas of ' +
+    '&ldquo;Sciesopoli&rdquo;: part of the garden in front of the main building; the entrance hall ' +
+    'of the main building with the marble plaques;</li>' +
+    '<li>that I have been informed that the building is partly inaccessible and presents internal ' +
+    'and external safety issues, and that I am fully aware of the potential danger, to myself and to ' +
+    'others, and of all the risks to which I am exposed during the visit.</li></ul>' +
+    '<p class="dich">I acknowledge</p>' +
+    '<p>that the Municipality of Selvino has informed me of all possible hazards.</p>' +
+    '<p class="dich">I undertake</p>' +
+    '<p>to view only the places open and marked out for visits, moving solely within the areas ' +
+    'indicated above.</p>' +
+    '<p class="dich">I assume and accept</p>' +
+    '<p>that any breach of the above undertaking shall be regarded as arbitrary and voluntary, and ' +
+    'therefore such as to release the Owner, the Municipality of Selvino and the Ministry of Culture ' +
+    'from any liability for damage to persons and/or property arising from it, <b>save in all cases ' +
+    'for damage caused by wilful misconduct or gross negligence</b> (art. 1229 of the Italian Civil ' +
+    'Code).</p>' +
+    '<p class="dich">I undertake</p>' +
+    '<ul><li>not to bring claims for damages against the Owner, the Municipality of Selvino or the ' +
+    'Ministry of Culture for damage (direct or indirect) suffered as a consequence of, or on the ' +
+    'occasion of, access to the places referred to above, <b>except in cases of wilful misconduct or ' +
+    'gross negligence</b>;</li>' +
+    '<li>accordingly, I hold the Owner, the Municipality of Selvino and the Ministry of Culture ' +
+    'harmless, with no right to reimbursement, recourse or subrogation, from any claim or demand ' +
+    'relating to damage of any kind caused to third parties and/or occurring to any object or ' +
+    'property, and I undertake to reimburse them &ndash; on simple request and without the right to ' +
+    'raise objections &ndash; any sum they may be required to pay to third parties as a result of ' +
+    'the facts, circumstances or exercise of the rights and claims referred to above, <b>always save ' +
+    'for wilful misconduct or gross negligence</b>.</li></ul>' +
+    '<p style="margin-top:14px;padding-top:10px;border-top:1px solid var(--line);font-size:.8rem;' +
+    'color:var(--ink-soft)">No clause of this form entails a waiver of inalienable rights, nor any ' +
+    'exemption from criminal liability, which remains governed by law.<br><b>This is a courtesy translation: the Italian version is the only legally binding text.</b></p>';
+
+  var PRIVACY_EN =
+    '<p>The Municipality of Selvino, with offices at Corso Milano 19, Selvino (BG) &ndash; ' +
+    'tel. +39 035 764250 &ndash; protocollo@comunediselvino.it, as data controller, informs you ' +
+    'that:</p><ul>' +
+    '<li><b>Purpose:</b> personal data are processed in order to identify those who access the ' +
+    'architectural complex known as &ldquo;Sciesopoli&rdquo;, protected by decree of the Regional ' +
+    'Commission for the Cultural Heritage of Lombardy of 25 November 2015, governed by art. 38 of ' +
+    'Legislative Decree 42/2004 and by the Agreement of 3 December 2019.</li>' +
+    '<li>The <b>legal basis</b> is the performance of a task carried out in the public interest ' +
+    'connected with the enjoyment and protection of a cultural asset (art. 6(1)(e) of Regulation ' +
+    '(EU) 2016/679, in relation to art. 38 of Legislative Decree 42/2004). Disclosure of the data to ' +
+    'the Owner of the complex (' + PROPRIETA + ') and to the Ministry of Culture is provided for by ' +
+    'the Agreement of 3 December 2019.</li>' +
+    '<li>Your personal data will be handled by all the parties involved (Municipality of Selvino, ' +
+    'the Owner, Ministry of Culture) in full compliance with Regulation (EU) 2016/679, and will be ' +
+    'processed solely to allow public access to &ldquo;Sciesopoli&rdquo;.</li>' +
+    '<li><b>Providing</b> your personal data is necessary in order to access ' +
+    '&ldquo;Sciesopoli&rdquo;: without it the visit cannot be allowed, since identifying those who ' +
+    'enter is a condition of the opening to the public.</li>' +
+    '<li>Data will be <b>kept</b> for no longer than is necessary for the purposes for which they ' +
+    'were collected, and in any case <b>no later than 2 December 2031</b> (expiry of the Agreement ' +
+    'of 3 December 2019).</li>' +
+    '<li>You may exercise the <b>rights</b> under arts. 15 to 22 of Regulation (EU) 2016/679 ' +
+    '&ndash; access, rectification, erasure, restriction and <b>objection</b> to processing ' +
+    '(art. 21) &ndash; by writing to the Municipality of Selvino, and you have the right to lodge a ' +
+    'complaint with the <b>Italian Data Protection Authority</b>.</li></ul>' +
+    '<p>Further details may be requested from the Municipality of Selvino &ndash; Tourism Office.</p>' +
+    '<p><b>Online completion.</b> This form is completed on this page and kept in digital form on ' +
+    'behalf of the controller; the signature drawn on screen is a simple electronic signature.</p>' +
+    '<p style="margin-top:12px;font-size:.8rem;color:var(--ink-soft)"><b>This is a courtesy translation: the Italian version is the only legally binding text.</b></p>';
+
+
+
+  /* ---------- lingue ----------
+     L'inglese e' una cortesia per i visitatori che arrivano dall'estero
+     per la storia dei bambini di Selvino. Il testo che fa fede resta
+     l'italiano: il PDF archiviato e' sempre in italiano, e la lingua
+     scelta viene registrata insieme al modulo. */
+
+  var LINGUA = "it";
+
+  var TESTI = {
+    it: {
+      h1: "Sciesopoli \u2013 modulo di visita",
+      sottotitolo: "Dichiarazione di assunzione di rischio e di manleva",
+      passo: "Passo %1 di 5",
+      avanti: "Avanti", indietro: "Indietro", cancella: "Cancella",
+      t1: "Chi compila il modulo",
+      s1: "Serve un modulo per ogni visitatore. Per chi ha meno di 18 anni lo compila un genitore o il tutore.",
+      adultoT: "Sono il visitatore, maggiorenne",
+      adultoS: "Compilo e firmo per me stesso.",
+      minoreT: "Sono genitore o tutore di un visitatore minorenne",
+      minoreS: "Compilo i miei dati e quelli del minore, e firmo per lui.",
+      dataVisita: "Data della visita",
+      t2: "Dati anagrafici", s2: "Come sul documento d\u2019identit\u00e0.",
+      legSott: "Il sottoscritto \u2013 genitore o tutore", legVis: "Il visitatore",
+      nome: "Nome", cognome: "Cognome", natoA: "Nato/a a", natoIl: "il",
+      comune: "Residente in (comune)", via: "via",
+      obbl: "Campo obbligatorio.",
+      t3: "Dichiarazione di manleva",
+      s3: "Leggi il testo fino in fondo, poi firma nel riquadro.",
+      okManleva: "Ho letto la dichiarazione e la sottoscrivo.",
+      okClausole: "Ai sensi degli <b>artt. 1341 e 1342 del codice civile</b> approvo specificamente le clausole \u00abAssumo e accetto\u00bb (esonero da responsabilit\u00e0) e \u00abMi impegno\u00bb (rinuncia ad azioni risarcitorie e manleva).",
+      firma: "Firma", firmaHint: "Firma qui con il dito o con il mouse", firmaQui: "Firma qui",
+      chiVisitatore: "il visitatore", chiGenitore: "il genitore o tutore",
+      t4: "Informativa privacy e consenso", s4: "Titolare del trattamento: Comune di Selvino.",
+      okPrivacy: "Ho letto l\u2019informativa e prendo atto che il presente documento, comprensivo dei miei dati personali, sar\u00e0 trasmesso alla Propriet\u00e0 del complesso architettonico e al Ministero della Cultura, come previsto dalla Convenzione del 3 dicembre 2019.",
+      firmaPresa: "Firma per presa visione",
+      legMinore: "Presa visione del minore",
+      sMinore: "Se il bambino \u00e8 troppo piccolo per firmare, lascia il riquadro vuoto.",
+      firmaMinore: "Firma del minore", facoltativa: "facoltativa",
+      hintMinore: "Firma del minore (se in grado di farlo)",
+      legGen: "Chi esercita la responsabilit\u00e0 genitoriale",
+      gen1: "primo genitore", gen2: "secondo genitore",
+      aggiungiGen2: "+ Aggiungi il secondo genitore", rimuovi: "Rimuovi",
+      t5: "Controlla e invia", s5: "Verifica i dati prima di inviare.",
+      invia: "Invia il modulo",
+      t6: "Modulo registrato", nota6: "Mostra questo codice all\u2019ingresso.",
+      stampa: "Salva o stampa una copia", altro: "Compila per un altro visitatore",
+      pie1: "<strong>Complesso architettonico \u201cSciesopoli\u201d</strong> \u2013 via Cardo 26, Selvino (BG). Tutelato con decreto della Commissione regionale per il patrimonio culturale della Lombardia del 25 novembre 2015. Apertura al pubblico ai sensi dell\u2019art. 38 del D.Lgs. 42/2004.",
+      pie2: "Titolare del trattamento: Comune di Selvino, Corso Milano 19, Selvino (BG) \u2013 tel. 035 764250 \u2013 protocollo@comunediselvino.it",
+      versione: "Versione del testo: ",
+      /* messaggi */
+      mData: "Indica la data della visita.",
+      mCampi: "Compila tutti i campi.",
+      mNascita: "La data di nascita del visitatore non sembra corretta.",
+      mGiaMaggiorenne: "Il visitatore risulta maggiorenne alla data della visita: torna al passo 1 e scegli la prima opzione.",
+      mGenitoreMinore: "Chi firma per il minore deve essere maggiorenne.",
+      mEMinorenne: "Il visitatore risulta minorenne: torna al passo 1 e scegli la seconda opzione.",
+      mCaselle: "Spunta entrambe le caselle e firma per proseguire.",
+      mFirma: "Manca la firma, oppure il segno \u00e8 troppo breve.",
+      mPrivacy: "Controlla consenso e firme: manca qualcosa.",
+      mInvio: "Invio in corso\u2026",
+      mRete: "Connessione assente o troppo lenta. I dati non sono persi: riprova quando hai segnale.",
+      mErrore: "Invio non riuscito. I dati sono ancora qui: riprova.",
+      /* riepilogo */
+      rData: "Data della visita", rVis: "Visitatore", rNato: "Nato/a a", rRes: "Residenza",
+      rGen: "Genitore o tutore", rGen2: "Secondo genitore", rIl: " il ",
+      fManleva: "Manleva", fPresa: "Presa visione", fMinore: "Minore",
+      fGen1: "Genitore 1", fGen2: "Genitore 2",
+      esitoProva: "Modalit\u00e0 prova: nessun dato \u00e8 stato inviato o conservato.",
+      esitoOk: "Conserva il codice fino al termine della visita.",
+      avvSalva: "Stiamo provando il modulo prima di aprirlo al pubblico. I dati che inserisci <b>vengono salvati</b>, ma sono contrassegnati come prova e verranno cancellati: usa dati di fantasia, non quelli di una persona reale.",
+      avvNoSalva: "Questa pagina non \u00e8 ancora collegata all\u2019archivio: i dati compilati <em>non vengono inviati n\u00e9 conservati</em>. Serve solo per controllare il modulo.",
+      avvTit: "Modulo in prova"
+    },
+    en: {
+      h1: "Sciesopoli \u2013 visitor form",
+      sottotitolo: "Declaration of assumption of risk and waiver of liability",
+      passo: "Step %1 of 5",
+      avanti: "Next", indietro: "Back", cancella: "Clear",
+      t1: "Who is filling in this form",
+      s1: "One form per visitor. For anyone under 18 it must be completed by a parent or legal guardian.",
+      adultoT: "I am the visitor, and I am over 18",
+      adultoS: "I fill in and sign for myself.",
+      minoreT: "I am the parent or legal guardian of a visitor under 18",
+      minoreS: "I fill in my details and the child\u2019s, and I sign on their behalf.",
+      dataVisita: "Date of the visit",
+      t2: "Personal details", s2: "As shown on your identity document.",
+      legSott: "The undersigned \u2013 parent or legal guardian", legVis: "The visitor",
+      nome: "First name", cognome: "Surname", natoA: "Place of birth", natoIl: "Date of birth",
+      comune: "Town of residence", via: "Street address",
+      obbl: "This field is required.",
+      t3: "Waiver of liability",
+      s3: "Please read the text to the end, then sign in the box below.",
+      okManleva: "I have read the declaration and I sign it.",
+      okClausole: "Pursuant to <b>arts. 1341 and 1342 of the Italian Civil Code</b> I specifically approve the clauses \u201cI assume and accept\u201d (release from liability) and \u201cI undertake\u201d (waiver of claims for damages and hold harmless).",
+      firma: "Signature", firmaHint: "Sign here with your finger or mouse", firmaQui: "Sign here",
+      chiVisitatore: "the visitor", chiGenitore: "the parent or guardian",
+      t4: "Privacy notice", s4: "Data controller: Municipality of Selvino.",
+      okPrivacy: "I have read the privacy notice and I acknowledge that this document, including my personal data, will be sent to the Owner of the complex and to the Ministry of Culture, as provided for by the Agreement of 3 December 2019.",
+      firmaPresa: "Signature of acknowledgement",
+      legMinore: "Acknowledgement by the child",
+      sMinore: "If the child is too young to sign, leave the box empty.",
+      firmaMinore: "Child\u2019s signature", facoltativa: "optional",
+      hintMinore: "Child\u2019s signature (if able to sign)",
+      legGen: "Those holding parental responsibility",
+      gen1: "first parent", gen2: "second parent",
+      aggiungiGen2: "+ Add the second parent", rimuovi: "Remove",
+      t5: "Check and send", s5: "Please check your details before sending.",
+      invia: "Send the form",
+      t6: "Form registered", nota6: "Please show this code at the entrance.",
+      stampa: "Save or print a copy", altro: "Fill in for another visitor",
+      pie1: "<strong>Architectural complex \u201cSciesopoli\u201d</strong> \u2013 via Cardo 26, Selvino (BG), Italy. Protected by decree of the Regional Commission for the Cultural Heritage of Lombardy of 25 November 2015. Open to the public pursuant to art. 38 of Legislative Decree 42/2004.",
+      pie2: "Data controller: Municipality of Selvino, Corso Milano 19, Selvino (BG), Italy \u2013 tel. +39 035 764250 \u2013 protocollo@comunediselvino.it",
+      versione: "Text version: ",
+      mData: "Please enter the date of the visit.",
+      mCampi: "Please fill in all the fields.",
+      mNascita: "The visitor\u2019s date of birth does not look correct.",
+      mGiaMaggiorenne: "The visitor is 18 or over on the date of the visit: go back to step 1 and choose the first option.",
+      mGenitoreMinore: "Whoever signs for a child must be over 18.",
+      mEMinorenne: "The visitor is under 18: go back to step 1 and choose the second option.",
+      mCaselle: "Please tick both boxes and sign to continue.",
+      mFirma: "The signature is missing, or the stroke is too short.",
+      mPrivacy: "Please check the acknowledgement and the signatures: something is missing.",
+      mInvio: "Sending\u2026",
+      mRete: "No connection, or too slow. Your data has not been lost: please try again when you have signal.",
+      mErrore: "Sending failed. Your data is still here: please try again.",
+      rData: "Date of visit", rVis: "Visitor", rNato: "Born in", rRes: "Residence",
+      rGen: "Parent or guardian", rGen2: "Second parent", rIl: " on ",
+      fManleva: "Waiver", fPresa: "Acknowledgement", fMinore: "Child",
+      fGen1: "Parent 1", fGen2: "Parent 2",
+      esitoProva: "Test mode: no data has been sent or stored.",
+      esitoOk: "Please keep this code until the end of your visit.",
+      avvSalva: "We are testing this form before opening it to the public. What you enter <b>is saved</b>, but it is marked as a test and will be deleted: please use made-up details, not a real person\u2019s.",
+      avvNoSalva: "This page is not yet connected to the archive: what you enter <em>is not sent or stored</em>. It is only here to check the form.",
+      avvTit: "Test form"
+    }
+  };
+
+  function T(k) { return TESTI[LINGUA][k]; }
+
+  /* selettore CSS -> chiave; "!" davanti alla chiave = innerHTML */
+  var MAPPA = {
+    '[data-t="h1"]': 'h1', '[data-t="sottotitolo"]': 'sottotitolo',
+    '#t1': 't1', '.passo[data-passo="1"] .sotto': 's1',
+    '#scAdulto b': 'adultoT', '#scAdulto span': 'adultoS',
+    '#scMinore b': 'minoreT', '#scMinore span': 'minoreS',
+    'label[for="dataVisita"]': 'dataVisita',
+    '#t2': 't2', '.passo[data-passo="2"] .sotto': 's2',
+    '#blkSottoscritto legend': 'legSott',
+    '.passo[data-passo="2"] fieldset:last-of-type legend': 'legVis',
+    'label[for="s_nome"]': 'nome', 'label[for="s_cognome"]': 'cognome',
+    'label[for="s_natoA"]': 'natoA', 'label[for="s_natoIl"]': 'natoIl',
+    'label[for="s_comune"]': 'comune', 'label[for="s_via"]': 'via',
+    'label[for="v_nome"]': 'nome', 'label[for="v_cognome"]': 'cognome',
+    'label[for="v_natoA"]': 'natoA', 'label[for="v_natoIl"]': 'natoIl',
+    'label[for="v_comune"]': 'comune', 'label[for="v_via"]': 'via',
+    'label[for="g2_nome"]': 'nome', 'label[for="g2_cognome"]': 'cognome',
+    '#t3': 't3', '.passo[data-passo="3"] .sotto': 's3',
+    '#okManlevaBox span': '!okManleva', '#okClausoleBox span': '!okClausole',
+    'label[for="c_manleva"]': 'firma',
+    '#t4': 't4', '.passo[data-passo="4"] > .sotto': 's4',
+    '#okPrivacyBox span': '!okPrivacy',
+    'label[for="c_consenso"]': 'firmaPresa',
+    '#blkMinore fieldset:first-of-type legend': 'legMinore',
+    '#blkMinore .sotto': 'sMinore',
+    'label[for="c_minore"]': 'firmaMinore',
+    '#blkMinore fieldset:last-of-type legend': 'legGen',
+    'label[for="c_gen1"]': 'firma', 'label[for="c_gen2"]': 'firma',
+    '#btnGen2': 'aggiungiGen2', '#btnGen2No': 'rimuovi',
+    '#t5': 't5', '.passo[data-passo="5"] .sotto': 's5',
+    '#btnInvia': 'invia', '#t6': 't6', '.esito .nota:first-of-type': 'nota6',
+    '#btnStampa': 'stampa', '#btnAltro': 'altro',
+    '#pie1': '!pie1', '#pie2': '!pie2'
+  };
+
+  function applicaLingua(l) {
+    LINGUA = l;
+    document.documentElement.setAttribute("lang", l);
+    $$(".lng").forEach(function (b) { b.classList.toggle("sel", b.dataset.lng === l); });
+
+    $("#testoManleva").innerHTML = (l === "en") ? MANLEVA_EN : MANLEVA_IT;
+    $("#testoPrivacy").innerHTML = (l === "en") ? PRIVACY_EN : PRIVACY_IT;
+
+    for (var sel in MAPPA) {
+      var k = MAPPA[sel], html = false;
+      if (k.charAt(0) === "!") { html = true; k = k.slice(1); }
+      $$(sel).forEach(function (el) {
+        if (html) el.innerHTML = TESTI[l][k]; else el.textContent = TESTI[l][k];
+      });
+    }
+    /* pulsanti e testi ripetuti */
+    $$(".btn-primario[data-vai]").forEach(function (b) { b.textContent = T("avanti"); });
+    $$(".btn-second[data-vai]").forEach(function (b) { b.textContent = T("indietro"); });
+    $$("[data-pulisci]").forEach(function (b) { b.textContent = T("cancella"); });
+    $$(".errore").forEach(function (e) { if (e.id !== "e_dataVisita") e.textContent = T("obbl"); });
+    $("#e_dataVisita").textContent = T("mData");
+    $("#box_manleva .tela-hint").textContent = T("firmaHint");
+    $("#box_consenso .tela-hint").textContent = T("firmaQui");
+    $("#box_minore .tela-hint").textContent = T("hintMinore");
+    $("#box_gen1 .tela-hint").textContent = T("firmaQui");
+    $("#box_gen2 .tela-hint").textContent = T("firmaQui");
+    $("#box_minore").previousElementSibling; /* nulla */
+    $$(".firma-chi").forEach(function (e) {
+      if (e.id) return;
+      if (e.closest("#blkGen2")) e.textContent = T("gen2");
+      else e.textContent = T("facoltativa");
+    });
+    $("#pieVersione").textContent = T("versione") + VERSIONE_TESTO;
+    $("#avvisoTit").textContent = T("avvTit");
+
+    banda();
+    etichetteFirme();
+    passoTesto();
+    if (passo === 5) riepiloga();
+  }
+
+  function passoTesto() {
+    if (passo <= ULTIMO) $("#avanzTesto").textContent = T("passo").replace("%1", passo);
+  }
+
+  function banda() {
+    if (!MODO_PROVA) return;
+    $("#avvisoProva").hidden = false;
+    $("#avvisoTesto").innerHTML = ENDPOINT ? T("avvSalva") : T("avvNoSalva");
+  }
 
   /* ---------- stato ---------- */
 
@@ -622,15 +940,7 @@
   }
   $("#dataVisita").value = oggiISO();
 
-  if (MODO_PROVA) {
-    $("#avvisoProva").hidden = false;
-    $("#avvisoTesto").innerHTML = ENDPOINT
-      ? 'Stiamo provando il modulo prima di aprirlo al pubblico. I dati che inserisci ' +
-        '<b>vengono salvati</b>, ma sono contrassegnati come prova e verranno cancellati: ' +
-        'usa dati di fantasia, non quelli di una persona reale.'
-      : 'Questa pagina non &egrave; ancora collegata all&rsquo;archivio: i dati compilati ' +
-        '<em>non vengono inviati n&eacute; conservati</em>. Serve solo per controllare il modulo.';
-  }
+  /* la banda la scrive applicaLingua(), che conosce la lingua scelta */
 
   function minorenne() { return $("input[name=tipo]:checked").value === "minore"; }
 
@@ -732,7 +1042,7 @@
     $("#avanz").style.display = vis ? "" : "none";
     if (vis) {
       $("#barra").style.width = Math.round(n / ULTIMO * 100) + "%";
-      $("#avanzTesto").textContent = "Passo " + n + " di " + ULTIMO;
+      passoTesto();
     }
     /* Le tavolette visibili vanno ridimensionate ORA, non fra 30ms: da
        nascoste misurano 1x1, e chi firmasse nel frattempo otterrebbe un
@@ -771,10 +1081,11 @@
 
   function etichetteFirme() {
     var m = minorenne();
-    $("#chiFirmaManleva").textContent  = m ? "il genitore o tutore" : "il visitatore";
-    $("#chiFirmaConsenso").textContent = m ? "il genitore o tutore" : "il visitatore";
+    var chi = m ? T("chiGenitore") : T("chiVisitatore");
+    $("#chiFirmaManleva").textContent  = chi;
+    $("#chiFirmaConsenso").textContent = chi;
     var nome = ($("#s_nome").value + " " + $("#s_cognome").value).trim();
-    $("#nomeGen1").textContent = nome || "primo genitore";
+    $("#nomeGen1").textContent = nome || T("gen1");
   }
   ["s_nome", "s_cognome"].forEach(function (id) {
     $("#" + id).addEventListener("input", etichetteFirme);
@@ -820,35 +1131,35 @@
     if (n === 1) {
       var d = testo("dataVisita");
       segna("dataVisita", !d);
-      if (!d) { errore("Indica la data della visita."); return false; }
+      if (!d) { errore(T("mData")); return false; }
       return true;
     }
 
     if (n === 2) {
       var ids = ["v_nome", "v_cognome", "v_natoA", "v_natoIl", "v_comune", "v_via"];
       if (minorenne()) ids = ids.concat(["s_nome", "s_cognome", "s_natoA", "s_natoIl", "s_comune", "s_via"]);
-      if (!obbligatori(ids)) { errore("Compila tutti i campi."); return false; }
+      if (!obbligatori(ids)) { errore(T("mCampi")); return false; }
 
       var dv = testo("dataVisita");
       var ev = eta(testo("v_natoIl"), dv);
       if (isNaN(ev) || ev < 0 || ev > 120) {
-        segna("v_natoIl", true); errore("La data di nascita del visitatore non sembra corretta."); return false;
+        segna("v_natoIl", true); errore(T("mNascita")); return false;
       }
       if (minorenne()) {
         if (ev >= 18) {
           segna("v_natoIl", true);
-          errore("Il visitatore risulta maggiorenne alla data della visita: torna al passo 1 e scegli la prima opzione.");
+          errore(T("mGiaMaggiorenne"));
           return false;
         }
         var es = eta(testo("s_natoIl"), dv);
         if (isNaN(es) || es < 18) {
           segna("s_natoIl", true);
-          errore("Chi firma per il minore deve essere maggiorenne.");
+          errore(T("mGenitoreMinore"));
           return false;
         }
       } else if (ev < 18) {
         segna("v_natoIl", true);
-        errore("Il visitatore risulta minorenne: torna al passo 1 e scegli la seconda opzione.");
+        errore(T("mEMinorenne"));
         return false;
       }
       return true;
@@ -865,8 +1176,8 @@
       if (!f) ok = false;
       if (!ok) {
         errore(!cb.checked || !cc.checked
-          ? "Spunta entrambe le caselle e firma per proseguire."
-          : "Manca la firma, oppure il segno è troppo breve.");
+          ? T("mCaselle")
+          : T("mFirma"));
       }
       return ok;
     }
@@ -895,7 +1206,7 @@
           if (!f2) ok4 = false;
         }
       }
-      if (!ok4) errore("Controlla consenso e firme: manca qualcosa.");
+      if (!ok4) errore(T("mPrivacy"));
       return ok4;
     }
     return true;
@@ -925,6 +1236,7 @@
       },
       firmaManleva: tele.c_manleva.png(),
       firmaConsenso: tele.c_consenso.png(),
+      lingua: LINGUA,
       dispositivo: navigator.userAgent,
       cap_extra: $("#cap_extra").value
     };
@@ -947,6 +1259,13 @@
   function riga(et, val) {
     return '<div class="rg"><dt>' + et + '</dt><dd>' + (val || "—") + '</dd></div>';
   }
+  /* evita "via Via Cardo 1" quando il campo contiene gia' il tipo di strada */
+  function indirizzo(v) {
+    var t = String(v || "").trim();
+    return /^(via|viale|v\.le|piazza|p\.zza|corso|c\.so|largo|vicolo|strada|localit|loc\.|contrada|frazione|fraz\.)\b/i.test(t)
+      ? t : ("via " + t);
+  }
+
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
@@ -955,15 +1274,15 @@
 
   function riepiloga() {
     var d = raccogli(), h = "";
-    h += riga("Data della visita", itData(d.dataVisita));
-    h += riga("Visitatore", esc(d.visitatore.nome + " " + d.visitatore.cognome));
-    h += riga("Nato/a a", esc(d.visitatore.natoA) + " il " + itData(d.visitatore.natoIl));
-    h += riga("Residenza", esc(d.visitatore.comune + ", " + d.visitatore.via));
+    h += riga(T("rData"), itData(d.dataVisita));
+    h += riga(T("rVis"), esc(d.visitatore.nome + " " + d.visitatore.cognome));
+    h += riga(T("rNato"), esc(d.visitatore.natoA) + T("rIl") + itData(d.visitatore.natoIl));
+    h += riga(T("rRes"), esc(d.visitatore.comune + ", " + d.visitatore.via));
     if (d.sottoscritto) {
-      h += riga("Genitore o tutore", esc(d.sottoscritto.nome + " " + d.sottoscritto.cognome));
-      h += riga("Nato/a a", esc(d.sottoscritto.natoA) + " il " + itData(d.sottoscritto.natoIl));
-      h += riga("Residenza", esc(d.sottoscritto.comune + ", " + d.sottoscritto.via));
-      if (d.genitore2) h += riga("Secondo genitore", esc(d.genitore2.nome + " " + d.genitore2.cognome));
+      h += riga(T("rGen"), esc(d.sottoscritto.nome + " " + d.sottoscritto.cognome));
+      h += riga(T("rNato"), esc(d.sottoscritto.natoA) + T("rIl") + itData(d.sottoscritto.natoIl));
+      h += riga(T("rRes"), esc(d.sottoscritto.comune + ", " + d.sottoscritto.via));
+      if (d.genitore2) h += riga(T("rGen2"), esc(d.genitore2.nome + " " + d.genitore2.cognome));
     }
     $("#riepDati").innerHTML = h;
 
@@ -972,11 +1291,11 @@
       if (!png) return "";
       return '<figure><img src="' + png + '" alt=""><figcaption>' + tit + "</figcaption></figure>";
     }
-    f += fig(d.firmaManleva, "Manleva");
-    f += fig(d.firmaConsenso, "Presa visione");
-    f += fig(d.firmaMinore, "Minore");
-    f += fig(d.firmaGenitore1, "Genitore 1");
-    f += fig(d.firmaGenitore2, "Genitore 2");
+    f += fig(d.firmaManleva, T("fManleva"));
+    f += fig(d.firmaConsenso, T("fPresa"));
+    f += fig(d.firmaMinore, T("fMinore"));
+    f += fig(d.firmaGenitore1, T("fGen1"));
+    f += fig(d.firmaGenitore2, T("fGen2"));
     $("#riepFirme").innerHTML = f;
   }
 
@@ -996,14 +1315,14 @@
     if (!ENDPOINT) {                      /* modalita' prova */
       preparaStampa(dati, "PROVA-NON-INVIATO");
       $("#codiceEsito").textContent = "PROVA";
-      $("#notaEsito").textContent = "Modalità prova: nessun dato è stato inviato o conservato.";
+      $("#notaEsito").textContent = T("esitoProva");
       mostra(6);
       return;
     }
 
     inCorso = true;
     $("#btnInvia").disabled = true;
-    var s = $("#stato"); s.className = "stato lav"; s.textContent = "Invio in corso…";
+    var s = $("#stato"); s.className = "stato lav"; s.textContent = T("mInvio");
 
     var x = new XMLHttpRequest();
     x.open("POST", ENDPOINT, true);
@@ -1016,21 +1335,21 @@
       if (x.status >= 200 && x.status < 300 && r && r.ok) {
         preparaStampa(dati, r.codice);
         $("#codiceEsito").textContent = r.codice;
-        $("#notaEsito").textContent = "Conserva il codice fino al termine della visita.";
+        $("#notaEsito").textContent = T("esitoOk");
         pulisciStato();
         mostra(6);
       } else {
-        errore((r && r.errore) ? r.errore : "Invio non riuscito. I dati sono ancora qui: riprova.");
+        errore((r && r.errore) ? r.errore : T("mErrore"));
       }
     };
     x.onerror = x.ontimeout = function () {
       inCorso = false; $("#btnInvia").disabled = false;
-      errore("Connessione assente o troppo lenta. I dati non sono persi: riprova quando hai segnale.");
+      errore(T("mRete"));
     };
     try { x.send(JSON.stringify(dati)); }
     catch (e) {
       inCorso = false; $("#btnInvia").disabled = false;
-      errore("Invio non riuscito: riprova.");
+      errore(T("mErrore"));
     }
   });
 
@@ -1042,7 +1361,7 @@
       return "<h3>" + tit + "</h3><table>" +
         '<tr><td class="et">Nome e cognome</td><td>' + esc(p.nome + " " + p.cognome) + "</td></tr>" +
         '<tr><td class="et">Nato/a a</td><td>' + esc(p.natoA) + " il " + itData(p.natoIl) + "</td></tr>" +
-        '<tr><td class="et">Residente in</td><td>' + esc(p.comune) + ", via " + esc(p.via) + "</td></tr>" +
+        '<tr><td class="et">Residente in</td><td>' + esc(p.comune) + ", " + esc(indirizzo(p.via)) + "</td></tr>" +
         "</table>";
     }
     var h = '<div class="pagina">';
@@ -1114,6 +1433,15 @@
     pulisciStato();
     mostra(1);
   });
+
+  $$(".lng").forEach(function (b) {
+    b.addEventListener("click", function () { applicaLingua(b.dataset.lng); });
+  });
+
+  /* se il telefono e' in inglese si parte in inglese; l'italiano resta
+     il testo che fa fede ed e' comunque a un tocco di distanza */
+  var pref = (navigator.language || "it").toLowerCase();
+  applicaLingua(pref.indexOf("it") === 0 ? "it" : "en");
 
   mostra(1);
 })();

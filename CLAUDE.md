@@ -262,6 +262,12 @@ da 2 firme (adulto) a 5 (minore con due genitori).
   ogni volta che cambia il testo legale.
 - **Il PDF lo compone il server**, dal proprio modello: dal browser arrivano solo dati e
   firme. Altrimenti basterebbe modificare la pagina per archiviare un testo diverso.
+- **Due lingue, un solo testo che fa fede.** Selettore IT/EN in alto; la lingua di partenza
+  la sceglie `navigator.language`. Le stringhe stanno in `TESTI` (un oggetto per lingua) e
+  vengono applicate da `applicaLingua()` tramite la tabella `MAPPA` (selettore CSS -> chiave;
+  "!" davanti alla chiave significa innerHTML). L'inglese e' **una traduzione di cortesia**:
+  lo dice il testo stesso, e il **PDF archiviato e' sempre in italiano**, con una nota in calce
+  quando il visitatore ha letto l'inglese. La lingua scelta finisce nel registro.
 - Niente `localStorage`: i dati restano in memoria, si perdono chiudendo la pagina.
 - ⚠️ **Trappola del riquadro firma.** Finché un passo è nascosto il suo `<canvas>` misura
   **1×1**: un PNG preso in quel momento è bianco, mentre il controllo sulla firma passa lo
@@ -269,6 +275,11 @@ da 2 firme (adulto) a 5 (minore con due genitori).
   le tavolette **in modo sincrono** appena il passo diventa visibile (non in un `setTimeout`),
   e `png()` rifà la tela se la trova ancora degenere. Non togliere né l'uno né l'altro:
   il sintomo sarebbe una firma vuota nell'archivio, senza alcun errore a video.
+- ⚠️ **Il testo legale sta in due posti**: nella pagina (quello che il visitatore legge) e
+  nel backend (quello che finisce nel PDF archiviato). Il controllo su `VERSIONE_TESTO`
+  confronta **stringhe, non contenuti**: se si cambia il testo solo da una parte e si alza la
+  versione in entrambe, il controllo non se ne accorge e si archivia un atto diverso da quello
+  sottoscritto. Quando si tocca il testo, si toccano **tutti e due i file**.
 - **Materiale non pubblicato**, in `_materiali/sciesopoli/` (ignorata da git):
   `MANLEVA SCIESOPOLI 2026.pdf` (modulo originale del Comune),
   `PIANO modulo digitale manleva.md` (piano di lavoro completo, fasi 0-6) e
