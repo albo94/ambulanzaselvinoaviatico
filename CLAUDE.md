@@ -106,6 +106,14 @@ minuscole quando si aggiunge o si rinomina un file.
     (1964) e poi nell'associazione ambulanza (prima ambulanza 1968). Frasi come «l'Associazione
     è presente da oltre 55 anni» o «Associazione di Volontariato dal 1968» sono sbagliate:
     il soggetto dei 55 anni / del 1968 è il **soccorso**, non l'ente.
+  - **Formula adottata sul sito** (27/09/2026): «**servizio ambulanza dal 1968**», che mette
+    il servizio come soggetto senza dover riscrivere la frase ogni volta. Usata nel footer di
+    tutte le pagine, nelle meta description, in OG/Twitter e nel JSON-LD. Prima c'era
+    «soccorso (volontario) dal 1968», che lasciava il soggetto implicito e scivolava
+    sull'ente: se serve una variante nuova, il soggetto deve restare il **servizio**.
+  - Restano corrette le frasi in cui il soggetto è esplicito e giusto: «i nostri volontari
+    … servono da oltre 55 anni», «il soccorso volontario è garantito da oltre 55 anni»,
+    e le date in timeline (1964 AVIS, 10 ottobre 1968 prima ambulanza, 1993 associazione).
 - **Volontari**: ~70 attivi
 - **Ambulanze operative**: 3
 - **Interventi/anno**: ~450–500
@@ -389,5 +397,7 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
 - Le pagine nascoste (`quiz60.html`, `sciesopoli/`, `checklist/`) non vanno aggiunte a `sitemap.xml`
   né linkate dal menu; `sciesopoli/` non deve caricare nulla dal resto del sito
 - Date: **1993** è l'associazione, **1968/oltre 55 anni** sono il servizio dei volontari
-  (vedi *Dati associazione*) — vale anche in `<title>`, meta description, OG/Twitter e JSON-LD
+  (vedi *Dati associazione*) — vale anche in `<title>`, meta description, OG/Twitter e JSON-LD.
+  La formula da riusare è «servizio ambulanza dal 1968»; il footer la ripete identica in tutte
+  le pagine, quindi va cambiata ovunque o da nessuna parte
 - `.servizio-photo-single img` usa `object-position: center 15%` per mostrare i volti
