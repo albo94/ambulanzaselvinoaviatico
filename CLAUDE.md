@@ -517,6 +517,13 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     `LATO DESTRO / SOTTO`.
   - ⚠️ L'avanzamento **conta le atmosfere**, non solo le spunte. Sono allineati di
     proposito: prima il contatore diceva 26/26 e il modulo non faceva comunque proseguire.
+- **ECG Cardioline: carica del telefono e tacche della batteria** (27/09/2026), tutti e due
+  obbligatori come le atmosfere. Un ECG si controlla acceso: la spunta non dice se reggera'
+  la prossima uscita. Telefono 0-100%%, batteria 1/2/3 a pulsanti (piu' veloci di un menu
+  sul telefono). Marcate le voci che contengono "Cardioline": **solo i due Crafter**, il
+  Ducato non ne ha una (ha `Cellulare GAMES`, che e' un'altra cosa).
+  Le misure obbligatorie passano tutte da `misureOk()`: chi ne aggiunge una nuova tocca
+  quella, non i tre punti che la usano (validazione, avanzamento, evidenziazione).
 - **`ZAINO DAE` si chiama `DAE`** (27/09/2026), su tutti e tre i mezzi.
 - **I danni si segnano quando si vedono.** Dal passo dei controlli c'è «Hai visto un danno?
   Segnalalo subito», che porta al passo 3 e ci si torna con «Torna ai controlli»: altrimenti
