@@ -499,6 +499,28 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   dal PDF e dalla riga di registro nel backend. ⚠️ In `setup()` le larghezze delle colonne
   del registro ora si ricavano da `COLONNE.indexOf(...)`: erano indici fissi (9 e 10) che
   contavano anche i km e dopo la rimozione avrebbero allargato le colonne sbagliate.
+- **Bombole: pressione obbligatoria, tutte nel vano sanitario** (27/09/2026). Le cinque
+  bombole di cui si rileva la pressione stavano in tre posti diversi a seconda del mezzo
+  (`LIVELLI BOMBOLE` su 006 e Ducato, dentro `PENSILE SOPRA PORTA SCORREVOLE` sul 007).
+  Ora stanno tutte in `VANO SANITARIO`, dove sono fisicamente, e ognuna ha un campo
+  **atm**: senza il numero la zona non risulta fatta e non si prosegue. Una spunta da sola
+  non dice se la bombola va cambiata.
+  - ⚠️ **Non confondere le due famiglie di righe.** Quelle da compilare finiscono con
+    «atm» (`Bombola 2l Vano atm`); quelle con la pressione **nominale fra parentesi**
+    (`Bombola O2 2l (50 atm)`) sono controlli di presenza e restano dove sono. La prima
+    versione del filtro prendeva anche le seconde e sul Ducato usciva con 8 bombole invece
+    di 5. Il filtro giusto è «inizia per bombola **e** finisce con atm».
+  - Le righe di solo conteggio che erano in `VANO SANITARIO` (2×7L, 2×2L) sono state tolte:
+    se di ogni bombola si scrive la pressione, la presenza è implicita.
+  - Restano fuori dal vano sanitario le bombole che stanno altrove davvero: quella dello
+    `ZAINO RIANIMAZIONE` (006 e 007) e, sul Ducato, `ZAINO ADULTO / GRANDE` e
+    `LATO DESTRO / SOTTO`.
+  - ⚠️ L'avanzamento **conta le atmosfere**, non solo le spunte. Sono allineati di
+    proposito: prima il contatore diceva 26/26 e il modulo non faceva comunque proseguire.
+- **`ZAINO DAE` si chiama `DAE`** (27/09/2026), su tutti e tre i mezzi.
+- **I danni si segnano quando si vedono.** Dal passo dei controlli c'è «Hai visto un danno?
+  Segnalalo subito», che porta al passo 3 e ci si torna con «Torna ai controlli»: altrimenti
+  per annotare un graffio bisognerebbe prima chiudere tutte le zone.
 - **Danni e segnalazioni** (passo 3, dal 27/09/2026). Ricalca il riquadro *DANNI E
   SEGNALAZIONI MEZZO* del cartaceo: stessi cinque codici (graffio, ammaccatura, rottura,
   malfunzionamento, altro) e le stesse quattro viste del mezzo.
