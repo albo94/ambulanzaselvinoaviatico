@@ -378,6 +378,29 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     facilmente — `I` maiuscola e `l` minuscola sono identiche in quasi tutti i caratteri, ed è
     successo davvero: un carattere su 44 e la risposta era 404, indistinguibile da un foglio
     non condiviso.
+- **Correzione della scadenza dalla check list** (dal 27/09/2026). Accanto ad assicurazione,
+  revisione e tagliando c'è «la data non è questa»: si apre un campo data già compilato con
+  il valore del gestionale. Se il volontario lo cambia, al riepilogo compare un riquadro con
+  `vecchia → nuova` e una **spunta di conferma**; senza spunta il salvataggio si ferma e lo
+  dice (il backend scarterebbe la correzione in silenzio, che è peggio).
+  - Il backend scrive nel gestionale come **seriale**, non come testo: il foglio è in locale
+    `en_US`, e `02/09/2027` scritto come stringa ci finisce come **9 febbraio**.
+  - La riga si cerca per **targa + tipo**: i nomi dei mezzi nel gestionale sono scritti a mano
+    e cambiano grafia, la targa no.
+  - La notifica Telegram non ha un chat id fisso: legge il foglio `CODICI` del gestionale e
+    manda ai chat del **Responsabile** di quella riga, come fa già `sendPerResponsible_()`
+    del progetto `gestionale`. Se cambiate gruppo, cambia da solo.
+  - `BOT_TOKEN` sta nelle **Script Properties** del progetto Check list mezzi, mai nel repo:
+    questo repository è pubblico su GitHub.
+  - Le correzioni girano **dopo** il salvataggio e dentro un `try`: una check list compilata
+    non si butta via perché una data non quadra. In `MODO_PROVA` non vengono applicate.
+  - ⚠️ **Il nickname non è autenticato.** La pagina è pubblica e chi compila sceglie il nome
+    da un elenco, senza login: chiunque abbia il link può cambiare una scadenza a nome di
+    chiunque. I paracadute sono a valle, non a monte — solo i 3 tipi di scadenza e i 3 mezzi
+    noti, mai cancellazioni, data entro un intervallo plausibile, e ogni modifica annunciata
+    su Telegram **con il valore precedente** e con la nota che il nome è dichiarato. Un cambio
+    sbagliato resta visibile e si torna indietro; non è impedito.
+  - Il registro ha una colonna `scadenze_corrette` con `tipo: vecchia -> nuova`.
   - Al 27/09/2026 **4 voci su 9 non tornavano**, e non sono state allineate d'ufficio: il
     tagliando del 007 dice 02/09/2027 nella check list (aggiornata quel giorno) e 20/12/2026
     nel gestionale. Quando le due fonti divergono di più di qualche giorno, decide una persona:

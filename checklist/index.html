@@ -164,6 +164,15 @@
           font:700 .7rem/1.5 inherit; white-space:nowrap; vertical-align:middle; }
   .scad.ko { background:var(--ko-bg); color:var(--ko); }
   .scad.warn { background:var(--warn-bg); color:var(--warn); }
+  .scad-mod { display:block; margin-top:4px; padding:0; background:none; border:0;
+              font:600 .72rem/1.4 inherit; color:var(--accent); cursor:pointer;
+              text-decoration:underline; text-underline-offset:2px; }
+  .scad-box { padding:0 14px 10px; }
+  .scad-box input { min-height:40px; font-size:.85rem; }
+  .riq.conferma { border-color:var(--warn); background:var(--warn-bg); }
+  .riq.conferma label { display:flex; gap:9px; align-items:flex-start; font-weight:600;
+                        margin:10px 0 0; cursor:pointer; }
+  .riq.conferma input[type=checkbox] { width:20px; height:20px; flex:0 0 auto; margin-top:1px; }
   .voce-nota { padding:0 14px 10px; }
   .voce-nota input { min-height:40px; font-size:.85rem; }
 
@@ -281,6 +290,7 @@
     <p class="sotto">Verifica prima di salvare: il documento finisce nella cartella del mezzo.</p>
 
     <div class="riq"><dl class="dati" id="riepDati"></dl></div>
+    <div id="riepCorrezioni"></div>
     <div id="riepEsiti"></div>
 
     <div class="campo">
@@ -329,7 +339,7 @@
      di prova e marcate come tali. */
   var MODO_PROVA = false;
 
-  var VERSIONE = "2026-09-v2";
+  var VERSIONE = "2026-09-v3";
 
   /* ============================================================ */
 
@@ -535,12 +545,12 @@
       s.voci.forEach(function (v) {
         /* assicurazione, revisione e tagliando portano la scadenza dal gestionale:
            una revisione scaduta si deve vedere prima di uscire, non dopo */
-        var q = null;
+        var q = null, t0 = null;
         for (var t in scad) {
-          if (v.toLowerCase().indexOf(t.toLowerCase()) === 0) { q = scad[t]; break; }
+          if (v.toLowerCase().indexOf(t.toLowerCase()) === 0) { q = scad[t]; t0 = t; break; }
         }
         lista.push({ p: trovaParte(s.titolo, ""), qta: null, nome: v,
-                     scad: q, stato: null, nota: "" });
+                     scad: q, tipoScad: t0, scadNuova: null, stato: null, nota: "" });
       });
     });
     (m.voci || []).forEach(function (v) {
@@ -577,14 +587,21 @@
     var i = lista.indexOf(v);
     return '<div class="voce" id="voce' + i + '">' +
              '<span class="voce-q">' + (v.qta == null ? "&middot;" : v.qta) + '</span>' +
-             '<span class="voce-n">' + esc(v.nome) + cartellinoScadenza(v.scad) + '</span>' +
+             '<span class="voce-n">' + esc(v.nome) + cartellinoScadenza(v.scad) +
+               (v.tipoScad ? '<button type="button" class="scad-mod" data-scad="' + i +
+                             '">la data non &egrave; questa</button>' : '') + '</span>' +
              '<span class="voce-b">' +
                '<button type="button" class="sb" data-i="' + i + '" data-s="ok">OK</button>' +
                '<button type="button" class="sb" data-i="' + i + '" data-s="ko">!</button>' +
              '</span></div>' +
            '<div class="voce-nota" id="nota' + i + '" hidden>' +
              '<input type="text" data-nota="' + i + '" placeholder="Cosa manca o cosa non va">' +
-           '</div>';
+           '</div>' +
+           (v.tipoScad
+             ? '<div class="scad-box" id="scad' + i + '" hidden>' +
+                 '<input type="date" data-scaddata="' + i + '" value="' + esc(v.scad || '') + '">' +
+               '</div>'
+             : '');
   }
 
   function disegnaZona(ip, titolo) {
@@ -675,6 +692,22 @@
       inp.addEventListener("input", function () { lista[+inp.dataset.nota].nota = inp.value; });
     });
 
+    $$("[data-scad]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var box = $("#scad" + b.dataset.scad);
+        box.hidden = !box.hidden;
+        if (!box.hidden) $("input", box).focus();
+      });
+    });
+
+    $$("[data-scaddata]").forEach(function (inp) {
+      inp.addEventListener("change", function () {
+        var v = lista[+inp.dataset.scaddata];
+        /* uguale all'originale = nessuna correzione, non una correzione a vuoto */
+        v.scadNuova = (inp.value && inp.value !== v.scad) ? inp.value : null;
+      });
+    });
+
     if (parti.length) apri(0, false);
     aggiorna();
   }
@@ -758,6 +791,22 @@
       "<dt>Compilata da</dt><dd>" + esc(chi) + "</dd>" +
       "<dt>Controlli</dt><dd>" + lista.length + "</dd>";
 
+    var corr = lista.filter(function (v) { return v.scadNuova; });
+    $("#riepCorrezioni").innerHTML = corr.length
+      ? '<div class="riq conferma"><h3>' +
+          (corr.length === 1 ? 'Stai correggendo una scadenza' : 'Stai correggendo ' + corr.length + ' scadenze') +
+        '</h3>' +
+        '<dl class="dati">' + corr.map(function (v) {
+          return '<dt>' + esc(v.tipoScad) + '</dt><dd>' + itData(v.scad || '') +
+                 ' &rarr; <b>' + itData(v.scadNuova) + '</b></dd>';
+        }).join("") + '</dl>' +
+        '<label><input type="checkbox" id="okCorrezioni">' +
+        '<span>Confermo: la data corretta è quella che ho scritto. ' +
+        'Verrà aggiornata nel gestionale scadenze e segnalata su Telegram ' +
+        'a nome di <b>' + esc(chi) + '</b>.</span></label>' +
+        '</div>'
+      : "";
+
     var ko = lista.filter(function (v) { return v.stato === "ko"; });
     $("#riepEsiti").innerHTML = ko.length
       ? '<div class="riq ko"><h3>' + ko.length + ' voci da sistemare</h3><ul class="mancanti">' +
@@ -812,7 +861,19 @@
       }
       riepiloga(); mostra(3); return;
     }
-    if (passo === 3) salva();
+    if (passo === 3) {
+      /* senza spunta il backend scarterebbe la correzione senza dire niente:
+         meglio fermarsi qui, dove si puo' ancora spiegare perche' */
+      var daConf = lista.filter(function (v) { return v.scadNuova; });
+      if (daConf.length && !$("#okCorrezioni").checked) {
+        errore("#stato3", daConf.length === 1
+          ? "Hai cambiato una scadenza: conferma la casella, oppure rimetti la data di prima."
+          : "Hai cambiato " + daConf.length + " scadenze: conferma la casella, oppure rimetti le date di prima.");
+        $("#okCorrezioni").focus();
+        return;
+      }
+      salva();
+    }
   });
 
   /* ---------- salvataggio ---------- */
@@ -826,6 +887,11 @@
       mezzo: mezzo, mezzoNome: m.nome, targa: m.targa || "",
       data: $("#data").value, operatore: chi,
       note: $("#note").value.trim(),
+      correzioni: lista.filter(function (v) { return v.scadNuova; })
+                       .map(function (v) {
+                         return { tipo: v.tipoScad, da: itData(v.scad || ""), a: v.scadNuova };
+                       }),
+      correzioniConfermate: !!($("#okCorrezioni") && $("#okCorrezioni").checked),
       totale: lista.length,
       mancanti: lista.filter(function (v) { return v.stato === "ko"; })
                      .map(function (v) { return { zona: parti[v.p].etichetta, voce: v.nome, nota: v.nota }; }),
