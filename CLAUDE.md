@@ -98,6 +98,11 @@ minuscole quando si aggiunge o si rinomina un file.
 - **IBAN**: IT67 O032 9601 6010 0006 7726 941
 - **ANPAS Lombardia** dal 1995
 - **Fondata**: 1993 (radici 1964 AVIS, prima ambulanza 1968)
+  - ⚠️ **Non attribuire all'associazione i "oltre 55 anni"**: l'associazione è del **1993**.
+    Sono i **volontari** a garantire il servizio da oltre 55 anni, prima nella sezione **AVIS**
+    (1964) e poi nell'associazione ambulanza (prima ambulanza 1968). Frasi come «l'Associazione
+    è presente da oltre 55 anni» o «Associazione di Volontariato dal 1968» sono sbagliate:
+    il soggetto dei 55 anni / del 1968 è il **soccorso**, non l'ente.
 - **Volontari**: ~70 attivi
 - **Ambulanze operative**: 3
 - **Interventi/anno**: ~450–500
@@ -245,4 +250,6 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
   come `foto.jpg` funziona in locale e si rompe online
 - Le immagini stanno nella sottocartella della sezione che le usa (vedi *Struttura immagini*),
   non nella radice di `images/`
+- Date: **1993** è l'associazione, **1968/oltre 55 anni** sono il servizio dei volontari
+  (vedi *Dati associazione*) — vale anche in `<title>`, meta description, OG/Twitter e JSON-LD
 - `.servizio-photo-single img` usa `object-position: center 15%` per mostrare i volti
