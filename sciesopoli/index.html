@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<!-- favicon neutra, disegnata qui: la pagina non deve caricare nulla dal resto del sito -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23594A3C'/%3E%3Cpath d='M8 23V12l8-4 8 4v11z' fill='none' stroke='%23F3EDE5' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M13 23v-6h6v6' fill='none' stroke='%23F3EDE5' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>Sciesopoli &ndash; modulo di visita</title>
+<style>
+  :root {
+    --paper:#F7F5F2; --surface:#FFFFFF; --surface-2:#EFEBE6;
+    --ink:#1F1D1B; --ink-soft:#6B6560; --line:#DCD5CC;
+    --accent:#E8601C; --accent-dark:#C04D14; --accent-ink:#FFFFFF;
+    --ok:#1A8B3C; --err:#B3261E;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(31,29,27,.05), 0 8px 24px -16px rgba(31,29,27,.35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#171615; --surface:#201E1C; --surface-2:#2A2724;
+      --ink:#F2EEE9; --ink-soft:#A8A099; --line:#3A3632;
+      --accent:#FF7A3D; --accent-dark:#E8601C; --accent-ink:#231004;
+      --ok:#5BC77E; --err:#FF6B61;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#171615; --surface:#201E1C; --surface-2:#2A2724;
+    --ink:#F2EEE9; --ink-soft:#A8A099; --line:#3A3632;
+    --accent:#FF7A3D; --accent-dark:#E8601C; --accent-ink:#231004;
+    --ok:#5BC77E; --err:#FF6B61;
+  }
+
+  *,*::before,*::after { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    padding-env: 0;
+  }
+  .wrap { max-width:720px; margin:0 auto; padding:16px 16px 56px; }
+
+  /* ---------- intestazione ---------- */
+  .testata { padding:14px 0 18px; border-bottom:1px solid var(--line); margin-bottom:18px; }
+  .testata h1 { margin:0; font-size:1.15rem; line-height:1.25; font-weight:700; letter-spacing:.01em; }
+  .testata p { margin:3px 0 0; font-size:.84rem; color:var(--ink-soft); }
+
+  .avviso {
+    border:1px solid var(--line); border-left:4px solid var(--accent);
+    background:var(--surface-2); border-radius:var(--radius);
+    padding:12px 14px; margin:0 0 18px; font-size:.88rem;
+  }
+  .avviso strong { display:block; margin-bottom:2px; }
+
+  /* ---------- avanzamento ---------- */
+  .avanz { margin:0 0 20px; }
+  .avanz-barra { height:5px; background:var(--surface-2); border-radius:99px; overflow:hidden; }
+  .avanz-barra i { display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .28s ease; }
+  .avanz-testo { margin:7px 0 0; font-size:.78rem; color:var(--ink-soft); letter-spacing:.02em; text-transform:uppercase; }
+
+  /* ---------- schede ---------- */
+  .passo { display:none; }
+  .passo.attivo { display:block; animation:entra .22s ease both; }
+  @keyframes entra { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+  h2 { font-size:1.25rem; margin:0 0 4px; line-height:1.3; }
+  .sotto { margin:0 0 18px; color:var(--ink-soft); font-size:.9rem; }
+
+  fieldset { border:0; margin:0 0 18px; padding:0; }
+  legend { padding:0; font-weight:700; font-size:.95rem; margin-bottom:10px; }
+
+  label { display:block; font-size:.86rem; font-weight:600; margin:0 0 5px; }
+  .campo { margin:0 0 14px; }
+  input[type=text], input[type=date] {
+    width:100%; padding:11px 12px; font:inherit; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    min-height:46px;
+  }
+  input:focus-visible, button:focus-visible, .scelta:focus-within {
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  .riga { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
+  @media (max-width:520px){ .riga { grid-template-columns:1fr; } }
+
+  .errore { color:var(--err); font-size:.8rem; margin:4px 0 0; display:none; }
+  .campo.ko input { border-color:var(--err); }
+  .campo.ko .errore { display:block; }
+
+  /* ---------- scelta tipo ---------- */
+  .scelta { display:block; border:1px solid var(--line); background:var(--surface);
+            border-radius:var(--radius); padding:14px; margin:0 0 10px; cursor:pointer; }
+  .scelta input { margin-right:8px; }
+  .scelta b { font-size:.95rem; }
+  .scelta span { display:block; color:var(--ink-soft); font-size:.84rem; margin-top:3px; }
+  .scelta.sel { border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+
+  /* ---------- testo legale ---------- */
+  .legale {
+    max-height:300px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    border:1px solid var(--line); background:var(--surface);
+    border-radius:var(--radius); padding:14px 16px; font-size:.84rem; line-height:1.55;
+  }
+  .legale h3 { font-size:.9rem; margin:14px 0 6px; }
+  .legale h3:first-child { margin-top:0; }
+  .legale p { margin:0 0 9px; }
+  .legale ul { margin:0 0 9px; padding-left:18px; }
+  .legale li { margin:0 0 5px; }
+  .legale .dich { font-weight:700; text-transform:uppercase; font-size:.78rem;
+                  letter-spacing:.04em; color:var(--accent-dark); margin:12px 0 4px; }
+
+  .consenso { display:flex; gap:10px; align-items:flex-start; margin:14px 0 0;
+              border:1px solid var(--line); background:var(--surface-2);
+              border-radius:var(--radius); padding:12px 14px; cursor:pointer; }
+  .consenso input { margin:3px 0 0; flex:0 0 auto; width:18px; height:18px; }
+  .consenso span { font-size:.87rem; }
+  .consenso.ko { border-color:var(--err); }
+
+  /* ---------- firma ---------- */
+  .firma { margin:18px 0 0; }
+  .firma-testa { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:6px; }
+  .firma-testa label { margin:0; }
+  .firma-chi { font-size:.78rem; color:var(--ink-soft); font-weight:400; }
+  .tela-box { position:relative; border:1px dashed var(--line); border-radius:var(--radius);
+              background:#FFFFFF; overflow:hidden; }
+  .tela-box.ko { border-color:var(--err); border-style:solid; }
+  canvas { display:block; width:100%; height:160px; touch-action:none; cursor:crosshair; }
+  .tela-riga { position:absolute; left:16px; right:16px; bottom:34px; border-bottom:1px solid #D8D2CA; pointer-events:none; }
+  .tela-hint { position:absolute; left:0; right:0; bottom:12px; text-align:center;
+               font-size:.78rem; color:#9A938B; pointer-events:none; }
+  .tela-box.scritto .tela-hint, .tela-box.scritto .tela-riga { display:none; }
+  .firma-azioni { display:flex; justify-content:flex-end; margin-top:6px; }
+
+  /* ---------- pulsanti ---------- */
+  .azioni { display:flex; gap:10px; margin:24px 0 0; }
+  button {
+    font:inherit; font-weight:700; border-radius:var(--radius); border:1px solid transparent;
+    padding:13px 18px; min-height:48px; cursor:pointer; flex:1;
+  }
+  .btn-primario { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .btn-primario:hover { background:var(--accent-dark); border-color:var(--accent-dark); }
+  .btn-second { background:transparent; color:var(--ink); border-color:var(--line); flex:0 0 auto; }
+  .btn-second:hover { border-color:var(--ink-soft); }
+  .btn-mini { flex:0 0 auto; padding:7px 12px; min-height:0; font-size:.8rem; font-weight:600;
+              background:transparent; color:var(--ink-soft); border-color:var(--line); }
+
+  /* ---------- riepilogo ---------- */
+  .riep { border:1px solid var(--line); background:var(--surface); border-radius:var(--radius); overflow:hidden; }
+  .riep dl { margin:0; }
+  .riep .rg { display:grid; grid-template-columns:38% 1fr; gap:10px; padding:10px 14px; border-bottom:1px solid var(--line); }
+  .riep .rg:last-child { border-bottom:0; }
+  .riep dt { color:var(--ink-soft); font-size:.82rem; margin:0; }
+  .riep dd { margin:0; font-size:.9rem; font-weight:600; word-break:break-word; }
+  .riep-firme { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+  .riep-firme figure { margin:0; border:1px solid var(--line); border-radius:8px; background:#fff; padding:6px 8px; }
+  .riep-firme img { display:block; height:48px; width:auto; }
+  .riep-firme figcaption { font-size:.7rem; color:var(--ink-soft); margin-top:3px; }
+
+  /* ---------- esito ---------- */
+  .esito { text-align:center; padding:26px 12px; }
+  .esito .segno { width:60px; height:60px; border-radius:50%; background:var(--ok); color:#fff;
+                  display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 16px; }
+  .codice { font-size:1.6rem; font-weight:800; letter-spacing:.06em; margin:10px 0 2px; font-variant-numeric:tabular-nums; }
+  .esito .nota { color:var(--ink-soft); font-size:.86rem; }
+
+  .stato { margin:14px 0 0; font-size:.88rem; display:none; }
+  .stato.ko { color:var(--err); display:block; }
+  .stato.lav { color:var(--ink-soft); display:block; }
+
+  footer { margin-top:34px; padding-top:14px; border-top:1px solid var(--line);
+           font-size:.76rem; color:var(--ink-soft); }
+  footer p { margin:0 0 5px; }
+
+  /* ---------- stampa ---------- */
+  @media print {
+    :root { --paper:#fff; --surface:#fff; --ink:#000; --ink-soft:#333; --line:#999; }
+    body { background:#fff; font-size:11pt; }
+    .wrap { max-width:none; padding:0; }
+    .avanz, .azioni, .avviso, .btn-mini, .stato, .firma-azioni { display:none !important; }
+    .passo { display:none !important; }
+    #stampa { display:block !important; }
+    .legale { max-height:none; overflow:visible; border:0; padding:0; }
+    .pagina { page-break-after:always; }
+    .pagina:last-child { page-break-after:auto; }
+  }
+  #stampa { display:none; }
+  #stampa .firma-img { border-bottom:1px solid #000; display:inline-block; min-width:220px; }
+  #stampa .firma-img img { height:46px; display:block; }
+  #stampa table { width:100%; border-collapse:collapse; margin:0 0 10px; }
+  #stampa td { padding:3px 0; vertical-align:top; font-size:10.5pt; }
+  #stampa td.et { color:#444; width:34%; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="testata">
+    <div>
+      <h1>Sciesopoli &ndash; modulo di visita</h1>
+      <p>Dichiarazione di assunzione di rischio e di manleva</p>
+    </div>
+  </div>
+
+  <div class="avviso" id="avvisoProva" hidden>
+    <strong>Modulo in prova</strong>
+    Questa pagina non &egrave; ancora collegata all&rsquo;archivio: i dati compilati
+    <em>non vengono inviati n&eacute; conservati</em>. Serve solo per controllare il modulo.
+  </div>
+
+  <div class="avanz" id="avanz">
+    <div class="avanz-barra"><i id="barra"></i></div>
+    <p class="avanz-testo" id="avanzTesto">Passo 1 di 5</p>
+  </div>
+
+  <form id="modulo" novalidate autocomplete="on">
+
+  <!-- campo trappola anti-spam: invisibile, deve restare vuoto -->
+  <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+    <label for="cap_extra">Non compilare</label>
+    <input type="text" id="cap_extra" name="cap_extra" tabindex="-1" autocomplete="off">
+  </div>
+
+  <!-- ============ PASSO 1 ============ -->
+  <section class="passo attivo" data-passo="1" aria-labelledby="t1">
+    <h2 id="t1">Chi compila il modulo</h2>
+    <p class="sotto">Serve un modulo per ogni visitatore. Per chi ha meno di 18 anni lo compila un genitore o il tutore.</p>
+
+    <label class="scelta sel" id="scAdulto">
+      <input type="radio" name="tipo" value="adulto" checked>
+      <b>Sono il visitatore, maggiorenne</b>
+      <span>Compilo e firmo per me stesso.</span>
+    </label>
+
+    <label class="scelta" id="scMinore">
+      <input type="radio" name="tipo" value="minore">
+      <b>Sono genitore o tutore di un visitatore minorenne</b>
+      <span>Compilo i miei dati e quelli del minore, e firmo per lui.</span>
+    </label>
+
+    <div class="campo" style="margin-top:18px">
+      <label for="dataVisita">Data della visita</label>
+      <input type="date" id="dataVisita" name="dataVisita" required>
+      <p class="errore" id="e_dataVisita">Indica la data della visita.</p>
+    </div>
+
+    <div class="azioni">
+      <button type="button" class="btn-primario" data-vai="2">Avanti</button>
+    </div>
+  </section>
+
+  <!-- ============ PASSO 2 ============ -->
+  <section class="passo" data-passo="2" aria-labelledby="t2">
+    <h2 id="t2">Dati anagrafici</h2>
+    <p class="sotto">Come sul documento d&rsquo;identit&agrave;.</p>
+
+    <fieldset id="blkSottoscritto" hidden>
+      <legend>Il sottoscritto &ndash; genitore o tutore</legend>
+      <div class="riga">
+        <div class="campo"><label for="s_nome">Nome</label>
+          <input type="text" id="s_nome" autocomplete="given-name">
+          <p class="errore">Campo obbligatorio.</p></div>
+        <div class="campo"><label for="s_cognome">Cognome</label>
+          <input type="text" id="s_cognome" autocomplete="family-name">
+          <p class="errore">Campo obbligatorio.</p></div>
+      </div>
+      <div class="riga">
+        <div class="campo"><label for="s_natoA">Nato/a a</label>
+          <input type="text" id="s_natoA"><p class="errore">Campo obbligatorio.</p></div>
+        <div class="campo"><label for="s_natoIl">il</label>
+          <input type="date" id="s_natoIl"><p class="errore" id="e_s_natoIl">Campo obbligatorio.</p></div>
+      </div>
+      <div class="riga">
+        <div class="campo"><label for="s_comune">Residente in (comune)</label>
+          <input type="text" id="s_comune" autocomplete="address-level2"><p class="errore">Campo obbligatorio.</p></div>
+        <div class="campo"><label for="s_via">via</label>
+          <input type="text" id="s_via" autocomplete="street-address"><p class="errore">Campo obbligatorio.</p></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Il visitatore</legend>
+      <div class="riga">
+        <div class="campo"><label for="v_nome">Nome</label>
+          <input type="text" id="v_nome" autocomplete="given-name"><p class="errore">Campo obbligatorio.</p></div>
+        <div class="campo"><label for="v_cognome">Cognome</label>
+          <input type="text" id="v_cognome" autocomplete="family-name"><p class="errore">Campo obbligatorio.</p></div>
+      </div>
+      <div class="riga">
+        <div class="campo"><label for="v_natoA">Nato/a a</label>
+          <input type="text" id="v_natoA"><p class="errore">Campo obbligatorio.</p></div>
+        <div class="campo"><label for="v_natoIl">il</label>
+          <input type="date" id="v_natoIl"><p class="errore" id="e_v_natoIl">Campo obbligatorio.</p></div>
+      </div>
+      <div class="riga">
+        <div class="campo"><label for="v_comune">Residente in (comune)</label>
+          <input type="text" id="v_comune" autocomplete="address-level2"><p class="errore">Campo obbligatorio.</p></div>
+        <div class="campo"><label for="v_via">via</label>
+          <input type="text" id="v_via" autocomplete="street-address"><p class="errore">Campo obbligatorio.</p></div>
+      </div>
+    </fieldset>
+
+    <div class="azioni">
+      <button type="button" class="btn-second" data-vai="1">Indietro</button>
+      <button type="button" class="btn-primario" data-vai="3">Avanti</button>
+    </div>
+  </section>
+
+  <!-- ============ PASSO 3 ============ -->
+  <section class="passo" data-passo="3" aria-labelledby="t3">
+    <h2 id="t3">Dichiarazione di manleva</h2>
+    <p class="sotto">Leggi il testo fino in fondo, poi firma nel riquadro.</p>
+
+    <div class="legale" id="testoManleva" tabindex="0"></div>
+
+    <label class="consenso" id="okManlevaBox">
+      <input type="checkbox" id="okManleva">
+      <span>Ho letto la dichiarazione e la sottoscrivo.</span>
+    </label>
+
+    <div class="firma">
+      <div class="firma-testa">
+        <label for="c_manleva">Firma</label>
+        <span class="firma-chi" id="chiFirmaManleva"></span>
+      </div>
+      <div class="tela-box" id="box_manleva">
+        <canvas id="c_manleva" aria-label="Riquadro per la firma"></canvas>
+        <div class="tela-riga"></div>
+        <div class="tela-hint">Firma qui con il dito o con il mouse</div>
+      </div>
+      <div class="firma-azioni"><button type="button" class="btn-mini" data-pulisci="c_manleva">Cancella</button></div>
+    </div>
+
+    <div class="azioni">
+      <button type="button" class="btn-second" data-vai="2">Indietro</button>
+      <button type="button" class="btn-primario" data-vai="4">Avanti</button>
+    </div>
+  </section>
+
+  <!-- ============ PASSO 4 ============ -->
+  <section class="passo" data-passo="4" aria-labelledby="t4">
+    <h2 id="t4">Informativa privacy e consenso</h2>
+    <p class="sotto">Titolare del trattamento: Comune di Selvino.</p>
+
+    <div class="legale" id="testoPrivacy" tabindex="0"></div>
+
+    <label class="consenso" id="okPrivacyBox">
+      <input type="checkbox" id="okPrivacy">
+      <span>Esprimo il consenso alla trasmissione del presente documento, comprensivo dei miei dati
+      personali, alla Propriet&agrave; e al Ministero della Cultura.</span>
+    </label>
+
+    <div class="firma">
+      <div class="firma-testa">
+        <label for="c_consenso">Firma per il consenso</label>
+        <span class="firma-chi" id="chiFirmaConsenso"></span>
+      </div>
+      <div class="tela-box" id="box_consenso">
+        <canvas id="c_consenso" aria-label="Riquadro per la firma di consenso"></canvas>
+        <div class="tela-riga"></div>
+        <div class="tela-hint">Firma qui</div>
+      </div>
+      <div class="firma-azioni"><button type="button" class="btn-mini" data-pulisci="c_consenso">Cancella</button></div>
+    </div>
+
+    <!-- blocco minorenni -->
+    <div id="blkMinore" hidden>
+      <fieldset style="margin-top:26px">
+        <legend>Consenso del minore</legend>
+        <p class="sotto" style="margin-bottom:12px">
+          Se il bambino &egrave; troppo piccolo per firmare, lascia il riquadro vuoto.
+        </p>
+        <div class="firma" style="margin-top:0">
+          <div class="firma-testa">
+            <label for="c_minore">Firma del minore</label>
+            <span class="firma-chi">facoltativa</span>
+          </div>
+          <div class="tela-box" id="box_minore">
+            <canvas id="c_minore" aria-label="Riquadro per la firma del minore"></canvas>
+            <div class="tela-riga"></div>
+            <div class="tela-hint">Firma del minore (se in grado di farlo)</div>
+          </div>
+          <div class="firma-azioni"><button type="button" class="btn-mini" data-pulisci="c_minore">Cancella</button></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Chi esercita la responsabilit&agrave; genitoriale</legend>
+        <div class="firma" style="margin-top:0">
+          <div class="firma-testa">
+            <label for="c_gen1">Firma</label>
+            <span class="firma-chi" id="nomeGen1"></span>
+          </div>
+          <div class="tela-box" id="box_gen1">
+            <canvas id="c_gen1" aria-label="Riquadro per la firma del primo genitore"></canvas>
+            <div class="tela-riga"></div>
+            <div class="tela-hint">Firma</div>
+          </div>
+          <div class="firma-azioni"><button type="button" class="btn-mini" data-pulisci="c_gen1">Cancella</button></div>
+        </div>
+
+        <div id="gen2Attiva" style="margin-top:16px">
+          <button type="button" class="btn-mini" id="btnGen2">+ Aggiungi il secondo genitore</button>
+        </div>
+
+        <div id="blkGen2" hidden style="margin-top:14px">
+          <div class="riga">
+            <div class="campo"><label for="g2_nome">Nome</label>
+              <input type="text" id="g2_nome"><p class="errore">Campo obbligatorio.</p></div>
+            <div class="campo"><label for="g2_cognome">Cognome</label>
+              <input type="text" id="g2_cognome"><p class="errore">Campo obbligatorio.</p></div>
+          </div>
+          <div class="firma" style="margin-top:4px">
+            <div class="firma-testa"><label for="c_gen2">Firma</label>
+              <span class="firma-chi">secondo genitore</span></div>
+            <div class="tela-box" id="box_gen2">
+              <canvas id="c_gen2" aria-label="Riquadro per la firma del secondo genitore"></canvas>
+              <div class="tela-riga"></div>
+              <div class="tela-hint">Firma</div>
+            </div>
+            <div class="firma-azioni">
+              <button type="button" class="btn-mini" data-pulisci="c_gen2">Cancella</button>
+              <button type="button" class="btn-mini" id="btnGen2No" style="margin-left:8px">Rimuovi</button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="azioni">
+      <button type="button" class="btn-second" data-vai="3">Indietro</button>
+      <button type="button" class="btn-primario" data-vai="5">Avanti</button>
+    </div>
+  </section>
+
+  <!-- ============ PASSO 5 ============ -->
+  <section class="passo" data-passo="5" aria-labelledby="t5">
+    <h2 id="t5">Controlla e invia</h2>
+    <p class="sotto">Verifica i dati prima di inviare.</p>
+
+    <div class="riep"><dl id="riepDati"></dl></div>
+    <div class="riep-firme" id="riepFirme"></div>
+
+    <p class="stato" id="stato"></p>
+
+    <div class="azioni">
+      <button type="button" class="btn-second" data-vai="4">Indietro</button>
+      <button type="button" class="btn-primario" id="btnInvia">Invia il modulo</button>
+    </div>
+  </section>
+
+  </form>
+
+  <!-- ============ ESITO ============ -->
+  <section class="passo" data-passo="6" aria-labelledby="t6">
+    <div class="esito">
+      <div class="segno" aria-hidden="true">&#10003;</div>
+      <h2 id="t6">Modulo registrato</h2>
+      <p class="nota">Mostra questo codice all&rsquo;ingresso.</p>
+      <p class="codice" id="codiceEsito">&mdash;</p>
+      <p class="nota" id="notaEsito"></p>
+    </div>
+    <div class="azioni" style="flex-direction:column">
+      <button type="button" class="btn-second" style="flex:1" id="btnStampa">Salva o stampa una copia</button>
+      <button type="button" class="btn-second" style="flex:1" id="btnAltro">Compila per un altro visitatore</button>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Complesso architettonico &ldquo;Sciesopoli&rdquo;</strong> &ndash; via Cardo 26, Selvino (BG).
+       Tutelato con decreto della Commissione regionale per il patrimonio culturale della Lombardia
+       del 25 novembre 2015. Apertura al pubblico ai sensi dell&rsquo;art. 38 del D.Lgs. 42/2004.</p>
+    <p>Titolare del trattamento: Comune di Selvino, Corso Milano 19, Selvino (BG) &ndash;
+       tel. 035 764250 &ndash; protocollo@comunediselvino.it</p>
+    <p id="pieVersione"></p>
+  </footer>
+
+  <!-- foglio di stampa, riempito al momento -->
+  <div id="stampa"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     CONFIGURAZIONE - le uniche righe da toccare
+     ============================================================ */
+
+  /* URL della web app Apps Script (.../exec).
+     Vuoto = MODALITA' PROVA: la pagina funziona ma non invia niente. */
+  var ENDPOINT = "";
+
+  /* Versione del testo legale. Va tenuta uguale a quella nello script
+     lato server: se non coincidono, il server rifiuta l'invio. Si alza
+     ogni volta che cambia il testo della manleva o dell'informativa. */
+  var VERSIONE_TESTO = "2026-09-comune-v1";
+
+  /* Nome della Proprieta'. Il modulo cartaceo del Comune riporta ancora
+     "Societa' Schiavo & C. S.p.a."; da luglio 2026 il proprietario e'
+     SciesopoliLab Impresa Sociale. Finche' il Comune non consegna il
+     testo aggiornato si resta su quello ufficiale. Si cambia QUI, in un
+     punto solo, e si alza VERSIONE_TESTO. */
+  var PROPRIETA = "Società Schiavo & C. S.p.a. – Vallo di Lucania (SA)";
+
+  /* Scadenza della conservazione dei dati (Convenzione del 3/12/2019). */
+  var SCADENZA = "2 dicembre 2031";
+
+  /* ============================================================ */
+
+  var $  = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ---------- testi legali ---------- */
+
+  $("#testoManleva").innerHTML =
+    '<h3>Selvino (BG) &ndash; complesso architettonico denominato &ldquo;Sciesopoli&rdquo;, via Cardo 26</h3>' +
+    '<p>Sottoposto a tutela con decreto della Commissione regionale per il patrimonio culturale della ' +
+    'Lombardia del 25 novembre 2015. Apertura al pubblico ai sensi dell&rsquo;art. 38 del D.Lgs. 42/2004 ' +
+    'e s.m.i. &ndash; Convenzione del 3 dicembre 2019, art. 5.</p>' +
+    '<h3>Dichiarazione di assunzione di rischio e di manleva nei confronti di:</h3>' +
+    '<p>' + PROPRIETA + ' (Propriet&agrave;); Comune di Selvino (organizzatore dell&rsquo;apertura al ' +
+    'pubblico); Ministero della Cultura.</p>' +
+    '<p>La presente liberatoria ha lo scopo di regolamentare l&rsquo;accesso al complesso architettonico ' +
+    'tutelato ai sensi del D.Lgs. 42/2004 e s.m.i. denominato &ldquo;Sciesopoli&rdquo; da parte di ' +
+    'visitatori interessati alla storia che questo edificio ha avuto.</p>' +
+    '<p class="dich">Dichiaro</p>' +
+    '<ul><li>di partecipare spontaneamente, in assenza di vincolo alcuno, a esclusivo scopo informativo ' +
+    'e senza ricevere alcuna remunerazione in denaro o in natura, al sopralluogo ai seguenti ambiti di ' +
+    '&ldquo;Sciesopoli&rdquo;: porzione del giardino antistante il Fabbricato centrale; atrio di ingresso ' +
+    'del Fabbricato centrale con le targhe in marmo;</li>' +
+    '<li>di essere stato edotto del fatto che il fabbricato in oggetto &egrave; parzialmente inaccessibile ' +
+    'e presenta problematiche di sicurezza interne ed esterne, e di essere pienamente consapevole della ' +
+    'potenziale pericolosit&agrave;, per me e per gli altri, e di tutti i rischi cui sono esposto in ' +
+    'esecuzione della visita stessa.</li></ul>' +
+    '<p class="dich">Riconosco</p>' +
+    '<p>che il Comune di Selvino ha riferito di tutti i possibili pericoli.</p>' +
+    '<p class="dich">Mi impegno</p>' +
+    '<p>alla sola visione dei luoghi visitabili e delimitati, rispettando di muovermi negli spazi sopra citati.</p>' +
+    '<p class="dich">Assumo e accetto</p>' +
+    '<p>che qualsiasi violazione dell&rsquo;impegno sopra assunto sar&agrave; da considerarsi arbitraria e ' +
+    'volontaria e quindi tale da esonerare la Propriet&agrave;, il Comune di Selvino e il Ministero della ' +
+    'Cultura da qualsiasi responsabilit&agrave; civile e/o penale per danni a persone e/o cose.</p>' +
+    '<p class="dich">Mi impegno</p>' +
+    '<ul><li>a non intraprendere nei confronti della Propriet&agrave;, del Comune di Selvino e del ' +
+    'Ministero della Cultura, qualsiasi azione (civile e penale) a tutela dei miei diritti ed interessi ' +
+    'e/o per danni (diretti, indiretti) patiti in conseguenza od occasione dell&rsquo;accesso ai luoghi ' +
+    'di cui sopra;</li>' +
+    '<li>pertanto manlevo la Propriet&agrave;, il Comune di Selvino e il Ministero della Cultura, senza ' +
+    'diritto a rimborsi, rivalse o regressi, da ogni pretesa e richiesta relativa a danni di qualsiasi ' +
+    'natura e specie arrecati a terzi e/o occorsi a qualsiasi oggetto o bene, nonch&eacute; a rimborsarla ' +
+    '&ndash; a semplice richiesta e senza diritto ad opporre eccezioni &ndash; di qualsiasi somma che ' +
+    'questi fossero chiamati a corrispondere a terzi in dipendenza dei fatti, delle situazioni o ' +
+    'dell&rsquo;esercizio dei diritti e delle pretese di cui sopra.</li></ul>';
+
+  $("#testoPrivacy").innerHTML =
+    '<p>Il Comune di Selvino, con sede in Corso Milano 19, Selvino (BG) &ndash; tel. 035 764250 &ndash; ' +
+    'email protocollo@comunediselvino.it, in qualit&agrave; di titolare del trattamento dei dati ' +
+    'personali, desidera informarla che:</p>' +
+    '<ul>' +
+    '<li><b>Finalit&agrave;:</b> il trattamento dei dati anagrafici ha lo scopo di identificare i soggetti ' +
+    'che accedono al complesso architettonico denominato &ldquo;Sciesopoli&rdquo;, sottoposto a tutela ' +
+    'con decreto della Commissione regionale per il patrimonio culturale della Lombardia del 25 novembre ' +
+    '2015, regolato dall&rsquo;art. 38 del D.Lgs. 42/2004 e s.m.i. e dalla Convenzione del 3 dicembre 2019.</li>' +
+    '<li>La <b>base giuridica</b> &egrave; il consenso del visitatore che, accedendo alla struttura, ' +
+    'autorizza il trattamento e la comunicazione delle informazioni raccolte alla Propriet&agrave; del ' +
+    'complesso architettonico (' + PROPRIETA + ') e al Ministero della Cultura.</li>' +
+    '<li>I suoi dati personali verranno gestiti da tutti i soggetti coinvolti (Comune di Selvino, ' +
+    'Propriet&agrave;, Ministero della Cultura) nel completo rispetto dei principi dettati dal Reg. UE ' +
+    '679/2016, e saranno trattati al solo fine di permettere la fruizione pubblica di &ldquo;Sciesopoli&rdquo;.</li>' +
+    '<li>Il <b>conferimento</b> dei suoi dati personali ha natura obbligatoria, in quanto indispensabile ' +
+    'per la visita di &ldquo;Sciesopoli&rdquo;; il diniego del consenso non consente l&rsquo;accesso.</li>' +
+    '<li>La <b>conservazione</b> dei dati personali avverr&agrave; per un periodo non superiore a quello ' +
+    'necessario agli scopi per i quali sono stati raccolti e trattati, e comunque <b>non oltre il ' +
+    SCADENZA + '</b> (data di scadenza della Convenzione del 3 dicembre 2019).</li>' +
+    '<li>Lei potr&agrave; avvalersi dei <b>diritti</b> previsti dagli artt. da 15 a 22 del Reg. UE 2016/679, ' +
+    'e avr&agrave; il diritto di <b>revocare il consenso</b> in qualsiasi momento senza pregiudicare la ' +
+    'liceit&agrave; del trattamento basata sul consenso prestato prima della revoca (art. 7.3).</li>' +
+    '</ul>' +
+    '<p>Eventuali dati di dettaglio potranno essere chiesti al Comune di Selvino &ndash; Ufficio Turismo.</p>' +
+    '<p><b>Compilazione online.</b> Il modulo viene compilato su questa pagina e conservato in forma ' +
+    'digitale per conto del titolare; la firma apposta sullo schermo &egrave; una firma elettronica ' +
+    'semplice.</p>';
+
+  $("#pieVersione").textContent = "Versione del testo: " + VERSIONE_TESTO;
+
+  /* ---------- stato ---------- */
+
+  var passo = 1, ULTIMO = 5;
+  var tele = {};           /* le tavolette da firma, per id */
+  var gen2 = false;
+
+  function oggiISO() {
+    var d = new Date(), m = d.getMonth() + 1, g = d.getDate();
+    return d.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (g < 10 ? "0" : "") + g;
+  }
+  $("#dataVisita").value = oggiISO();
+
+  if (!ENDPOINT) $("#avvisoProva").hidden = false;
+
+  function minorenne() { return $("input[name=tipo]:checked").value === "minore"; }
+
+  /* ---------- tavoletta per la firma ---------- */
+
+  function Tela(id) {
+    var cv = document.getElementById(id);
+    var box = document.getElementById("box_" + id.replace("c_", ""));
+    var ctx = cv.getContext("2d");
+    var tratti = [], corrente = null, giu = false;
+
+    function dimensiona() {
+      var r = cv.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      cv.width  = Math.max(1, Math.round(r.width  * dpr));
+      cv.height = Math.max(1, Math.round(r.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ridisegna();
+    }
+    function ridisegna() {
+      var r = cv.getBoundingClientRect();
+      ctx.clearRect(0, 0, r.width, r.height);
+      ctx.lineWidth = 2.2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.strokeStyle = "#16324F";
+      tratti.forEach(function (t) {
+        if (t.length < 2) {
+          if (t.length === 1) { ctx.beginPath(); ctx.arc(t[0].x, t[0].y, 1.2, 0, 6.29); ctx.fillStyle = "#16324F"; ctx.fill(); }
+          return;
+        }
+        ctx.beginPath(); ctx.moveTo(t[0].x, t[0].y);
+        for (var i = 1; i < t.length; i++) ctx.lineTo(t[i].x, t[i].y);
+        ctx.stroke();
+      });
+    }
+    function punto(ev) {
+      var r = cv.getBoundingClientRect();
+      return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+    }
+    cv.addEventListener("pointerdown", function (ev) {
+      ev.preventDefault();
+      try { cv.setPointerCapture(ev.pointerId); } catch (e) {}
+      giu = true; corrente = [punto(ev)]; tratti.push(corrente);
+      box.classList.add("scritto"); box.classList.remove("ko");
+    });
+    cv.addEventListener("pointermove", function (ev) {
+      if (!giu) return;
+      ev.preventDefault();
+      corrente.push(punto(ev)); ridisegna();
+    });
+    function su(ev) { if (giu) { giu = false; corrente = null; ridisegna(); } }
+    cv.addEventListener("pointerup", su);
+    cv.addEventListener("pointercancel", su);
+    cv.addEventListener("pointerleave", su);
+
+    window.addEventListener("resize", dimensiona);
+    window.addEventListener("orientationchange", function () { setTimeout(dimensiona, 200); });
+
+    this.dimensiona = dimensiona;
+    this.pulisci = function () { tratti = []; ridisegna(); box.classList.remove("scritto"); };
+    /* una firma vale se ha abbastanza movimento: evita il puntino involontario */
+    this.valida = function () {
+      var n = 0, lung = 0;
+      tratti.forEach(function (t) {
+        n += t.length;
+        for (var i = 1; i < t.length; i++) {
+          lung += Math.abs(t[i].x - t[i - 1].x) + Math.abs(t[i].y - t[i - 1].y);
+        }
+      });
+      return n >= 8 && lung >= 60;
+    };
+    this.vuota = function () { return tratti.length === 0; };
+    this.png = function () { return this.valida() ? cv.toDataURL("image/png") : ""; };
+    this.box = box;
+    dimensiona();
+  }
+
+  ["c_manleva", "c_consenso", "c_minore", "c_gen1", "c_gen2"].forEach(function (id) {
+    tele[id] = new Tela(id);
+  });
+  $$("[data-pulisci]").forEach(function (b) {
+    b.addEventListener("click", function () { tele[b.dataset.pulisci].pulisci(); });
+  });
+
+  /* ---------- navigazione ---------- */
+
+  function mostra(n) {
+    passo = n;
+    $$(".passo").forEach(function (s) { s.classList.toggle("attivo", +s.dataset.passo === n); });
+    var vis = n <= ULTIMO;
+    $("#avanz").style.display = vis ? "" : "none";
+    if (vis) {
+      $("#barra").style.width = Math.round(n / ULTIMO * 100) + "%";
+      $("#avanzTesto").textContent = "Passo " + n + " di " + ULTIMO;
+    }
+    /* le tavolette visibili vanno ridimensionate ora che hanno una larghezza vera */
+    setTimeout(function () {
+      for (var k in tele) if (tele[k].box.offsetParent) tele[k].dimensiona();
+    }, 30);
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); }
+  }
+
+  $$("[data-vai]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var n = +b.dataset.vai;
+      if (n > passo && !convalida(passo)) return;
+      if (n === 5) riepiloga();
+      mostra(n);
+    });
+  });
+
+  /* ---------- tipo di visitatore ---------- */
+
+  $$("input[name=tipo]").forEach(function (r) {
+    r.addEventListener("change", function () {
+      var m = minorenne();
+      $("#scAdulto").classList.toggle("sel", !m);
+      $("#scMinore").classList.toggle("sel", m);
+      $("#blkSottoscritto").hidden = !m;
+      $("#blkMinore").hidden = !m;
+      etichetteFirme();
+    });
+  });
+
+  function etichetteFirme() {
+    var m = minorenne();
+    $("#chiFirmaManleva").textContent  = m ? "il genitore o tutore" : "il visitatore";
+    $("#chiFirmaConsenso").textContent = m ? "il genitore o tutore" : "il visitatore";
+    var nome = ($("#s_nome").value + " " + $("#s_cognome").value).trim();
+    $("#nomeGen1").textContent = nome || "primo genitore";
+  }
+  ["s_nome", "s_cognome"].forEach(function (id) {
+    $("#" + id).addEventListener("input", etichetteFirme);
+  });
+  etichetteFirme();
+
+  $("#btnGen2").addEventListener("click", function () {
+    gen2 = true; $("#blkGen2").hidden = false; $("#gen2Attiva").hidden = true;
+    setTimeout(function () { tele.c_gen2.dimensiona(); }, 30);
+  });
+  $("#btnGen2No").addEventListener("click", function () {
+    gen2 = false; $("#blkGen2").hidden = true; $("#gen2Attiva").hidden = false;
+    tele.c_gen2.pulisci(); $("#g2_nome").value = ""; $("#g2_cognome").value = "";
+  });
+
+  /* ---------- convalida ---------- */
+
+  function segna(id, ko) {
+    var el = $("#" + id); if (!el) return;
+    var c = el.closest(".campo"); if (c) c.classList.toggle("ko", !!ko);
+  }
+  function testo(id) { return ($("#" + id).value || "").trim(); }
+  function eta(nascita, alGiorno) {
+    var n = new Date(nascita), d = new Date(alGiorno);
+    if (isNaN(n) || isNaN(d)) return NaN;
+    var a = d.getFullYear() - n.getFullYear();
+    var m = d.getMonth() - n.getMonth();
+    if (m < 0 || (m === 0 && d.getDate() < n.getDate())) a--;
+    return a;
+  }
+  function errore(msg) { var s = $("#stato"); s.textContent = msg; s.className = "stato ko"; }
+  function pulisciStato() { $("#stato").className = "stato"; $("#stato").textContent = ""; }
+
+  function obbligatori(ids) {
+    var ok = true;
+    ids.forEach(function (id) { var v = !testo(id); segna(id, v); if (v) ok = false; });
+    return ok;
+  }
+
+  function convalida(n) {
+    pulisciStato();
+
+    if (n === 1) {
+      var d = testo("dataVisita");
+      segna("dataVisita", !d);
+      if (!d) { errore("Indica la data della visita."); return false; }
+      return true;
+    }
+
+    if (n === 2) {
+      var ids = ["v_nome", "v_cognome", "v_natoA", "v_natoIl", "v_comune", "v_via"];
+      if (minorenne()) ids = ids.concat(["s_nome", "s_cognome", "s_natoA", "s_natoIl", "s_comune", "s_via"]);
+      if (!obbligatori(ids)) { errore("Compila tutti i campi."); return false; }
+
+      var dv = testo("dataVisita");
+      var ev = eta(testo("v_natoIl"), dv);
+      if (isNaN(ev) || ev < 0 || ev > 120) {
+        segna("v_natoIl", true); errore("La data di nascita del visitatore non sembra corretta."); return false;
+      }
+      if (minorenne()) {
+        if (ev >= 18) {
+          segna("v_natoIl", true);
+          errore("Il visitatore risulta maggiorenne alla data della visita: torna al passo 1 e scegli la prima opzione.");
+          return false;
+        }
+        var es = eta(testo("s_natoIl"), dv);
+        if (isNaN(es) || es < 18) {
+          segna("s_natoIl", true);
+          errore("Chi firma per il minore deve essere maggiorenne.");
+          return false;
+        }
+      } else if (ev < 18) {
+        segna("v_natoIl", true);
+        errore("Il visitatore risulta minorenne: torna al passo 1 e scegli la seconda opzione.");
+        return false;
+      }
+      return true;
+    }
+
+    if (n === 3) {
+      var ok = true;
+      var cb = $("#okManleva");
+      $("#okManlevaBox").classList.toggle("ko", !cb.checked);
+      if (!cb.checked) ok = false;
+      var f = tele.c_manleva.valida();
+      tele.c_manleva.box.classList.toggle("ko", !f);
+      if (!f) ok = false;
+      if (!ok) errore(!cb.checked ? "Spunta la casella e firma per proseguire." : "Manca la firma, oppure il segno è troppo breve.");
+      return ok;
+    }
+
+    if (n === 4) {
+      var ok4 = true;
+      var cp = $("#okPrivacy");
+      $("#okPrivacyBox").classList.toggle("ko", !cp.checked);
+      if (!cp.checked) ok4 = false;
+      var fc = tele.c_consenso.valida();
+      tele.c_consenso.box.classList.toggle("ko", !fc);
+      if (!fc) ok4 = false;
+
+      if (minorenne()) {
+        var f1 = tele.c_gen1.valida();
+        tele.c_gen1.box.classList.toggle("ko", !f1);
+        if (!f1) ok4 = false;
+        /* la firma del minore resta facoltativa: se c'e' un segno, deve pero' essere valido */
+        if (!tele.c_minore.vuota() && !tele.c_minore.valida()) {
+          tele.c_minore.box.classList.add("ko"); ok4 = false;
+        }
+        if (gen2) {
+          if (!obbligatori(["g2_nome", "g2_cognome"])) ok4 = false;
+          var f2 = tele.c_gen2.valida();
+          tele.c_gen2.box.classList.toggle("ko", !f2);
+          if (!f2) ok4 = false;
+        }
+      }
+      if (!ok4) errore("Controlla consenso e firme: manca qualcosa.");
+      return ok4;
+    }
+    return true;
+  }
+
+  /* ---------- riepilogo ---------- */
+
+  function itData(iso) {
+    if (!iso) return "—";
+    var p = iso.split("-");
+    return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : iso;
+  }
+
+  function raccogli() {
+    var m = minorenne();
+    var d = {
+      versioneTesto: VERSIONE_TESTO,
+      proprieta: PROPRIETA,
+      tipo: m ? "minore" : "adulto",
+      dataVisita: testo("dataVisita"),
+      visitatore: {
+        nome: testo("v_nome"), cognome: testo("v_cognome"),
+        natoA: testo("v_natoA"), natoIl: testo("v_natoIl"),
+        comune: testo("v_comune"), via: testo("v_via")
+      },
+      firmaManleva: tele.c_manleva.png(),
+      firmaConsenso: tele.c_consenso.png(),
+      dispositivo: navigator.userAgent,
+      cap_extra: $("#cap_extra").value
+    };
+    if (m) {
+      d.sottoscritto = {
+        nome: testo("s_nome"), cognome: testo("s_cognome"),
+        natoA: testo("s_natoA"), natoIl: testo("s_natoIl"),
+        comune: testo("s_comune"), via: testo("s_via")
+      };
+      d.firmaMinore = tele.c_minore.valida() ? tele.c_minore.png() : "";
+      d.firmaGenitore1 = tele.c_gen1.png();
+      if (gen2) {
+        d.genitore2 = { nome: testo("g2_nome"), cognome: testo("g2_cognome") };
+        d.firmaGenitore2 = tele.c_gen2.png();
+      }
+    }
+    return d;
+  }
+
+  function riga(et, val) {
+    return '<div class="rg"><dt>' + et + '</dt><dd>' + (val || "—") + '</dd></div>';
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  function riepiloga() {
+    var d = raccogli(), h = "";
+    h += riga("Data della visita", itData(d.dataVisita));
+    h += riga("Visitatore", esc(d.visitatore.nome + " " + d.visitatore.cognome));
+    h += riga("Nato/a a", esc(d.visitatore.natoA) + " il " + itData(d.visitatore.natoIl));
+    h += riga("Residenza", esc(d.visitatore.comune + ", " + d.visitatore.via));
+    if (d.sottoscritto) {
+      h += riga("Genitore o tutore", esc(d.sottoscritto.nome + " " + d.sottoscritto.cognome));
+      h += riga("Nato/a a", esc(d.sottoscritto.natoA) + " il " + itData(d.sottoscritto.natoIl));
+      h += riga("Residenza", esc(d.sottoscritto.comune + ", " + d.sottoscritto.via));
+      if (d.genitore2) h += riga("Secondo genitore", esc(d.genitore2.nome + " " + d.genitore2.cognome));
+    }
+    $("#riepDati").innerHTML = h;
+
+    var f = "";
+    function fig(png, tit) {
+      if (!png) return "";
+      return '<figure><img src="' + png + '" alt=""><figcaption>' + tit + "</figcaption></figure>";
+    }
+    f += fig(d.firmaManleva, "Manleva");
+    f += fig(d.firmaConsenso, "Consenso");
+    f += fig(d.firmaMinore, "Minore");
+    f += fig(d.firmaGenitore1, "Genitore 1");
+    f += fig(d.firmaGenitore2, "Genitore 2");
+    $("#riepFirme").innerHTML = f;
+  }
+
+  /* ---------- invio ---------- */
+
+  var inCorso = false;
+
+  $("#btnInvia").addEventListener("click", function () {
+    if (inCorso) return;
+    /* si ricontrolla tutto, non solo l'ultimo passo */
+    for (var n = 1; n <= 4; n++) {
+      if (!convalida(n)) { mostra(n); return; }
+    }
+    var dati = raccogli();
+    if (dati.cap_extra) return;          /* trappola anti-spam: si esce in silenzio */
+
+    if (!ENDPOINT) {                      /* modalita' prova */
+      preparaStampa(dati, "PROVA-NON-INVIATO");
+      $("#codiceEsito").textContent = "PROVA";
+      $("#notaEsito").textContent = "Modalità prova: nessun dato è stato inviato o conservato.";
+      mostra(6);
+      return;
+    }
+
+    inCorso = true;
+    $("#btnInvia").disabled = true;
+    var s = $("#stato"); s.className = "stato lav"; s.textContent = "Invio in corso…";
+
+    var x = new XMLHttpRequest();
+    x.open("POST", ENDPOINT, true);
+    x.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
+    x.timeout = 30000;
+    x.onload = function () {
+      inCorso = false; $("#btnInvia").disabled = false;
+      var r = null;
+      try { r = JSON.parse(x.responseText); } catch (e) {}
+      if (x.status >= 200 && x.status < 300 && r && r.ok) {
+        preparaStampa(dati, r.codice);
+        $("#codiceEsito").textContent = r.codice;
+        $("#notaEsito").textContent = "Conserva il codice fino al termine della visita.";
+        pulisciStato();
+        mostra(6);
+      } else {
+        errore((r && r.errore) ? r.errore : "Invio non riuscito. I dati sono ancora qui: riprova.");
+      }
+    };
+    x.onerror = x.ontimeout = function () {
+      inCorso = false; $("#btnInvia").disabled = false;
+      errore("Connessione assente o troppo lenta. I dati non sono persi: riprova quando hai segnale.");
+    };
+    try { x.send(JSON.stringify(dati)); }
+    catch (e) {
+      inCorso = false; $("#btnInvia").disabled = false;
+      errore("Invio non riuscito: riprova.");
+    }
+  });
+
+  /* ---------- copia da stampare ---------- */
+
+  function preparaStampa(d, codice) {
+    function fImg(png) { return png ? '<span class="firma-img"><img src="' + png + '" alt=""></span>' : '<span class="firma-img">&nbsp;</span>'; }
+    function blocco(tit, p) {
+      return "<h3>" + tit + "</h3><table>" +
+        '<tr><td class="et">Nome e cognome</td><td>' + esc(p.nome + " " + p.cognome) + "</td></tr>" +
+        '<tr><td class="et">Nato/a a</td><td>' + esc(p.natoA) + " il " + itData(p.natoIl) + "</td></tr>" +
+        '<tr><td class="et">Residente in</td><td>' + esc(p.comune) + ", via " + esc(p.via) + "</td></tr>" +
+        "</table>";
+    }
+    var h = '<div class="pagina">';
+    h += "<h2>Sciesopoli &ndash; dichiarazione di assunzione di rischio e di manleva</h2>";
+    h += "<p><b>Codice modulo:</b> " + esc(codice) + " &nbsp;&nbsp; <b>Data della visita:</b> " + itData(d.dataVisita) + "</p>";
+    if (d.sottoscritto) h += blocco("Il sottoscritto (genitore o tutore)", d.sottoscritto);
+    h += blocco("Il visitatore", d.visitatore);
+    h += '<div class="legale">' + $("#testoManleva").innerHTML + "</div>";
+    h += "<p>Selvino, l&igrave; " + itData(d.dataVisita) + " &nbsp;&nbsp; Firma: " + fImg(d.firmaManleva) + "</p>";
+    h += "</div>";
+
+    h += '<div class="pagina">';
+    h += "<h2>Informativa privacy e consenso</h2>";
+    h += '<div class="legale">' + $("#testoPrivacy").innerHTML + "</div>";
+    h += "<p><b>Esprimo il consenso</b> al Comune di Selvino di trasmettere il presente documento, " +
+         "comprensivo dei miei dati personali, alla Propriet&agrave; del complesso architettonico e al " +
+         "Ministero della Cultura &ndash; Segretariato regionale per la Lombardia.</p>";
+    h += "<p>Selvino, l&igrave; " + itData(d.dataVisita) + " &nbsp;&nbsp; Firma: " + fImg(d.firmaConsenso) + "</p>";
+    if (d.sottoscritto) {
+      h += "<h3>Per i soggetti minorenni</h3>";
+      h += "<p>Il/la sottoscritto/a soggetto minorenne " + esc(d.visitatore.nome + " " + d.visitatore.cognome) + "</p>";
+      h += "<p>Firma del minore: " + fImg(d.firmaMinore) + "</p>";
+      h += "<h3>Autorizzazione di chi esercita la responsabilit&agrave; genitoriale</h3>";
+      h += "<p>" + esc(d.sottoscritto.nome + " " + d.sottoscritto.cognome) + " &nbsp; Firma: " + fImg(d.firmaGenitore1) + "</p>";
+      if (d.genitore2) {
+        h += "<p>" + esc(d.genitore2.nome + " " + d.genitore2.cognome) + " &nbsp; Firma: " + fImg(d.firmaGenitore2) + "</p>";
+      }
+    }
+    h += "<p style='margin-top:14px;font-size:9pt;color:#555'>Versione del testo: " + esc(VERSIONE_TESTO) +
+         " &ndash; documento compilato e sottoscritto online con firma elettronica semplice.</p>";
+    h += "</div>";
+    $("#stampa").innerHTML = h;
+  }
+
+  $("#btnStampa").addEventListener("click", function () { window.print(); });
+
+  /* ---------- un altro visitatore ---------- */
+
+  $("#btnAltro").addEventListener("click", function () {
+    var dv = testo("dataVisita");
+    var res = { comune: testo("v_comune"), via: testo("v_via") };
+    var adultoPrec = minorenne()
+      ? { nome: testo("s_nome"), cognome: testo("s_cognome"), natoA: testo("s_natoA"),
+          natoIl: testo("s_natoIl"), comune: testo("s_comune"), via: testo("s_via") }
+      : { nome: testo("v_nome"), cognome: testo("v_cognome"), natoA: testo("v_natoA"),
+          natoIl: testo("v_natoIl"), comune: testo("v_comune"), via: testo("v_via") };
+
+    $("#modulo").reset();
+    for (var k in tele) tele[k].pulisci();
+    $$(".campo").forEach(function (c) { c.classList.remove("ko"); });
+    $("#okManlevaBox").classList.remove("ko");
+    $("#okPrivacyBox").classList.remove("ko");
+    gen2 = false; $("#blkGen2").hidden = true; $("#gen2Attiva").hidden = false;
+
+    $("#dataVisita").value = dv;
+    $("#v_comune").value = res.comune;
+    $("#v_via").value = res.via;
+    /* l'adulto appena registrato viene proposto come genitore, se il prossimo e' un minore */
+    $("#s_nome").value = adultoPrec.nome;   $("#s_cognome").value = adultoPrec.cognome;
+    $("#s_natoA").value = adultoPrec.natoA; $("#s_natoIl").value = adultoPrec.natoIl;
+    $("#s_comune").value = adultoPrec.comune; $("#s_via").value = adultoPrec.via;
+
+    $("#scAdulto").classList.add("sel"); $("#scMinore").classList.remove("sel");
+    $("#blkSottoscritto").hidden = true; $("#blkMinore").hidden = true;
+    etichetteFirme();
+    pulisciStato();
+    mostra(1);
+  });
+
+  mostra(1);
+})();
+</script>
+</body>
+</html>

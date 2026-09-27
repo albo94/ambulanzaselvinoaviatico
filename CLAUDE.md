@@ -14,6 +14,8 @@ Repository: `https://github.com/albo94/ambulanzaselvinoaviatico`
 ├── contatti.html       – Mappa, indirizzi, orari
 ├── volontario.html     – Come diventare volontario, donazioni, contributi pubblici
 ├── numeri.html         – Dashboard statistiche pubblica (vedi sezione dedicata)
+├── quiz60.html         – Pagina nascosta: quiz del 60° AVIS (vedi *Pagine nascoste*)
+├── sciesopoli/         – Pagina nascosta: modulo di manleva visitatori (vedi *Pagine nascoste*)
 ├── sitemap.xml
 ├── robots.txt
 ├── css/style.css       – Unico foglio di stile (tutto il sito)
@@ -217,6 +219,53 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
   per persona. Il sito è statico e pubblico, qualsiasi "area riservata" lato browser
   sarebbe aggirabile — i dati per volontario stanno solo nella web app autenticata.
 
+## Pagine nascoste (fuori dal menu)
+
+Due pagine del sito **non** sono raggiungibili dalla navigazione, **non** stanno in
+`sitemap.xml` e portano `<meta name="robots" content="noindex, nofollow, noarchive">`.
+Ci si arriva solo con un link diretto o un QR code.
+
+> **Attenzione a `robots.txt`:** non vanno messe in `Disallow`. Se il crawler non può
+> scaricare la pagina non legge nemmeno il `noindex`, e l'URL può finire in SERP senza
+> contenuto. La regola giusta è quella attuale: crawling libero + `noindex` nella pagina.
+
+### `quiz60.html` — quiz del 60° AVIS
+Pagina singola autosufficiente, font Google, `ENDPOINT` vuoto (i tentativi non vengono
+inviati). Il commento nel codice cita `apps-script-salvataggio.gs`, che **non esiste nel
+repo**: se serve salvare i tentativi va scritto.
+
+### `sciesopoli/index.html` — modulo di manleva dei visitatori di Sciesopoli
+Modulo digitale che sostituisce il cartaceo del Comune di Selvino per l'accesso al
+complesso tutelato "Sciesopoli" (via Cardo 26). Cinque passi, firma su `<canvas>`,
+da 2 firme (adulto) a 5 (minore con due genitori).
+
+- **Nessun riferimento all'associazione.** La pagina non ha logo, non nomina l'ente e
+  **non carica un solo file dal resto del sito**: niente CSS, niente font, niente immagini
+  (favicon inclusa, disegnata inline in SVG). Una sola richiesta HTTP, la pagina stessa.
+  Va tenuta così: serve perché il modulo è del **Comune**, e perché la pagina possa essere
+  servita da un dominio breve neutro senza modifiche.
+- **Configurazione** in cima allo `<script>`, quattro costanti: `ENDPOINT` (web app Apps
+  Script; **vuoto = modalità prova**, mostra l'avviso e non invia niente), `VERSIONE_TESTO`,
+  `PROPRIETA`, `SCADENZA`.
+- **`VERSIONE_TESTO` sta in due posti** — nella pagina e nello script lato server — e il
+  server rifiuta gli invii con versione diversa: si alzano **insieme**, lo stesso giorno,
+  ogni volta che cambia il testo legale.
+- **Il PDF lo compone il server**, dal proprio modello: dal browser arrivano solo dati e
+  firme. Altrimenti basterebbe modificare la pagina per archiviare un testo diverso.
+- Niente `localStorage`: i dati restano in memoria, si perdono chiudendo la pagina.
+- **Materiale non pubblicato**, in `_materiali/sciesopoli/` (ignorata da git):
+  `MANLEVA SCIESOPOLI 2026.pdf` (modulo originale del Comune),
+  `PIANO modulo digitale manleva.md` (piano di lavoro completo, fasi 0-6) e
+  `sciesopoli-manleva.gs` (backend Apps Script: PDF, Drive, registro, cancellazione
+  automatica alla scadenza). Il `.gs` sta lì di proposito: quello che finisce nel repo
+  finisce su GitHub Pages.
+
+**Non è ancora in funzione.** Prima servono, dal Comune: il testo aggiornato con la
+Proprietà corretta (il modulo cita ancora *Schiavo & C. S.p.a.*, ma da luglio 2026 il
+proprietario è **SciesopoliLab Impresa Sociale**), la nomina a responsabile ex art. 28
+GDPR se l'archivio lo tiene l'ODV, e l'accettazione della firma elettronica semplice.
+Dettagli e clausole da far rivedere a un legale: §2 del piano.
+
 ## SEO
 
 - Canonical, geo meta, Open Graph, Twitter Card su tutte le pagine
@@ -250,6 +299,8 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
   come `foto.jpg` funziona in locale e si rompe online
 - Le immagini stanno nella sottocartella della sezione che le usa (vedi *Struttura immagini*),
   non nella radice di `images/`
+- Le pagine nascoste (`quiz60.html`, `sciesopoli/`) non vanno aggiunte a `sitemap.xml`
+  né linkate dal menu; `sciesopoli/` non deve caricare nulla dal resto del sito
 - Date: **1993** è l'associazione, **1968/oltre 55 anni** sono il servizio dei volontari
   (vedi *Dati associazione*) — vale anche in `<title>`, meta description, OG/Twitter e JSON-LD
 - `.servizio-photo-single img` usa `object-position: center 15%` per mostrare i volti
