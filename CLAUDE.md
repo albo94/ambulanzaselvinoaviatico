@@ -204,8 +204,13 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
 - Lo **stesso** CSS e JS sono caricati anche dalla dashboard interna riservata (web app
   Apps Script), che li prende da questo dominio: se rinomini o sposti quei due file,
   la dashboard interna smette di disegnare i grafici. In `numeri.html` sono richiamati con
-  un `?v=<data>` di cache busting (oggi `?v=20260926c`): quando si modifica uno dei due file
+  un `?v=<data>` di cache busting (oggi `?v=20260927a`): quando si modifica uno dei due file
   va alzato **anche** nella web app, altrimenti una delle due dashboard resta sul file vecchio.
+  ⚠️ È già successo (27/09/2026): la scheda Ossigeno era stata scritta, committata e pushata,
+  ma con il `?v=` fermo al giorno prima il file servito restava quello vecchio — **senza alcun
+  errore**, né a video né in console. Il sintomo è una funzione che "non c'è" pur essendo nel
+  sorgente. Regola pratica: chi tocca `dashboard.js` o `dashboard.css` alza il `?v=` nello
+  stesso commit, in **entrambi** i posti.
 - **Un solo file JS, due payload diversi.** `dashboard.js` disegna sia la pagina pubblica sia
   la dashboard riservata, ma la parte "composizione" (un grafico per tipo di personale +
   tabella persone) si accende solo se nel payload c'è `volontari`. Nel JSON pubblico
@@ -213,7 +218,8 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
   la web app autenticata passa a `AMB_DASH`.
 - **La riservata è a schede** (`montaSchede()`): *Panoramica* (la stessa pagina pubblica),
   *Tempi di partenza* (`tempiPartenza`), *Mezzi e km* (`kmStorico`), *Persone*
-  (`volontari`). Ogni pannello si disegna la prima volta che viene aperto, perché i grafici
+  (`volontari`), *Ossigeno* (`ossigeno`, dal 27/09/2026: uscite con ossigeno per anno e tipo,
+  esiste solo dagli anni in cui la colonna OSSIGENO c'è, cioè dal 2024). Ogni pannello si disegna la prima volta che viene aperto, perché i grafici
   prendono la larghezza del contenitore e da nascosto vale zero; l'ultima scheda aperta si
   ricorda in `localStorage` (`amb-dash-scheda`). La pubblica non ha schede: con
   `opzioni.riservato` falso `monta()` chiama solo `montaComune()`.
@@ -410,6 +416,28 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     resta la scrittura pubblica **senza più nessuno che se ne accorga**. Se si tocca la
     notifica, va rimesso un controllo a monte (il pulsante di conferma su Telegram).
   - Il registro ha una colonna `scadenze_corrette` con `tipo: vecchia -> nuova`.
+- **Progetti e fogli collegati alla check list** (ID utili, nessuno è segreto: i token stanno
+  nelle Script Properties, mai qui — questo repository è pubblico):
+
+  | Cosa | Dove |
+  |---|---|
+  | GESTIONALE SCADENZE | `1b4XeICCnSha6WKbQubAJuHChbQBFta85tIhyYZuvnfo`, scheda `GENERALE` |
+  | CONTROLLI OGNI CHECK LIST | `1q2Jc3qKEdr5vkhgEwXWSX19g77zCqnDZm1ZAeIR8rgQ`, una scheda per mezzo |
+  | Progetto `gestionale` (bot `@gestionaleselvinobot`) | `1i8Zk55u393zuUWSWgjhhUZ1YcnbevI2B_qF8zVZsZfZzyg6EI00xGWVY` |
+  | Sorgenti del gestionale, clonate in locale | `G:\Drive condivisi\BOT TELEGRAM\GESTIONALE\AMB_gestionale` |
+
+  ⚠️ Attenzione a trascrivere gli ID **da uno screenshot**: `I` maiuscola e `l` minuscola sono
+  identiche in quasi tutti i caratteri, e un carattere sbagliato su 44 dà **404**, che è
+  indistinguibile da un foglio non condiviso. Ci si perde un'ora. `scadenze.py` per questo
+  cerca per nome quando l'ID non risponde.
+  ⚠️ Il service account legge il GESTIONALE (come *Editor*, gli serve per scrivere le
+  correzioni) e il Riepilogo del bot 118, ma **non** CONTROLLI OGNI CHECK LIST: quello va
+  scaricato in `.xlsx` a mano prima di lanciare `aggiorna_documenti.py`.
+- **clasp**: dal 27/09/2026 il profilo `default` è su `alberto.grigis@ambulanzaselvinoaviatico.com`
+  (prima erano due Gmail personali e il deploy era bloccato — la nota contraria nel CLAUDE.md
+  del bot 118 è superata). `clasp run` però **non** funziona: vuole l'API di Apps Script
+  abilitata, una distribuzione *API executable* e credenziali GCP dedicate. Per eseguire una
+  funzione a mano (`setup()`, `ricalcolaOreTurnisti()`) si apre l'editor e si preme Run.
   - Al 27/09/2026 **4 voci su 9 non tornavano**, e non sono state allineate d'ufficio: il
     tagliando del 007 dice 02/09/2027 nella check list (aggiornata quel giorno) e 20/12/2026
     nel gestionale. Quando le due fonti divergono di più di qualche giorno, decide una persona:
