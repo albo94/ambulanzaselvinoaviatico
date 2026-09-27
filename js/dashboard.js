@@ -1160,6 +1160,58 @@ var AMB_DASH = (function () {
       })));
   }
 
+  /* ── utilizzo ossigeno (solo riservata) ─────────────────── */
+  // d.ossigeno = [{ anno, righe: [{ tipo, nome, si, tot }] }], solo gli anni in
+  // cui la colonna OSSIGENO esiste (dal 2024). Serve per la rendicontazione.
+
+  function pct(si, tot) {
+    return tot ? Math.round(si / tot * 1000) / 10 : 0;
+  }
+
+  function montaOssigeno(root, d) {
+    var anni = d.ossigeno || [];
+    if (!anni.length) {
+      root.appendChild(html('p', 'dash-avviso-riga',
+        testo('I dati sull’ossigeno arrivano col prossimo aggiornamento della dashboard.')));
+      return;
+    }
+    var ultimo = anni[anni.length - 1];
+    var tot = function (a) {
+      return a.righe.reduce(function (s, r) { return { si: s.si + r.si, tot: s.tot + r.tot }; }, { si: 0, tot: 0 });
+    };
+    var t = tot(ultimo);
+    var m118 = ultimo.righe.filter(function (r) { return r.tipo === '118'; })[0];
+
+    var c = scheda('Utilizzo ossigeno',
+      'Missioni e programmate in cui è stato usato l’ossigeno. Le missioni già fatte ' +
+      'prima del 27/09/2026 sono segnate a mano nei fogli.');
+    root.appendChild(c);   // prima di disegnare: il grafico misura la larghezza
+    c.corpo.appendChild(kpi([
+      { label: 'Con ossigeno nel ' + ultimo.anno, valore: n(t.si), nota: 'su ' + n(t.tot) + ' uscite' },
+      { label: 'Quota ' + ultimo.anno, valore: dec(pct(t.si, t.tot)) + '%' },
+      { label: 'Missioni 118 con ossigeno', valore: m118 ? n(m118.si) : '–',
+        nota: m118 ? dec(pct(m118.si, m118.tot)) + '% delle missioni 118' : null }
+    ]));
+
+    if (anni.length > 1) {
+      var g = html('div');   // colonne() svuota il contenitore che riceve
+      c.corpo.appendChild(g);
+      colonne(g, {
+        etichette: anni.map(function (a) { return String(a.anno); }),
+        serie: [{ nome: 'Uscite con ossigeno', valori: anni.map(function (a) { return tot(a).si; }) }],
+        etichetta: 'Uscite con ossigeno per anno'
+      });
+    }
+
+    var righe = [];
+    anni.slice().reverse().forEach(function (a) {
+      a.righe.forEach(function (r) {
+        righe.push([String(a.anno), r.nome, n(r.si), n(r.tot), dec(pct(r.si, r.tot)) + '%']);
+      });
+    });
+    c.corpo.appendChild(tabellaSemplice(['Anno', 'Tipo', 'Con ossigeno', 'Totale', '%'], righe));
+  }
+
   /* ── schede della pagina riservata ──────────────────────── */
 
   var SCHEDA_SALVATA = 'amb-dash-scheda';
@@ -1173,6 +1225,7 @@ var AMB_DASH = (function () {
             testo('I tempi di partenza arrivano col prossimo aggiornamento della dashboard.')));
         } },
       { id: 'km', titolo: 'Mezzi e km', disegna: function (p) { montaKm(p, d); } },
+      { id: 'ossigeno', titolo: 'Ossigeno', disegna: function (p) { montaOssigeno(p, d); } },
       { id: 'persone', titolo: 'Persone', disegna: function (p) { montaPersone(p, d); } }
     ];
 
