@@ -408,6 +408,19 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   rispondere a «quando è stata rilevata l'ultima volta questa mancanza» senza aprire i PDF
   uno per uno.
 - Se si ricompila lo stesso giorno il file **non viene sovrascritto**: prende ` (2)`.
+- **Progetto Apps Script** (creato il 27/09/2026 con l'account dell'associazione):
+
+  | Cosa | Valore |
+  |---|---|
+  | Script ID | `1ndJKi07VYTGEjM5agjVB8ZWzCBNT6uwgvYS7jhzQZI5zKvBNpFXm-ihI` |
+  | Deployment "produzione" | `AKfycbzr7TY0vMt0ubZVdbI3nUbpI1KdaBigWT5m-3F95oBc6N3DLcG4cp41VLKOLB_GLCkZ` |
+  | Radice clasp | `_materiali/checklist/gas/` (fuori dal repo) |
+
+  Deploy: `cd _materiali/checklist/gas && clasp push --force && clasp create-deployment`.
+  ⚠️ `clasp create-script` **sovrascrive `appsscript.json`** con il suo default, che ha
+  `timeZone: America/New_York`: ogni timestamp del registro sarebbe sfasato. Dopo una
+  ricreazione va rimesso `Europe/Rome` insieme a `oauthScopes` e al blocco `webapp`.
+  ⚠️ `clasp push` da solo salta `appsscript.json`: serve `--force`.
 - `ENDPOINT`, `MODO_PROVA` e `VERSIONE` in cima allo script, come in `sciesopoli/`.
   `VERSIONE` sta **sia nella pagina sia nel backend** e va alzata in entrambi quando cambia
   il payload (a `2026-09-v2` con i nickname e la rimozione dei km). Qui non c'è il controllo
