@@ -236,6 +236,18 @@
   .elenco-danni .via { flex:0 0 auto; border:0; background:none; color:var(--ko);
                        font:700 1.1rem/1 inherit; cursor:pointer; padding:2px 6px; min-height:0; }
 
+  .segno-d.vecchio { border-style:dashed; border-width:3px; }
+  .segno-d.risolto { opacity:.35; text-decoration:line-through; }
+  .elenco-danni li.gia { border-left:4px solid var(--warn); }
+  .elenco-danni li.gia.risolto { opacity:.6; }
+  .elenco-danni .origine { display:block; font-size:.76rem; color:var(--ink-soft); margin-top:2px; }
+  .elenco-danni .scelte { display:flex; gap:6px; margin-top:7px; }
+  .elenco-danni .sc { border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+                      border-radius:7px; padding:7px 11px; font:600 .78rem/1 inherit;
+                      cursor:pointer; min-height:0; }
+  .elenco-danni .sc.sel { background:var(--warn-bg); border-color:var(--warn); color:var(--warn); }
+  .elenco-danni .sc.ok.sel { background:var(--ok-bg); border-color:var(--ok); color:var(--ok); }
+
   /* ---- riepilogo ---- */
   .riq { border:1px solid var(--line); background:var(--surface);
          border-radius:var(--radius); padding:14px; margin:0 0 14px; }
@@ -481,6 +493,7 @@
       b.classList.add("sel");
       mezzo = b.dataset.m;
       pulisciStato();
+      caricaDifetti();
     });
   });
 
@@ -950,6 +963,7 @@
     { n: 5, nome: "Altro",          col: "#37474F" }
   ];
   var tipoScelto = 1;
+  var difettiCaricati = false;   /* l'elenco e' arrivato dal server */
   var danni = [];          /* {id, tipo, x, y, nota}  x/y in % dell'immagine */
   var idDanno = 0;
 
@@ -962,6 +976,37 @@
     return '<button type="button" class="tipo' + (t.n === 1 ? ' sel' : '') + '" data-tipo="' + t.n + '">' +
            '<span class="pal" style="background:' + t.col + '">' + t.n + '</span>' + t.nome + '</button>';
   }).join("");
+
+  /* I difetti aperti arrivano dal server quando si sceglie il mezzo, cosi'
+     sono gia' pronti al passo 3. Si chiede con una POST perche' e' la strada
+     che il browser percorre gia' verso Apps Script senza intoppi di CORS.
+     Se la chiamata non riesce si va avanti lo stesso: la check list non si
+     blocca per un elenco di difetti. */
+  function caricaDifetti() {
+    difettiCaricati = false;
+    danni = danni.filter(function (x) { return !x.esistente; });
+    disegnaDanni();
+    if (!ENDPOINT || !mezzo) { difettiCaricati = true; return; }
+
+    var x = new XMLHttpRequest();
+    x.open("POST", ENDPOINT, true);
+    x.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
+    x.timeout = 20000;
+    x.onload = function () {
+      difettiCaricati = true;
+      var r = null;
+      try { r = JSON.parse(x.responseText); } catch (e) {}
+      if (!r || !r.ok || !r.difetti) { disegnaDanni(); return; }
+      r.difetti.forEach(function (v) {
+        danni.push({ id: v.id, tipo: v.tipo, x: v.x, y: v.y, nota: v.nota || "",
+                     esistente: true, risolto: false, da: v.da, il: v.il });
+      });
+      disegnaDanni();
+    };
+    x.onerror = x.ontimeout = function () { difettiCaricati = true; disegnaDanni(); };
+    try { x.send(JSON.stringify({ azione: "difetti", mezzo: mezzo })); }
+    catch (e) { difettiCaricati = true; }
+  }
 
   $$("[data-tipo]").forEach(function (b) {
     b.addEventListener("click", function () {
@@ -979,27 +1024,48 @@
     var x = (ev.clientX - r.left) / r.width * 100;
     var y = (ev.clientY - r.top) / r.height * 100;
     if (x < 0 || x > 100 || y < 0 || y > 100) return;
-    danni.push({ id: ++idDanno, tipo: tipoScelto, x: x, y: y, nota: "" });
+    danni.push({ id: "n" + (++idDanno), tipo: tipoScelto, x: x, y: y, nota: "" });
     disegnaDanni();
   });
 
   var trascinato = false;
 
+  /* i risolti restano nell'elenco ma non contano piu' come difetti attivi */
+  function attivi() {
+    return danni.filter(function (d) { return !d.risolto; });
+  }
+
   function disegnaDanni() {
     $("#segni").innerHTML = danni.map(function (d, i) {
       var t = tipoInfo(d.tipo);
-      return '<div class="segno-d" data-d="' + d.id + '" title="' + esc(t.nome) + '" ' +
+      var cls = 'segno-d' + (d.esistente ? ' vecchio' : '') + (d.risolto ? ' risolto' : '');
+      return '<div class="' + cls + '" data-d="' + d.id + '" title="' + esc(t.nome) + '" ' +
              'style="left:' + d.x.toFixed(2) + '%;top:' + d.y.toFixed(2) + '%;background:' + t.col + '">' +
              (i + 1) + '</div>';
     }).join("");
 
-    $("#aiutoDanni").textContent = danni.length
-      ? (danni.length === 1 ? "1 danno segnalato. Trascina il segno per spostarlo, toccalo per toglierlo."
-                            : danni.length + " danni segnalati. Trascina i segni per spostarli, toccali per toglierli.")
+    var att = attivi();
+    $("#aiutoDanni").textContent = att.length
+      ? (att.length === 1 ? "1 danno aperto. Trascina il segno per spostarlo, toccalo per toglierlo."
+                          : att.length + " danni aperti. Trascina i segni per spostarli, toccali per toglierli.")
       : "Nessun danno segnalato.";
 
     $("#elencoDanni").innerHTML = danni.map(function (d, i) {
       var t = tipoInfo(d.tipo);
+      if (d.esistente) {
+        return '<li class="gia' + (d.risolto ? ' risolto' : '') + '">' +
+               '<span class="pal" style="background:' + t.col + '">' + (i + 1) + '</span>' +
+               '<span class="testo"><b>' + esc(t.nome) + '</b>' +
+               (d.nota ? ' &ndash; ' + esc(d.nota) : '') +
+               '<span class="origine">Gi&agrave; segnalato il ' + itData(d.il) +
+               (d.da ? ' da ' + esc(d.da) : '') + '</span>' +
+               '<span class="scelte">' +
+                 '<button type="button" class="sc' + (d.risolto ? '' : ' sel') +
+                 '" data-ancora="' + d.id + '">C&rsquo;&egrave; ancora</button>' +
+                 '<button type="button" class="sc ok' + (d.risolto ? ' sel' : '') +
+                 '" data-risolto="' + d.id + '">Risolto</button>' +
+               '</span></span></li>';
+      }
       return '<li><span class="pal" style="background:' + t.col + '">' + (i + 1) + '</span>' +
              '<span class="testo"><b>' + esc(t.nome) + '</b>' +
              '<input type="text" data-nd="' + d.id + '" value="' + esc(d.nota) + '" ' +
@@ -1008,23 +1074,43 @@
              'aria-label="Togli">&times;</button></li>';
     }).join("");
 
+    $$("[data-ancora]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var d = trova(b.dataset.ancora); if (d) { d.risolto = false; disegnaDanni(); }
+      });
+    });
+    $$("[data-risolto]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var d = trova(b.dataset.risolto); if (d) { d.risolto = true; disegnaDanni(); }
+      });
+    });
+
     $$("[data-nd]").forEach(function (inp) {
       inp.addEventListener("input", function () {
-        var d = trova(+inp.dataset.nd); if (d) d.nota = inp.value;
+        var d = trova(inp.dataset.nd); if (d) d.nota = inp.value;
       });
     });
     $$("[data-via]").forEach(function (b) {
-      b.addEventListener("click", function () { togli(+b.dataset.via); });
+      b.addEventListener("click", function () { togli(b.dataset.via); });
     });
-    $$(".segno-d").forEach(prendi);
+    $$(".segno-d").forEach(function (el) {
+      var d = trova(el.dataset.d);
+      if (d && d.esistente) return;   /* posizione storica: non si sposta */
+      prendi(el);
+    });
   }
 
   function trova(id) {
-    for (var i = 0; i < danni.length; i++) if (danni[i].id === id) return danni[i];
+    for (var i = 0; i < danni.length; i++) {
+      if (String(danni[i].id) === String(id)) return danni[i];
+    }
     return null;
   }
   function togli(id) {
-    danni = danni.filter(function (d) { return d.id !== id; });
+    /* i difetti gia' in archivio non si cancellano: si marcano risolti */
+    var d = trova(id);
+    if (d && d.esistente) { d.risolto = true; disegnaDanni(); return; }
+    danni = danni.filter(function (x) { return String(x.id) !== String(id); });
     disegnaDanni();
   }
 
@@ -1042,7 +1128,7 @@
       if (!giu) return;
       mosso = true;
       var r = $("#imgMezzo").getBoundingClientRect();
-      var d = trova(+el.dataset.d); if (!d) return;
+      var d = trova(el.dataset.d); if (!d) return;
       d.x = Math.min(100, Math.max(0, (ev.clientX - r.left) / r.width * 100));
       d.y = Math.min(100, Math.max(0, (ev.clientY - r.top) / r.height * 100));
       el.style.left = d.x.toFixed(2) + "%";
@@ -1052,17 +1138,29 @@
       if (!giu) return;
       giu = false; el.classList.remove("presa");
       if (mosso) { trascinato = true; }
-      else { ev.stopPropagation(); togli(+el.dataset.d); }
+      else { ev.stopPropagation(); togli(el.dataset.d); }
     }
     el.addEventListener("pointerup", su);
     el.addEventListener("pointercancel", function () { giu = false; el.classList.remove("presa"); });
   }
 
+  /* al server: i nuovi per esteso, e solo gli id per confermati e risolti */
   function danniPerInvio() {
-    return danni.map(function (d, i) {
-      return { n: i + 1, tipo: d.tipo, tipoNome: tipoInfo(d.tipo).nome,
-               x: +d.x.toFixed(2), y: +d.y.toFixed(2), nota: d.nota.trim() };
+    return attivi().map(function (d, i) {
+      var o = { n: i + 1, tipo: d.tipo, tipoNome: tipoInfo(d.tipo).nome,
+                x: +d.x.toFixed(2), y: +d.y.toFixed(2), nota: (d.nota || '').trim() };
+      if (d.esistente) { o.id = d.id; o.da = d.da; o.il = d.il; }
+      return o;
     });
+  }
+
+  function danniChiusi() {
+    return danni.filter(function (d) { return d.esistente && d.risolto; })
+                .map(function (d) { return d.id; });
+  }
+  function danniConfermati() {
+    return danni.filter(function (d) { return d.esistente && !d.risolto; })
+                .map(function (d) { return d.id; });
   }
 
   disegnaDanni();
@@ -1217,6 +1315,8 @@
         return o;
       }),
       danni: danniPerInvio(),
+      danniChiusi: danniChiusi(),
+      danniConfermati: danniConfermati(),
       dispositivo: navigator.userAgent
     };
   }
@@ -1237,7 +1337,7 @@
         "Modalità prova: non è stato salvato niente. Con l’indirizzo del Drive impostato, " +
         "il documento verrebbe salvato con questo nome." +
         (d.mancanti.length ? " " + d.mancanti.length + " voci da sistemare." : "");
-      mostra(4); return;
+      mostra(5); return;
     }
 
     inCorso = true;
@@ -1256,7 +1356,7 @@
         $("#esitoFile").textContent = r.file || nomeFile(d);
         $("#esitoNota").textContent = "Salvata nella cartella del mezzo e annotata nel registro." +
           (d.mancanti.length ? " " + d.mancanti.length + " voci da sistemare." : "");
-        pulisciStato(); mostra(4);
+        pulisciStato(); mostra(5);
       } else {
         errore("#stato4", (r && r.errore) ? r.errore :
                "Salvataggio non riuscito. I dati sono ancora qui: riprova.");
