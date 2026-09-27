@@ -354,8 +354,17 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     (ambra, sotto i 30) accanto alla voce: una revisione scaduta si deve vedere *prima* di
     uscire, non a cose fatte. Senza `scadenze` nei dati non compare niente e la pagina funziona
     lo stesso.
-  - ⚠️ Serve condividere il foglio in lettura con il service account
-    `pianificatore-turni@xenon-shard-300518.iam.gserviceaccount.com`, altrimenti 404.
+  - Il foglio è condiviso in lettura col service account
+    `pianificatore-turni@xenon-shard-300518.iam.gserviceaccount.com` (dal 27/09/2026).
+    ⚠️ L'ID sta in cima allo script: se non risponde, lo script lo ricerca **per nome** fra i
+    fogli condivisi e stampa quello giusto. Serve perché un ID trascritto a mano si sbaglia
+    facilmente — `I` maiuscola e `l` minuscola sono identiche in quasi tutti i caratteri, ed è
+    successo davvero: un carattere su 44 e la risposta era 404, indistinguibile da un foglio
+    non condiviso.
+  - Al 27/09/2026 **4 voci su 9 non tornavano**, e non sono state allineate d'ufficio: il
+    tagliando del 007 dice 02/09/2027 nella check list (aggiornata quel giorno) e 20/12/2026
+    nel gestionale. Quando le due fonti divergono di più di qualche giorno, decide una persona:
+    `--scrivi` dà ragione al gestionale sempre, e su una data di documento non è detto sia giusto.
 - **Chi compila si sceglie da un elenco di nickname**, non si scrive a mano: i nickname sono
   quelli del tab `Ore Turnisti` del foglio **Riepilogo** del bot 118 (stessa grafia del
   tabellone, così il registro è confrontabile con i turni). L'elenco è **incorporato nella
