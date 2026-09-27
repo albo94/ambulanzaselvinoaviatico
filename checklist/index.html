@@ -31,10 +31,18 @@
          font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
   .wrap { max-width:780px; margin:0 auto; padding:14px 14px 96px; }
 
-  .testata { display:flex; justify-content:space-between; align-items:baseline;
+  .testata { display:flex; justify-content:space-between; align-items:flex-start;
              gap:12px; padding:10px 0 14px; border-bottom:1px solid var(--line); margin-bottom:16px; }
-  .testata h1 { margin:0; font-size:1.1rem; font-weight:700; }
-  .testata .sub { font-size:.8rem; color:var(--ink-soft); }
+  .marchio { display:flex; gap:11px; align-items:center; }
+  .marchio img { width:52px; height:52px; object-fit:contain; flex:0 0 auto; }
+  .testata h1 { margin:0 0 1px; font-size:1.1rem; font-weight:700; line-height:1.2; }
+  .testata .sub { font-size:.78rem; color:var(--ink-soft); line-height:1.35; }
+  /* su telefono la data in alto a destra stringerebbe troppo il titolo:
+     si toglie, tanto il campo data e' subito sotto nel modulo */
+  @media (max-width:430px) {
+    .marchio img { width:44px; height:44px; }
+    #oggiTxt { display:none; }
+  }
 
   h2 { font-size:1.15rem; margin:0 0 4px; }
   .sotto { margin:0 0 16px; color:var(--ink-soft); font-size:.88rem; }
@@ -154,9 +162,13 @@
 <div class="wrap">
 
   <div class="testata">
-    <div>
-      <h1>Check list mezzi</h1>
-      <div class="sub">Volontari Selvino Aviatico ODV &ndash; uso interno</div>
+    <div class="marchio">
+      <img src="../images/logo.png" alt="Volontari Selvino Aviatico ODV" width="52" height="52">
+      <div>
+        <h1>Check list mezzi</h1>
+        <div class="sub">Volontari Selvino Aviatico ODV</div>
+        <div class="sub">Selvino (BG) &middot; uso interno</div>
+      </div>
     </div>
     <div class="sub" id="oggiTxt"></div>
   </div>
