@@ -572,6 +572,18 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     delle scadenze: il nickname non è autenticato, la notifica è il rilevatore.
   - In `MODO_PROVA` i difetti **non** vengono scritti e non parte nessuna notifica: per
     questo il giro completo si prova con un endpoint finto in locale, non in produzione.
+  - **Annullare un difetto** (segnato per errore, o senza nota) non è chiuderlo: la riga
+    resta, con stato `annullato` e il motivo in `chiuso_da`, e non parte nessuna
+    notifica perché non è una riparazione. Lo fa `annullaDifetti_(ids, motivo)` nel backend.
+    Non ha un'azione web di proposito: la pagina è pubblica. Si lancia dall'editor, oppure
+    come è stato fatto il 29/09/2026 con un ramo `doPost` **monouso** limitato agli id da
+    annullare, distribuito, chiamato una volta e tolto subito (versioni 9 e 10).
+    ⚠️ Il service account **non** vede il registro: per leggerlo o scriverlo da fuori
+    si passa dal backend (`azione: 'difetti'` restituisce gli aperti di un mezzo).
+  - Il 29/09/2026 sono stati annullati i 14 difetti delle prime check list vere
+    (12 sul Crafter 006, 2 sul 007): erano tutti **senza nota** e un pallino con scritto
+    «Graffio» non dice a nessuno dove guardare. Le prossime check list li risegnalano con
+    la nota. I PDF di quel giorno restano com'erano.
 - ⚠️ **Quando si aggiunge o si sposta un passo, si controllano TUTTE le chiamate a
   `mostra()`**, non solo quelle nella navigazione. Inserendo i danni erano
   rimaste indietro le due dentro `salva()`: la check list si salvava davvero
@@ -594,6 +606,12 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     Sta in `checklist/mezzo-danni.png` per lo schermo e incorporata in base64 nel backend
     per il PDF (Apps Script non scarica immagini da internet).
   - Il passo si può saltare: se non c'è niente da segnalare si va avanti.
+  - **La nota è obbligatoria su ogni danno nuovo** (dal 29/09/2026, almeno 3 caratteri):
+    dove si trova e cos'è. Senza, non si esce dal passo, né con «Avanti» né con «Torna
+    ai controlli»: i campi vuoti diventano rossi e il cursore va sul primo. I difetti già
+    in archivio non chiedono nota: si confermano o si chiudono. Il controllo sta **solo
+    nella pagina**, il backend non rifiuta i danni senza nota: una pagina rimasta in cache
+    non deve far perdere una check list già compilata.
   - Nel registro c'è la colonna `danni`.
 - Le **mancanze** vanno in testa al PDF con la zona dove si trovano, perché è la parte che
   serve leggere subito; l'esito completo delle 151 voci viene dopo.

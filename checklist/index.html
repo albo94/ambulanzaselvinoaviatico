@@ -233,6 +233,8 @@
                        font:700 .75rem/22px system-ui; text-align:center; }
   .elenco-danni .testo { flex:1; font-size:.86rem; }
   .elenco-danni input { min-height:38px; font-size:.84rem; margin-top:5px; }
+  .elenco-danni li.senza { border-color:var(--ko); }
+  .elenco-danni li.senza input { border-color:var(--ko); background:var(--ko-bg, #fdecec); }
   .elenco-danni .via { flex:0 0 auto; border:0; background:none; color:var(--ko);
                        font:700 1.1rem/1 inherit; cursor:pointer; padding:2px 6px; min-height:0; }
 
@@ -362,7 +364,8 @@
     <p class="torna" id="tornaBox" hidden><button type="button" id="tornaControlli">&larr; Torna ai controlli</button></p>
     <h2>Danni e segnalazioni</h2>
     <p class="sotto">Scegli il tipo, poi tocca il punto sul disegno. Se sbagli, trascina il
-    segno o toccalo per toglierlo. Se non c'&egrave; niente da segnalare, vai avanti.</p>
+    segno o toccalo per toglierlo. Per ogni danno <b>scrivi dove si trova e cos&rsquo;&egrave;</b>:
+    senza la nota non si prosegue. Se non c'&egrave; niente da segnalare, vai avanti.</p>
 
     <div class="tipi" id="tipiDanno"></div>
 
@@ -1030,6 +1033,28 @@
 
   var trascinato = false;
 
+  /* un segno senza parole non si capisce: "graffio" e un pallino non
+     dicono a chi ripara dove guardare. La nota e' obbligatoria sui danni
+     nuovi; quelli gia' in archivio si confermano o si chiudono e basta. */
+  var segnaSenza = false;
+  function notaOk(d) { return d.esistente || (d.nota || "").trim().length >= 3; }
+  function danniSenzaNota() {
+    return danni.filter(function (d) { return !d.risolto && !notaOk(d); });
+  }
+  /* true se si puo' lasciare il passo; altrimenti evidenzia e spiega */
+  function controllaNote() {
+    var senza = danniSenzaNota();
+    segnaSenza = senza.length > 0;
+    if (!segnaSenza) return true;
+    disegnaDanni();
+    errore("#stato3d", senza.length === 1
+      ? "Scrivi dove si trova e cos’è il danno segnato: senza nota non si capisce."
+      : "Scrivi la nota per " + senza.length + " danni: dove si trovano e cosa sono.");
+    var inp = $('[data-nd="' + senza[0].id + '"]');
+    if (inp) { try { inp.focus(); } catch (e) {} }
+    return false;
+  }
+
   /* i risolti restano nell'elenco ma non contano piu' come difetti attivi */
   function attivi() {
     return danni.filter(function (d) { return !d.risolto; });
@@ -1066,10 +1091,11 @@
                  '" data-risolto="' + d.id + '">Risolto</button>' +
                '</span></span></li>';
       }
-      return '<li><span class="pal" style="background:' + t.col + '">' + (i + 1) + '</span>' +
+      return '<li' + (segnaSenza && !notaOk(d) ? ' class="senza"' : '') + '>' +
+             '<span class="pal" style="background:' + t.col + '">' + (i + 1) + '</span>' +
              '<span class="testo"><b>' + esc(t.nome) + '</b>' +
              '<input type="text" data-nd="' + d.id + '" value="' + esc(d.nota) + '" ' +
-             'placeholder="Dove e cosa (facoltativo)"></span>' +
+             'placeholder="Dove e cosa: es. paraurti post. sx"></span>' +
              '<button type="button" class="via" data-via="' + d.id + '" ' +
              'aria-label="Togli">&times;</button></li>';
     }).join("");
@@ -1087,7 +1113,9 @@
 
     $$("[data-nd]").forEach(function (inp) {
       inp.addEventListener("input", function () {
-        var d = trova(inp.dataset.nd); if (d) d.nota = inp.value;
+        var d = trova(inp.dataset.nd); if (!d) return;
+        d.nota = inp.value;
+        if (segnaSenza) inp.closest("li").classList.toggle("senza", !notaOk(d));
       });
     });
     $$("[data-via]").forEach(function (b) {
@@ -1270,6 +1298,7 @@
       mostra(3); return;
     }
     if (passo === 3) {
+      if (!controllaNote()) return;
       if (daControlli) { daControlli = false; $("#tornaBox").hidden = true; mostra(2); return; }
       riepiloga(); mostra(4); return;
     }
@@ -1377,6 +1406,8 @@
     daControlli = true; $("#tornaBox").hidden = false; pulisciStato(); mostra(3);
   });
   $("#tornaControlli").addEventListener("click", function () {
+    pulisciStato();
+    if (!controllaNote()) return;
     daControlli = false; $("#tornaBox").hidden = true; mostra(2);
   });
 
