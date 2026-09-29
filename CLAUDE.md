@@ -502,9 +502,10 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
 - **Bombole: pressione obbligatoria, ognuna dove sta davvero** (27/09, rivisto il 29/09/2026).
   Le cinque bombole di cui si rileva la pressione stavano in tre posti diversi a seconda del
   mezzo (`LIVELLI BOMBOLE` su 006 e Ducato, dentro `PENSILE SOPRA PORTA SCORREVOLE` sul 007).
-  Ora **quattro stanno in `VANO SANITARIO` e quella dello zaino sta nello zaino**
-  (`ZAINO RIANIMAZIONE / INTERNO GRANDE` sui Crafter, `ZAINO ADULTO / GRANDE` sul Ducato),
-  come sulla cartacea. Ognuna ha un campo **atm**: senza il numero la zona non risulta fatta e
+  Ora ognuna sta dove sta fisicamente, come sulla cartacea: sui **Crafter** 1 nello zaino
+  (`ZAINO RIANIMAZIONE / INTERNO GRANDE`) e 4 in `VANO SANITARIO`; sul **Ducato** 1 nello
+  zaino (`ZAINO ADULTO / GRANDE`), 2 da 2 L sotto il lato destro (`LATO DESTRO / SOTTO`)
+  e 2 da 7 L in `VANO SANITARIO`. Ognuna ha un campo **atm**: senza il numero la zona non risulta fatta e
   non si prosegue. Una spunta da sola non dice se la bombola va cambiata.
   - Sulla cartacea la bombola dello zaino compare **due volte**: come presenza nello zaino
     (`Bombola O2`) e come pressione nel blocco dei livelli (`Bombola 2l Zaino atm`). Qui la
@@ -518,8 +519,15 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     di 5. Il filtro giusto è «inizia per bombola **e** finisce con atm».
   - Le righe di solo conteggio che erano in `VANO SANITARIO` (2×7L, 2×2L) sono state tolte:
     se di ogni bombola si scrive la pressione, la presenza è implicita.
-  - Resta come semplice presenza, fuori dal vano, solo `LATO DESTRO / SOTTO` sul Ducato
-    (`Bombola O2 2l (50 atm)`, qta 2).
+  - ⚠️ **Le etichette «Vano» della cartacea non vogliono dire «vano sanitario».**
+    `Bombola 2l Vano atm` indica il vano del mezzo in generale. Sul Ducato il vano sanitario
+    contiene solo le due da 7 L: le due righe «2 L Vano» sono le bombole **sotto il lato
+    destro**, e lo dicono i conti (5 bombole in presenza, 5 righe di pressione). Il 27/09 erano
+    finite nel vano sanitario per errore; aggiungere altri campi sotto il lato destro avrebbe
+    fatto scrivere due volte la pressione delle stesse due bombole. La regola in
+    `regole()` è generica: una riga di presenza fuori dal vano sanitario, con N bombole
+    da X litri, viene sostituita da N righe di pressione da X litri. Se i conti non tornano
+    la lascia com'è e lo stampa.
   - ⚠️ **Queste regole stanno in `parse_check.py` (funzione `regole()`), non nella
     pagina.** Fino al 29/09/2026 bombole, ECG e `DAE` erano stati sistemati a mano nei dati
     della pagina e lo script non ne sapeva niente: il primo `--scrivi` li avrebbe cancellati
