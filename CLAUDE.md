@@ -327,7 +327,7 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   che si apre — `BORSA PORTA PARAMETRI`, `LATO SINISTRO` — e dentro ci sono le **zone** da
   spuntare (`CENTRALE`, `LATO`, `MEDICAZIONE`). Nei dati la gerarchia sta in `gruppi`
   (`{nome, zone[]}`) e ogni voce porta `gruppo` + `zona`.
-  - I gruppi **senza** sottozone (`LIVELLI BOMBOLE`, i tre blocchi di testa) restano a un
+  - I gruppi **senza** sottozone (`DAE` sul Ducato, i tre blocchi di testa) restano a un
     livello solo: incartarli in un secondo accordion vuoto sarebbe un tocco in più per niente.
   - Aprire un gruppo apre subito la prima zona da fare; finita l'ultima zona di un gruppo si
     salta al gruppo dopo. L'avanzamento conta le **zone**, non i gruppi: 27 sul Crafter 006.
@@ -499,12 +499,18 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   dal PDF e dalla riga di registro nel backend. ⚠️ In `setup()` le larghezze delle colonne
   del registro ora si ricavano da `COLONNE.indexOf(...)`: erano indici fissi (9 e 10) che
   contavano anche i km e dopo la rimozione avrebbero allargato le colonne sbagliate.
-- **Bombole: pressione obbligatoria, tutte nel vano sanitario** (27/09/2026). Le cinque
-  bombole di cui si rileva la pressione stavano in tre posti diversi a seconda del mezzo
-  (`LIVELLI BOMBOLE` su 006 e Ducato, dentro `PENSILE SOPRA PORTA SCORREVOLE` sul 007).
-  Ora stanno tutte in `VANO SANITARIO`, dove sono fisicamente, e ognuna ha un campo
-  **atm**: senza il numero la zona non risulta fatta e non si prosegue. Una spunta da sola
-  non dice se la bombola va cambiata.
+- **Bombole: pressione obbligatoria, ognuna dove sta davvero** (27/09, rivisto il 29/09/2026).
+  Le cinque bombole di cui si rileva la pressione stavano in tre posti diversi a seconda del
+  mezzo (`LIVELLI BOMBOLE` su 006 e Ducato, dentro `PENSILE SOPRA PORTA SCORREVOLE` sul 007).
+  Ora **quattro stanno in `VANO SANITARIO` e quella dello zaino sta nello zaino**
+  (`ZAINO RIANIMAZIONE / INTERNO GRANDE` sui Crafter, `ZAINO ADULTO / GRANDE` sul Ducato),
+  come sulla cartacea. Ognuna ha un campo **atm**: senza il numero la zona non risulta fatta e
+  non si prosegue. Una spunta da sola non dice se la bombola va cambiata.
+  - Sulla cartacea la bombola dello zaino compare **due volte**: come presenza nello zaino
+    (`Bombola O2`) e come pressione nel blocco dei livelli (`Bombola 2l Zaino atm`). Qui la
+    riga della pressione **prende il posto** di quella di presenza, nella stessa posizione:
+    stessa logica del vano sanitario, dove il conteggio è stato tolto perché la pressione
+    lo rende implicito.
   - ⚠️ **Non confondere le due famiglie di righe.** Quelle da compilare finiscono con
     «atm» (`Bombola 2l Vano atm`); quelle con la pressione **nominale fra parentesi**
     (`Bombola O2 2l (50 atm)`) sono controlli di presenza e restano dove sono. La prima
@@ -512,9 +518,19 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     di 5. Il filtro giusto è «inizia per bombola **e** finisce con atm».
   - Le righe di solo conteggio che erano in `VANO SANITARIO` (2×7L, 2×2L) sono state tolte:
     se di ogni bombola si scrive la pressione, la presenza è implicita.
-  - Restano fuori dal vano sanitario le bombole che stanno altrove davvero: quella dello
-    `ZAINO RIANIMAZIONE` (006 e 007) e, sul Ducato, `ZAINO ADULTO / GRANDE` e
-    `LATO DESTRO / SOTTO`.
+  - Resta come semplice presenza, fuori dal vano, solo `LATO DESTRO / SOTTO` sul Ducato
+    (`Bombola O2 2l (50 atm)`, qta 2).
+  - ⚠️ **Queste regole stanno in `parse_check.py` (funzione `regole()`), non nella
+    pagina.** Fino al 29/09/2026 bombole, ECG e `DAE` erano stati sistemati a mano nei dati
+    della pagina e lo script non ne sapeva niente: il primo `--scrivi` li avrebbe cancellati
+    in silenzio. Chi cambia la struttura della check list cambia `regole()` e rigenera;
+    il confronto senza `--scrivi` deve mostrare **solo** la modifica voluta. Il confronto
+    ora guarda anche `atm` ed `ecg`, non solo gruppo, zona, quantità e articolo.
+  - ⚠️ Il confronto **non vede l'ordine dei gruppi**: va controllato a parte. Il 27/09 lo
+    spostamento delle bombole aveva fatto risalire `VANO SANITARIO` a metà elenco (sul
+    Ducato al quarto posto, prima dei lati), perché i gruppi si costruiscono dalla prima voce
+    che compare. Ora le bombole si accodano alla zona di arrivo e l'ordine resta quello
+    dell'Excel, cioè il giro del mezzo, con il vano sanitario in fondo.
   - ⚠️ L'avanzamento **conta le atmosfere**, non solo le spunte. Sono allineati di
     proposito: prima il contatore diceva 26/26 e il modulo non faceva comunque proseguire.
 - **ECG Cardioline: carica del telefono e tacche della batteria** (27/09/2026), tutti e due
