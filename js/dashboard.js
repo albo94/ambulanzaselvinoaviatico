@@ -835,6 +835,79 @@ var AMB_DASH = (function () {
     return s;
   }
 
+  /**
+   * Tempi di partenza per composizione dell'equipaggio (tp.equipaggi, da
+   * st_tempiPartenza_): solo dipendenti / dipendenti e volontari / nessun
+   * dipendente. Chi e' dipendente lo dicono le date di assunzione e cessazione
+   * del DVR; le ore di reperibilita' dei dipendenti sono tenute a parte.
+   */
+  var POCHI = 20;   // sotto questa soglia di partenze la mediana e' indicativa
+
+  function montaTempiEquipaggio(corpo, tp, anno) {
+    var eq = {};
+    tp.equipaggi.forEach(function (e) { eq[e.chiave] = e; });
+    var rep = (tp.reperibilita || []).map(function (f) {
+      var gg = f.giorni.map(function (g) { return ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'][g]; });
+      return gg.join(' e ') + (f.festivi ? ' e festivi' : '') + ' dalle ' + f.da + ' alle ' + f.a;
+    }).join('; ');
+
+    corpo.appendChild(html('h4', 'dash-sottotitolo', 'Chi è in equipaggio'));
+    corpo.appendChild(html('p', 'dash-spiega', testo(
+      'Partenze divise per chi è salito sul mezzo. "Solo dipendenti": tutto l’equipaggio è ' +
+      'personale dipendente in quel giorno (date di assunzione e cessazione dal DVR: chi è ' +
+      'passato da volontario a dipendente conta come dipendente solo dall’assunzione). Il ' +
+      'servizio civile non è dipendente. Escluse qui le ore di reperibilità dei dipendenti (' +
+      rep + '), in cui non sono in sede: sono riportate a parte in fondo alla tabella.')));
+
+    var d = eq.dip, m = eq.misto, v = eq.vol;
+    var diff = d && m && d.giorno.n && m.giorno.n ? m.giorno.mediana - d.giorno.mediana : null;
+    corpo.appendChild(kpi([
+      { label: 'Solo dipendenti, di giorno', valore: mmss(d.giorno.mediana),
+        nota: n(d.giorno.n) + ' partenze' + (d.giorno.n < POCHI ? ' · pochi dati' : '') },
+      { label: 'Dipendenti e volontari, di giorno', valore: mmss(m.giorno.mediana),
+        nota: diff === null ? n(m.giorno.n) + ' partenze'
+          : (diff >= 0 ? '+' : '−') + mmss(Math.abs(diff)) + ' rispetto a solo dipendenti' },
+      { label: 'Nessun dipendente, di notte', valore: mmss(v.notte.mediana),
+        nota: n(v.notte.n) + ' partenze' + (v.notte.n < POCHI ? ' · pochi dati' : '') }
+    ]));
+
+    // boxplot per gruppo e fascia, solo dove ci sono abbastanza partenze
+    // nomi corti: il boxplot ha ~100 px a sinistra per l'etichetta
+    var CORTO = { dip: 'Dip.', misto: 'Misto', vol: 'Volontari' };
+    var voci = [];
+    tp.equipaggi.forEach(function (e, i) {
+      [['giorno', 'giorno'], ['notte', 'notte']].forEach(function (f) {
+        if (e[f[0]].n >= 5 && e[f[0]].q1 !== undefined) {
+          voci.push({ nome: (CORTO[e.chiave] || e.nome) + ' · ' + f[1],
+                      s: e[f[0]], colore: COLORI[i % COLORI.length] });
+        }
+      });
+    });
+    if (voci.length) {
+      var box = html('div');
+      corpo.appendChild(box);
+      scatole(box, { voci: voci, formato: mmss,
+        etichetta: 'Boxplot dei tempi di partenza ' + anno + ' per composizione dell’equipaggio' });
+    }
+
+    var righe = [];
+    tp.equipaggi.forEach(function (e) {
+      [['giorno', 'Giorno'], ['notte', 'Notte']].forEach(function (f) {
+        var s = e[f[0]];
+        if (!s.n) return;
+        righe.push([e.nome, f[1], n(s.n), mmss(s.mediana), mmss(s.p90),
+                    s.n < POCHI ? 'pochi dati' : '']);
+      });
+    });
+    tp.equipaggi.forEach(function (e) {
+      var s = e.reperibilita;
+      if (!s || !s.n) return;
+      righe.push([e.nome, 'In reperibilità', n(s.n), mmss(s.mediana), mmss(s.p90),
+                  s.n < POCHI ? 'pochi dati' : '']);
+    });
+    corpo.appendChild(tabellaSemplice(['Equipaggio', 'Fascia', 'Partenze', 'Mediana', '9 su 10', ''], righe));
+  }
+
   function montaTempi(root, tp, anno) {
     var notte = tp.notte || [20, 6];
     var c = scheda('Tempo di partenza – ' + anno,
@@ -896,7 +969,10 @@ var AMB_DASH = (function () {
       });
     }
 
+    if (tp.equipaggi) montaTempiEquipaggio(c.corpo, tp, anno);
+
     // tabella mese per mese, con quante partenze ci sono dietro ogni mediana
+    c.corpo.appendChild(html('h4', 'dash-sottotitolo', 'Mese per mese'));
     var scroll = html('div', 'dash-tabella-wrap');
     var t = html('table', 'dash-tabella');
     var th = html('thead');
