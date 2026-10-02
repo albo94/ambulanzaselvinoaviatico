@@ -364,9 +364,13 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     stringa dentro `xl/sharedStrings.xml` riscrivendo lo zip voce per voce, così tutto il
     resto resta identico. Nota utile: Excel deduplica le stringhe uguali, quindi una sola
     sostituzione sistema la stessa voce su più schede.
-  - `DATA`, `FIRMA` (campi del cartaceo) e `Tariffario programmate` sono nella lista `FUORI`
-    dello script e non devono rientrare. Il tariffario era anche un **articolo fisico** sulla
-    mensola del Ducato: tolto anche da lì.
+  - `DATA` e `FIRMA` (campi del cartaceo) sono nella lista `FUORI` dello script e non devono
+    rientrare.
+  - **`Tariffario programmate` c'è solo sul Ducato** (rimesso il 02/10/2026, era stato tolto
+    il 27/09 per errore): in `Controllo documenti` e come articolo su `LATO SINISTRO / MENSOLA`,
+    come sul cartaceo. Sui due Crafter non c'è, ed è giusto così: non c'è già nelle sorgenti
+    (né nelle loro schede di `CONTROLLI OGNI CHECK LIST` né nei loro Excel), quindi non serve
+    nessun filtro. Non rimetterlo in `FUORI`, che varrebbe per tutti e tre i mezzi.
   - `Controllo carburante` nel foglio è un'intestazione con la sua casella accanto, senza voci
     sotto: qui diventa una sezione con un controllo solo.
 - **Scadenze collegate al GESTIONALE SCADENZE.** Assicurazione, revisione e tagliando hanno la
