@@ -367,8 +367,9 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   - `DATA` e `FIRMA` (campi del cartaceo) sono nella lista `FUORI` dello script e non devono
     rientrare.
   - **`Tariffario programmate` c'è solo sul Ducato** (rimesso il 02/10/2026, era stato tolto
-    il 27/09 per errore): in `Controllo documenti` e come articolo su `LATO SINISTRO / MENSOLA`,
-    come sul cartaceo. Sui due Crafter non c'è, ed è giusto così: non c'è già nelle sorgenti
+    il 27/09 per errore), **solo** come articolo su `LATO SINISTRO / MENSOLA`. Nel foglio
+    `CONTROLLI OGNI CHECK LIST` sta anche fra i documenti, ma spuntarlo due volte non serve:
+    `aggiorna_documenti.py` lo salta con la lista `SOLO_ARTICOLO`. Sui due Crafter non c'è, ed è giusto così: non c'è già nelle sorgenti
     (né nelle loro schede di `CONTROLLI OGNI CHECK LIST` né nei loro Excel), quindi non serve
     nessun filtro. Non rimetterlo in `FUORI`, che varrebbe per tutti e tre i mezzi.
   - `Controllo carburante` nel foglio è un'intestazione con la sua casella accanto, senza voci
