@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-10-04T02:43:17+02:00",
+ "aggiornato": "2026-10-05T02:43:07+02:00",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -1161,27 +1161,27 @@
     570,
     354,
     110,
-    11,
+    26,
     0,
     0
    ],
-   "totale": 1988,
+   "totale": 2003,
    "parziale": true
   }
  ],
  "tipologie": [
   {
+   "tipo": "Manifestazioni",
+   "valori": [
+    422,
+    539
+   ]
+  },
+  {
    "tipo": "Programmate",
    "valori": [
     412,
     529
-   ]
-  },
-  {
-   "tipo": "Manifestazioni",
-   "valori": [
-    422,
-    524
    ]
   },
   {
@@ -1230,22 +1230,22 @@
   },
   {
    "anno": 2026,
-   "ore": 13667,
-   "oreTutti": 24612,
-   "giorni": 276,
-   "al": "2026-10-03"
+   "ore": 13699,
+   "oreTutti": 24688,
+   "giorni": 277,
+   "al": "2026-10-04"
   }
  ],
  "confronto": {
   "finoAMese": 10,
-  "giorno": 4,
+  "giorno": 5,
   "missioni": {
    "prec": 414,
    "corr": 424
   },
   "ore": {
    "prec": 1481,
-   "corr": 1988
+   "corr": 2003
   }
  }
 }
