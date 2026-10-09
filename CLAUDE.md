@@ -372,6 +372,16 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     `aggiorna_documenti.py` lo salta con la lista `SOLO_ARTICOLO`. Sui due Crafter non c'è, ed è giusto così: non c'è già nelle sorgenti
     (né nelle loro schede di `CONTROLLI OGNI CHECK LIST` né nei loro Excel), quindi non serve
     nessun filtro. Non rimetterlo in `FUORI`, che varrebbe per tutti e tre i mezzi.
+  - **Voci che sul mezzo ci sono ma nelle sorgenti no** (09/10/2026, Ducato): `Batteria scorta DAE`
+    in `DAE`, `Scheda manifestazioni` su `LATO SINISTRO / MENSOLA` (tolta dai documenti,
+    come il tariffario) e `Registro di bordo` in `Controllo vano guida`, prima della pulizia.
+    Stanno nei dizionari `AGGIUNTE` di `parse_check.py` (articoli, regola 6) e di
+    `aggiorna_documenti.py` (controlli), e in `SOLO_ARTICOLO_MEZZO`, che a differenza di
+    `SOLO_ARTICOLO` vale per un mezzo solo: sui Crafter la scheda manifestazioni resta fra i
+    documenti. Non sono state scritte negli Excel perché nel file del Ducato DAE e mensola
+    non hanno righe libere: inserirne vorrebbe dire spostare celle unite e il disegno della
+    cartacea. **La cartacea quindi non le ha.** Se un giorno si aggiornano gli Excel, gli
+    script se ne accorgono («c'è già nell'Excel») e la voce va tolta da `AGGIUNTE`.
   - `Controllo carburante` nel foglio è un'intestazione con la sua casella accanto, senza voci
     sotto: qui diventa una sezione con un controllo solo.
 - **Scadenze collegate al GESTIONALE SCADENZE.** Assicurazione, revisione e tagliando hanno la
