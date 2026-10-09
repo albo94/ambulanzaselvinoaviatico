@@ -593,8 +593,10 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     Non ha un'azione web di proposito: la pagina è pubblica. Si lancia dall'editor, oppure
     come è stato fatto il 29/09/2026 con un ramo `doPost` **monouso** limitato agli id da
     annullare, distribuito, chiamato una volta e tolto subito (versioni 9 e 10).
-    ⚠️ Il service account **non** vede il registro: per leggerlo o scriverlo da fuori
-    si passa dal backend (`azione: 'difetti'` restituisce gli aperti di un mezzo).
+    Il registro è condiviso col service account (letto con successo il 09/10/2026, schede
+    comprese): i difetti si possono leggere da fuori con l'API Sheets, senza passare dal
+    backend. Se possa anche scriverci dipende dal permesso dato in condivisione; in ogni
+    caso un annullamento va fatto come sopra, cambiando lo stato e mai cancellando righe.
   - Il 29/09/2026 sono stati annullati i 14 difetti delle prime check list vere
     (12 sul Crafter 006, 2 sul 007): erano tutti **senza nota** e un pallino con scritto
     «Graffio» non dice a nessuno dove guardare. Le prossime check list li risegnalano con
