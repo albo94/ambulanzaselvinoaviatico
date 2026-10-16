@@ -19,10 +19,13 @@ Repository: `https://github.com/albo94/ambulanzaselvinoaviatico`
 ├── checklist/          – Pagina nascosta: check list dei mezzi, uso interno (vedi *Pagine nascoste*)
 ├── sitemap.xml
 ├── robots.txt
+├── llms.txt            – Fatti essenziali per i motori generativi (vedi *SEO*)
+├── google0a9c787ee85afe3d.html – Verifica Search Console: NON rimuovere (vedi *Analytics*)
 ├── css/style.css       – Unico foglio di stile (tutto il sito)
 ├── css/dashboard.css   – Stili della dashboard statistiche
 ├── js/main.js          – Hamburger, stats counter, carousel, scroll reveal
 ├── js/dashboard.js     – Renderer dei grafici (SVG a mano, nessuna libreria)
+├── js/analytics.js     – GA4 + banner cookie con Consent Mode v2 (vedi *Analytics*)
 ├── dati/statistiche.json – Dati della dashboard, rigenerati ogni notte (non modificare)
 ├── CNAME               – Dominio custom per GitHub Pages (non rimuovere)
 ├── images/             – Immagini usate dal sito (vedi struttura sottocartelle)
@@ -174,9 +177,22 @@ Tab sticky sotto l'header con 5 sezioni:
    - **Comunità**: griglia 3 foto (`formazione4.jpg` sp-wide, `formazione2.jpg`, `formazione6.jpg`)
    - **Aziende**: foto `aziende/formazione-aziende.jpg`
 
+### Home (index.html) – contenuti rivisti il 16/10/2026
+- **Storia con le date**: 1968 prima ambulanza, messa in strada dalla sezione AVIS
+  Selvino Aviatico (con link), 1993 associazione, 2021 convenzione AREU. Il soggetto del
+  1968 resta il soccorso, non l'ente (vedi *Dati associazione*).
+- **L'Altipiano raccontato con i numeri**, non con gli aggettivi: circa mille metri, il 44%
+  delle missioni fuori dall'Altipiano, 66 comuni raggiunti. Niente elisoccorso: non è in
+  carico all'associazione, lo manda AREU.
+- **Contatore interventi** fra `<!-- CONTATORE:INIZIO -->` e `<!-- CONTATORE:FINE -->`, riscritto
+  di notte dall'automazione (vedi *SEO > GEO/AIO*): non va corretto a mano.
+
 ### News (index.html)
 3 card news:
-- **Evento**: `images/eventi/inaugurazione/evento-taglio-nastro.jpg` – Inaugurazione nuova ambulanza
+- **Evento**: `images/eventi/inaugurazione/evento-taglio-nastro.jpg` – «Inaugurata la nuova
+  ambulanza – 26 aprile 2026», scritta come cronaca con il link alle foto. Fino al 16/10/2026
+  era ancora l'invito («Siete tutti invitati!», senza anno) sei mesi dopo l'evento: una news
+  con una data va riletta quando la data passa.
 - **Formazione**: `images/servizi/formazione/formazione1.jpg` – Formiamo i soccorritori
 - **Volontariato**: `images/news-team.jpg` – Entra a far parte della squadra
 
@@ -658,7 +674,12 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   risponde 302 e con `-X` forzato curl rispedisce il POST senza `Content-Length` (411).
   Basta `--data-binary`, che implica POST e sul redirect passa a GET come fa il browser.
 
-  Deploy: `cd _materiali/checklist/gas && clasp push --force && clasp create-deployment`.
+  Deploy: da `_materiali/checklist/gas`, con il profilo dell'associazione:
+  `clasp --user ambulanza push --force`, poi `clasp --user ambulanza create-version "..."`
+  e `clasp --user ambulanza update-deployment --versionNumber N <id produzione>`.
+  ⚠️ **Mai `create-deployment`**: crea un URL nuovo, e la pagina continuerebbe a
+  chiamare quello vecchio, fermo alla versione precedente. Al 09/10/2026 la produzione è
+  sulla versione 10.
   ⚠️ `clasp create-script` **sovrascrive `appsscript.json`** con il suo default, che ha
   `timeZone: America/New_York`: ogni timestamp del registro sarebbe sfasato. Dopo una
   ricreazione va rimesso `Europe/Rome` insieme a `oauthScopes` e al blocco `webapp`.
@@ -762,9 +783,23 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   - `lastmod` in `sitemap.xml` va tenuto allineato: era fermo ad aprile mentre le pagine
     erano di settembre. Per `numeri.html` vale la data di `dati/statistiche.json`, non
     quella del file HTML, perché è il dato a cambiare. Si ricava da
-    `git log -1 --format=%ad --date=short -- <file>`.
-- `sitemap.xml` e `robots.txt` presenti
-- Google Search Console: verificato via TXT DNS
+    `git log -1 --format=%ad --date=short -- <file>`, ma va letto: conta l'ultimo
+    commit che ha cambiato il **contenuto**. Il 16/10/2026 tutte e sei le pagine hanno preso
+    lo script di analytics e il link «Cookie» nel footer: per `associazione` e
+    `volontario` è stato l'unico cambio, e il loro `lastmod` resta al 27/09; home,
+    servizi e contatti sono cambiate davvero (storia, FAQ, dati strutturati) e sono al 16/10.
+    Un `lastmod` che si muove a ogni ritocco tecnico insegna a Google a ignorarlo.
+    ⚠️ **Nessuno lo aggiorna in automatico.** L'automazione notturna riscrive il riquadro
+    di `numeri.html` e il contatore della home, ma non tocca `sitemap.xml`: il `lastmod`
+    di `numeri.html` resta alla data dell'ultimo ritocco a mano. Non è grave (una data
+    vecchia fa solo ripassare meno spesso), ma se si vuole esatto va aggiunto alla funzione
+    `pubblicaSintesiNumeri()` del progetto missioni.
+- `sitemap.xml` (6 pagine pubbliche, nessuna nascosta) e `robots.txt` con la riga
+  `Sitemap:`. Nella Search Console la sitemap risulta letta con 6 pagine (14/10/2026).
+  C'è anche una seconda voce, `http://www.../sitemap.xml` di tipo *Indice Sitemap*,
+  inviata il 12/01/2021: è quella di Wix, non letta dal 2024, e si può rimuovere dal menu
+  ⋮ della riga. Non fa danni, ma è un residuo.
+- Google Search Console: vedi *Analytics e consenso* (verificata con file HTML e TXT DNS).
 
 ## Analytics e consenso
 
@@ -815,6 +850,12 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
 - **Dominio**: registrato su Squarespace Domains
 - **DNS**: A records → 185.199.108–111.153, CNAME www → albo94.github.io
 - Nameservers: Squarespace (migrato da Wix)
+- ⚠️ **HTTPS non forzato** (verificato il 16/10/2026): `http://www.ambulanzaselvinoaviatico.com/`
+  risponde 200 con la pagina invece di rimandare a `https://`. Il certificato c'è e
+  `https://` funziona: manca solo la spunta *Enforce HTTPS* in GitHub, repository →
+  Settings → Pages. Finché manca, ogni pagina esiste in due copie (i `canonical` su
+  `https://` limitano il danno) e chi arriva da un vecchio link in `http://` naviga
+  in chiaro, banner dei cookie compreso.
 
 ## Regole di sviluppo
 
