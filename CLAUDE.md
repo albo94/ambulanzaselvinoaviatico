@@ -788,10 +788,12 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   per sempre. Un link `href="#cookie"` in qualunque pagina la azzera e riapre il banner —
   c'è nel footer di tutte e sei. I due pulsanti hanno lo stesso peso visivo di proposito: un
   «rifiuta» sbiadito accanto a un «accetta» acceso non è una scelta libera.
-- ⚠️ **Search Console: la verifica non risulta attiva** (controllato il 16/10/2026). Sul
-  dominio c'è solo il TXT dell'SPF, nessun `google-site-verification`, nessun meta nelle
-  pagine, nessun file di verifica. O è decaduta, o passa dall'account Google Workspace. La
-  nota precedente in questo file («verificato via TXT DNS») era superata.
+- **Search Console: verificata con file HTML** dal 16/10/2026. In radice c'è
+  `google0a9c787ee85afe3d.html` (53 byte, una riga). ⚠️ **Non va rimosso mai**, nemmeno
+  dopo l'esito positivo: Google ricontrolla periodicamente e, se sparisce, la proprietà
+  torna non verificata e si perdono i dati di ricerca. Non è un residuo da ripulire.
+  La nota precedente («verificato via TXT DNS») era superata: sul dominio c'è solo il TXT
+  dell'SPF, nessun `google-site-verification`.
 
 ## DNS e hosting
 
