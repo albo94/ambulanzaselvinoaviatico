@@ -766,6 +766,33 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
 - `sitemap.xml` e `robots.txt` presenti
 - Google Search Console: verificato via TXT DNS
 
+## Analytics e consenso
+
+- **`js/analytics.js`**: Google Analytics 4 con **Consent Mode v2**. Caricato solo dalle sei
+  pagine pubbliche, **mai** da `quiz60.html`, `checklist/` e `sciesopoli/` — quest'ultima per
+  regola non deve caricare nulla dal resto del sito, le altre due sono strumenti interni.
+- ⚠️ **`ID_GA` vuoto = tutto spento**: niente banner, niente `dataLayer`, niente cookie,
+  nessuna richiesta a Google. È lo stato attuale, in attesa dell'ID di misurazione
+  (`G-XXXXXXXXXX`, da Analytics → Amministrazione → Flussi di dati). Basta valorizzare
+  quella costante per accendere tutto.
+- **Senza consenso GA non viene nemmeno scaricato.** Il default di Consent Mode è `denied`
+  per tutto e viene dichiarato *prima* di caricare lo script: se qualcosa va storto, il
+  punto di partenza resta "negato". `ad_storage` resta negato anche dopo l'accettazione —
+  l'associazione non fa pubblicità, le servono solo le visite.
+- ⚠️ **Rifiutare cancella anche i cookie già scritti** (`pulisciCookie()`): senza, chi
+  accetta e poi cambia idea se li ritrova addosso e la revoca non revoca niente. Trovato in
+  collaudo il 16/10/2026: il rifiuto non caricava GA ma lasciava i `_ga` di un consenso
+  precedente. I cookie si cancellano provando il dominio corrente **e** quelli padre, perché
+  GA li scrive sul dominio padre.
+- La scelta sta in `localStorage` (`amb-consenso`) e **scade dopo 6 mesi**: il consenso non è
+  per sempre. Un link `href="#cookie"` in qualunque pagina la azzera e riapre il banner —
+  c'è nel footer di tutte e sei. I due pulsanti hanno lo stesso peso visivo di proposito: un
+  «rifiuta» sbiadito accanto a un «accetta» acceso non è una scelta libera.
+- ⚠️ **Search Console: la verifica non risulta attiva** (controllato il 16/10/2026). Sul
+  dominio c'è solo il TXT dell'SPF, nessun `google-site-verification`, nessun meta nelle
+  pagine, nessun file di verifica. O è decaduta, o passa dall'account Google Workspace. La
+  nota precedente in questo file («verificato via TXT DNS») era superata.
+
 ## DNS e hosting
 
 - **Hosting**: GitHub Pages (branch `main`, repo `albo94/ambulanzaselvinoaviatico`)

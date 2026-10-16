@@ -2307,3 +2307,63 @@ ul {
 .stat-collegato:hover .stat-number { color: var(--orange); }
 .stat-collegato:hover .stat-label { text-decoration: underline; text-underline-offset: 3px; }
 .stat-collegato:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; border-radius: 6px; }
+
+/* ============================================================
+   BANNER CONSENSO COOKIE
+   Compare solo se analytics e' configurato e la scelta non e'
+   ancora stata fatta. Niente overlay che blocca la pagina: il
+   sito resta leggibile anche senza rispondere.
+   ============================================================ */
+.consenso {
+  position: fixed;
+  left: 14px; right: 14px; bottom: 14px;
+  z-index: 9999;
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid var(--line, #d8dde2);
+  border-left: 4px solid var(--orange);
+  border-radius: 10px;
+  box-shadow: 0 6px 28px rgba(0, 0, 0, .18);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.consenso-testo strong {
+  display: block;
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: var(--dark);
+}
+.consenso-testo p {
+  margin: 0;
+  font-size: .86rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+.consenso-bottoni {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.btn-consenso {
+  font: 700 .85rem/1 'Titillium Web', sans-serif;
+  padding: 11px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--line, #d8dde2);
+  min-height: 42px;
+}
+/* i due pulsanti hanno lo stesso peso visivo: un "rifiuta" sbiadito
+   accanto a un "accetta" acceso non e' una scelta libera */
+.btn-consenso--no { background: var(--white); color: var(--text); }
+.btn-consenso--no:hover { background: var(--gray); }
+.btn-consenso--si { background: var(--orange); color: #fff; border-color: var(--orange); }
+.btn-consenso--si:hover { background: var(--orange-dark); }
+.btn-consenso:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+@media (max-width: 430px) {
+  .consenso-bottoni { flex-direction: column-reverse; }
+  .btn-consenso { width: 100%; }
+}
