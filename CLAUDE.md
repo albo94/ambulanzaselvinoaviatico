@@ -693,7 +693,35 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   `hero-principale.jpg` (index, contatti), `associazione/corteo.jpg` (associazione),
   `servizi/emergenza/ambulanza3.jpg` (servizi), `associazione/consiglio-direttivo.jpg`
   (volontario), `logo.png` (numeri)
-- JSON-LD: Organization + EmergencyService + WebSite (index), LocalBusiness (contatti)
+- JSON-LD: Organization + EmergencyService + WebSite (index), LocalBusiness (contatti),
+  5 × Service (servizi). `associazione`, `volontario` e `numeri` non ne hanno ancora.
+  L'`Organization` ha `@id` stabile, `sameAs` (Facebook, Instagram), `memberOf` ANPAS,
+  `areaServed`, `geo`, `openingHoursSpecification`, `vatID`/`taxID` (CF 95052440161).
+  I `Service` puntano all'organizzazione con `"provider": {"@id": ".../#organization"}`:
+  l'`@id` va tenuto identico, è quello che lega le entità fra pagine diverse.
+- ⚠️ **Il telefono nei dati strutturati va controllato cifra per cifra.** Fino al 16/10/2026
+  entrambi i blocchi JSON-LD dichiaravano `+390357646426`, con **una cifra in più**
+  (corretto: `+39035764626`). Nel testo visibile il numero era giusto in tutte e 18 le
+  occorrenze, quindi l'errore non si vedeva: ma i dati strutturati sono la prima cosa che
+  legge un motore, e un assistente avrebbe dettato un numero inesistente.
+- **GEO / AIO (motori generativi)**: `robots.txt` non blocca nessun crawler AI, ed è
+  voluto — farsi leggere è il presupposto per essere citati. C'è un `llms.txt` in radice
+  con i fatti essenziali, i servizi, i recapiti e la nota che **per le emergenze si chiama
+  il 112**, non la sede.
+  - ⚠️ **`numeri.html` è vuota per chi non esegue JavaScript**: il contenitore della
+    dashboard contiene solo «Caricamento dei dati…», e i crawler di ChatGPT, Claude,
+    Perplexity e Common Crawl leggono l'HTML grezzo. L'unica pagina con numeri verificabili
+    è quindi l'unica che nessun motore può citare. Il rimedio è un riquadro di testo
+    statico con le cifre chiave, scritto dallo stesso script notturno che aggiorna il JSON.
+    Non è ancora fatto.
+  - I contenuti a forma di domanda sono il formato che i motori generativi citano più
+    volentieri: oggi nel sito ci sono 3 titoli con punto interrogativo e sono tutti slogan
+    («Hai Domande?»). Manca un `FAQPage`. Le domande devono essere quelle vere che arrivano
+    in sede, non inventate a tavolino.
+  - `lastmod` in `sitemap.xml` va tenuto allineato: era fermo ad aprile mentre le pagine
+    erano di settembre. Per `numeri.html` vale la data di `dati/statistiche.json`, non
+    quella del file HTML, perché è il dato a cambiare. Si ricava da
+    `git log -1 --format=%ad --date=short -- <file>`.
 - `sitemap.xml` e `robots.txt` presenti
 - Google Search Console: verificato via TXT DNS
 

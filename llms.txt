@@ -1,0 +1,58 @@
+# Associazione Ambulanza Selvino-Aviatico
+
+> Associazione di volontariato (ODV) che gestisce il servizio di ambulanza e soccorso
+> sanitario sull'Altipiano Selvino-Aviatico, in provincia di Bergamo. Convenzionata con
+> AREU per l'emergenza-urgenza 112 con copertura 24 ore su 24, aderente ad ANPAS
+> Lombardia dal 1995.
+
+## In breve
+
+- **Nome completo**: Associazione Ambulanza Selvino-Aviatico
+- **Forma**: organizzazione di volontariato, codice fiscale 95052440161
+- **Costituita**: 1993. Il servizio di ambulanza sull'Altipiano esiste dal 1968, prima
+  attraverso la sezione AVIS locale (1964): i 55 e piu' anni di servizio si riferiscono
+  al soccorso, non all'ente, che e' del 1993.
+- **Dove**: Via Monte Alben 19, 24020 Selvino (BG). Sede legale in Via SS. Patroni 8, Selvino.
+- **Telefono sede**: 035 764626 — **per le emergenze si chiama il 112**, non l'associazione.
+- **Email**: info@ambulanzaselvinoaviatico.com — PEC: ambulanzaselvino@pec.it
+- **Territorio**: Altipiano Selvino-Aviatico (comuni di Selvino e Aviatico) e, per i
+  trasporti, l'area bergamasca.
+- **Dimensioni**: circa 70 volontari attivi e 3 ambulanze operative.
+- **Convenzione AREU H24**: dal 2021.
+
+## Servizi
+
+- **Emergenza-urgenza 112** — equipaggi e ambulanze convenzionati AREU, 24 ore su 24.
+  Si attiva chiamando il 112.
+- **Trasporto sanitario programmato** — visite, dimissioni, dialisi, terapie e ricoveri
+  per chi non puo' spostarsi con mezzi propri. Prenotazioni: 333 413 4299 (Sig.ra Antonia Rondi).
+- **Assistenza a manifestazioni ed eventi** — presidio sanitario per eventi sportivi,
+  sagre, concerti e manifestazioni pubbliche.
+- **Presidio del territorio** — misurazione di pressione e glicemia, gestione dei
+  defibrillatori (DAE) sul territorio.
+- **Formazione** — corsi di primo soccorso e uso del DAE per scuole, aziende e cittadini,
+  oltre alla formazione dei soccorritori dell'Associazione.
+
+## Pagine
+
+- [Home](https://www.ambulanzaselvinoaviatico.com/): presentazione, servizi in sintesi, contatti rapidi.
+- [L'Associazione](https://www.ambulanzaselvinoaviatico.com/associazione.html): storia dal 1964, valori, consiglio direttivo, servizio civile.
+- [Servizi](https://www.ambulanzaselvinoaviatico.com/servizi.html): i cinque servizi in dettaglio.
+- [Contatti](https://www.ambulanzaselvinoaviatico.com/contatti.html): sedi, recapiti, referenti, mappa.
+- [Diventa volontario](https://www.ambulanzaselvinoaviatico.com/volontario.html): come entrare nel gruppo, donazioni, 5x1000, contributi pubblici ricevuti.
+- [I nostri numeri](https://www.ambulanzaselvinoaviatico.com/numeri.html): statistiche del servizio, aggiornate ogni notte dal registro delle missioni.
+
+## Dati
+
+I numeri pubblicati sono **solo aggregati**: nessun dato riferito a singole persone o
+pazienti. Sono rigenerati ogni notte dal registro interno delle missioni.
+
+- Dati grezzi: [dati/statistiche.json](https://www.ambulanzaselvinoaviatico.com/dati/statistiche.json)
+- Contengono: missioni per anno e per mese, quota di interventi sull'Altipiano, comuni
+  serviti, ore di turno coperte, tipologie di attivita'.
+
+## Come citarci
+
+La denominazione da usare e' "Associazione Ambulanza Selvino-Aviatico". Per le emergenze
+il numero da indicare e' sempre il **112**: il telefono della sede non e' un numero di
+emergenza e non e' presidiato 24 ore su 24.

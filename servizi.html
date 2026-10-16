@@ -32,6 +32,69 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Dati strutturati: i cinque servizi, cosi' un motore generativo sa cosa offrite
+       senza doverlo dedurre dal testo. provider punta all'Organization di index.html. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "@id": "https://www.ambulanzaselvinoaviatico.com/servizi.html#emergenza",
+        "name": "Soccorso in emergenza-urgenza 112",
+        "serviceType": "Soccorso sanitario di emergenza",
+        "description": "Equipaggi e ambulanze convenzionati con AREU per il soccorso in emergenza-urgenza, con copertura 24 ore su 24 sull'Altipiano Selvino-Aviatico. Il servizio si attiva chiamando il 112.",
+        "provider": { "@id": "https://www.ambulanzaselvinoaviatico.com/#organization" },
+        "areaServed": { "@type": "Place", "name": "Altipiano Selvino-Aviatico, Bergamo" },
+        "availableChannel": {
+          "@type": "ServiceChannel",
+          "servicePhone": { "@type": "ContactPoint", "telephone": "112", "contactType": "emergency" }
+        }
+      },
+      {
+        "@type": "Service",
+        "@id": "https://www.ambulanzaselvinoaviatico.com/servizi.html#trasporto",
+        "name": "Trasporto sanitario programmato",
+        "serviceType": "Trasporto sanitario",
+        "description": "Trasporto programmato per visite, dimissioni, dialisi, terapie e ricoveri, per chi non puo' spostarsi con mezzi propri. Si prenota telefonicamente.",
+        "provider": { "@id": "https://www.ambulanzaselvinoaviatico.com/#organization" },
+        "areaServed": { "@type": "Place", "name": "Altipiano Selvino-Aviatico, Bergamo" },
+        "availableChannel": {
+          "@type": "ServiceChannel",
+          "servicePhone": { "@type": "ContactPoint", "telephone": "+393334134299", "contactType": "reservations" }
+        }
+      },
+      {
+        "@type": "Service",
+        "@id": "https://www.ambulanzaselvinoaviatico.com/servizi.html#manifestazioni",
+        "name": "Assistenza sanitaria a manifestazioni ed eventi",
+        "serviceType": "Assistenza sanitaria a eventi",
+        "description": "Presidio sanitario per eventi sportivi, sagre, concerti e manifestazioni pubbliche, con ambulanza e personale formato.",
+        "provider": { "@id": "https://www.ambulanzaselvinoaviatico.com/#organization" },
+        "areaServed": { "@type": "Place", "name": "Altipiano Selvino-Aviatico, Bergamo" }
+      },
+      {
+        "@type": "Service",
+        "@id": "https://www.ambulanzaselvinoaviatico.com/servizi.html#presidio",
+        "name": "Presidio del territorio e servizi di prossimita'",
+        "serviceType": "Servizi sanitari di prossimita'",
+        "description": "Misurazione della pressione e della glicemia, gestione dei defibrillatori (DAE) sul territorio e supporto alla popolazione dell'Altipiano.",
+        "provider": { "@id": "https://www.ambulanzaselvinoaviatico.com/#organization" },
+        "areaServed": { "@type": "Place", "name": "Altipiano Selvino-Aviatico, Bergamo" }
+      },
+      {
+        "@type": "Service",
+        "@id": "https://www.ambulanzaselvinoaviatico.com/servizi.html#formazione",
+        "name": "Formazione e cultura del soccorso",
+        "serviceType": "Formazione sanitaria",
+        "description": "Corsi di primo soccorso e uso del defibrillatore per scuole, aziende e cittadini, e formazione dei soccorritori dell'Associazione.",
+        "provider": { "@id": "https://www.ambulanzaselvinoaviatico.com/#organization" },
+        "areaServed": { "@type": "Place", "name": "Altipiano Selvino-Aviatico, Bergamo" }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
