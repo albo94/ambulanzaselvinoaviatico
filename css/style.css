@@ -2296,3 +2296,14 @@ ul {
 .faq-risposta { padding: 0 18px 18px; }
 .faq-risposta p { margin: 0; line-height: 1.65; color: var(--text); }
 .faq-risposta a { color: var(--orange); text-decoration: underline; text-underline-offset: 2px; }
+
+/* Contatore collegato ai numeri veri: e' un link, ma non deve sembrare
+   un link dentro la barra delle statistiche. */
+.stat-collegato {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.stat-collegato:hover .stat-number { color: var(--orange); }
+.stat-collegato:hover .stat-label { text-decoration: underline; text-underline-offset: 3px; }
+.stat-collegato:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; border-radius: 6px; }

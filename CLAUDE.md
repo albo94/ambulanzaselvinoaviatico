@@ -729,6 +729,13 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
       non deve far fallire la pubblicazione del JSON, che è la cosa importante.
     - È testo normale, visibile anche nel browser: non è contenuto nascosto per i motori,
       che sarebbe cloaking e verrebbe penalizzato.
+    - **Anche il contatore della home** è scritto dall'automazione, fra
+      `<!-- CONTATORE:INIZIO -->` e `<!-- CONTATORE:FINE -->` in `index.html`, da
+      `pubblicaContatoreHome()`. Usa l'**ultimo anno completo**, non quello in corso: in
+      home un parziale sembrerebbe un calo. ⚠️ Prima diceva «450+ Interventi/anno», scritto
+      a mano: le missioni vere del 2025 erano **519**, quindi il sito si sottostimava di una
+      settantina di interventi l'anno. L'etichetta porta l'anno (`Interventi nel 2025`)
+      perché senza, un numero secco si legge come media perenne e invecchia peggio.
     - Gli stili `.dash-sintesi` stanno in **`style.css`**, non in `dashboard.css`:
       quest'ultimo è caricato anche dalla riservata, che il riquadro non ha, e toccarlo
       obbligherebbe ad alzare il `?v=` in due posti per niente.
