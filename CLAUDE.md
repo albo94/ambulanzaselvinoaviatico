@@ -469,9 +469,14 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   ⚠️ Il service account legge il GESTIONALE (come *Editor*, gli serve per scrivere le
   correzioni) e il Riepilogo del bot 118, ma **non** CONTROLLI OGNI CHECK LIST: quello va
   scaricato in `.xlsx` a mano prima di lanciare `aggiorna_documenti.py`.
-- **clasp**: dal 27/09/2026 il profilo `default` è su `alberto.grigis@ambulanzaselvinoaviatico.com`
-  (prima erano due Gmail personali e il deploy era bloccato — la nota contraria nel CLAUDE.md
-  del bot 118 è superata). `clasp run` però **non** funziona: vuole l'API di Apps Script
+- **clasp**: le credenziali dell'associazione stanno nel profilo **`ambulanza`**, non in
+  `default`. Si usa con `clasp --user ambulanza <comando>`.
+  ⚠️ Non rimetterle in `default`: il 16/10/2026 erano state sovrascritte da un `clasp login`
+  fatto con un Gmail personale per un altro progetto, e il push è fallito con *«The caller
+  does not have permission»*, che non fa capire che il problema è l'account. Un profilo
+  dedicato regge a un login distratto. Per sapere con chi si è loggati:
+  `clasp --user ambulanza show-authorized-user`.
+  `clasp run` però **non** funziona: vuole l'API di Apps Script
   abilitata, una distribuzione *API executable* e credenziali GCP dedicate. Per eseguire una
   funzione a mano (`setup()`, `ricalcolaOreTurnisti()`) si apre l'editor e si preme Run.
   - Al 27/09/2026 **4 voci su 9 non tornavano**, e non sono state allineate d'ufficio: il
