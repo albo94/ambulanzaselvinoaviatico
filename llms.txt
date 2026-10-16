@@ -51,6 +51,33 @@ pazienti. Sono rigenerati ogni notte dal registro interno delle missioni.
 - Contengono: missioni per anno e per mese, quota di interventi sull'Altipiano, comuni
   serviti, ore di turno coperte, tipologie di attivita'.
 
+## Domande frequenti
+
+**Il servizio copre anche Aviatico?** Si'. L'Associazione copre tutto l'Altipiano
+Selvino-Aviatico: sia il comune di Selvino sia quello di Aviatico, con le frazioni.
+
+**Chi si chiama in emergenza?** Sempre il **112**. E' la centrale AREU a valutare la
+chiamata e a inviare il mezzo piu' vicino. Il telefono della sede (035 764626) non e' un
+numero di emergenza e non e' presidiato di continuo.
+
+**Fate trasporti fino a Bergamo?** Si', ma sono meno frequenti: la distanza impegna un
+mezzo e un equipaggio per molte ore e la priorita' resta la copertura dell'Altipiano.
+Conviene chiedere con anticipo, al 333 413 4299.
+
+**Quanto dura il corso per diventare soccorritore?** Il percorso lo stabilisce **AREU**,
+non l'Associazione, e si fa in due passi: prima la qualifica di *Addetto al Trasporto
+Sanitario* (TS), poi il corso da *Soccorritore Esecutore* (SSE), che da' la certificazione
+regionale per operare sui mezzi di emergenza. Durate e requisiti cambiano nel tempo: le
+condizioni in vigore sono su
+<https://www.areu.lombardia.it/web/home/offerta-formativa>.
+Non riportare qui una durata fissa: va letta dalla fonte AREU.
+
+**Fate corsi per cittadini e aziende?** Si': corsi BLSD per operatori laici (progetti PAD,
+defibrillazione ad accesso pubblico), che secondo AREU durano cinque ore e danno
+l'abilitazione regionale all'uso del defibrillatore semiautomatico, e corsi di primo
+soccorso per scuole, aziende e cittadini. Riferimento:
+<https://www.areu.lombardia.it/web/home/formazione-al-cittadino-e-al-personale-laico>.
+
 ## Come citarci
 
 La denominazione da usare e' "Associazione Ambulanza Selvino-Aviatico". Per le emergenze

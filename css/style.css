@@ -2204,3 +2204,95 @@ ul {
     padding: 24px 16px;
   }
 }
+
+/* ============================================================
+   NUMERI — riquadro di sintesi testuale (numeri.html)
+   I grafici sotto li disegna JavaScript: questo blocco e' la
+   stessa informazione in testo, per chi legge l'HTML grezzo.
+   Sta qui e non in dashboard.css perche' quel file e' caricato
+   anche dalla dashboard riservata, che questo riquadro non ha.
+   ============================================================ */
+.dash-sintesi {
+  max-width: 70ch;
+  margin: 0 auto 34px;
+  padding: 22px 24px;
+  background: var(--gray);
+  border-radius: 10px;
+  border-left: 4px solid var(--orange);
+}
+.dash-sintesi h2 {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+}
+.dash-sintesi p {
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+.dash-sintesi p:last-child { margin-bottom: 0; }
+.dash-sintesi strong { color: var(--dark); }
+.dash-sintesi-nota {
+  font-size: .85rem;
+  color: var(--text-light);
+}
+.dash-sintesi-tab {
+  border-collapse: collapse;
+  margin: 4px 0 14px;
+  font-variant-numeric: tabular-nums;
+}
+.dash-sintesi-tab caption {
+  text-align: left;
+  font-size: .85rem;
+  color: var(--text-light);
+  padding-bottom: 6px;
+}
+.dash-sintesi-tab th,
+.dash-sintesi-tab td {
+  border: 1px solid #ddd;
+  padding: 5px 14px;
+  text-align: left;
+  font-size: .9rem;
+}
+.dash-sintesi-tab thead th { background: var(--white); font-weight: 700; }
+.dash-sintesi-tab tbody th { font-weight: 600; }
+
+/* ============================================================
+   FAQ (servizi.html) — <details> nativi: si aprono anche senza
+   JavaScript, e il testo resta nell'HTML anche da chiusi, quindi
+   lo leggono sia i motori sia i lettori di schermo.
+   ============================================================ */
+.faq-lista { max-width: 78ch; margin: 0 auto; }
+.faq-voce {
+  background: var(--white);
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  margin: 0 0 12px;
+  overflow: hidden;
+}
+.faq-voce summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 16px 48px 16px 18px;
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 600;
+  font-size: 1.02rem;
+  color: var(--dark);
+  position: relative;
+}
+.faq-voce summary::-webkit-details-marker { display: none; }
+.faq-voce summary::after {
+  content: '+';
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--orange);
+  font-weight: 400;
+}
+.faq-voce[open] summary::after { content: '\2013'; }
+.faq-voce summary:hover { background: var(--gray); }
+.faq-voce summary:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; }
+.faq-risposta { padding: 0 18px 18px; }
+.faq-risposta p { margin: 0; line-height: 1.65; color: var(--text); }
+.faq-risposta a { color: var(--orange); text-decoration: underline; text-underline-offset: 2px; }

@@ -123,8 +123,30 @@
         Questi dati arrivano direttamente dal registro delle missioni e si aggiornano
         da soli ogni notte: non sono stime, sono il lavoro dei volontari messo in fila.
       </p>
+      <!-- Riquadro di testo con le cifre chiave. Esiste perche' i grafici qui sotto
+           li disegna JavaScript, e chi legge l'HTML grezzo (i crawler dei motori
+           generativi, i lettori di schermo prima del rendering) altrimenti non
+           troverebbe un solo numero. Lo riscrive ogni notte pubblicaSintesiNumeri()
+           nel progetto missioni; a mano si rigenera con
+           _materiali/numeri/genera_sintesi.py. Non modificare a mano fra i marcatori. -->
+      <!-- NUMERI:INIZIO -->
+<section class="dash-sintesi" aria-labelledby="sintesi-titolo">
+  <h2 id="sintesi-titolo">I numeri in breve</h2>
+  <p class="dash-sintesi-nota">Dati aggregati del servizio, rigenerati ogni notte dal registro delle missioni. Nessun dato riferito a singole persone o pazienti.</p>
+  <p>Nel 2026 l'Associazione ha svolto <strong>434 missioni di soccorso</strong> fino al 16 ottobre, contro 414 nello stesso periodo del 2025. Nel 2025 le missioni sono state 519 in tutto.</p>
+  <p>Il <strong>56%</strong> delle missioni del 2026 resta sull'Altipiano Selvino-Aviatico; le restanti portano il soccorso fuori dall'Altipiano.</p>
+  <p>Nel 2026 volontari e dipendenti hanno coperto <strong>14.154 ore di turno in emergenza</strong> e 25.525 ore complessive, su 288 giorni di copertura continuativa.</p>
+  <table class="dash-sintesi-tab">
+    <caption>Missioni di soccorso per anno, dal 2019 al 2026</caption>
+    <thead><tr><th scope="col">Anno</th><th scope="col">Missioni</th></tr></thead>
+    <tbody><tr><th scope="row">2019</th><td>333</td></tr><tr><th scope="row">2020</th><td>357</td></tr><tr><th scope="row">2021</th><td>328</td></tr><tr><th scope="row">2022</th><td>453</td></tr><tr><th scope="row">2023</th><td>459</td></tr><tr><th scope="row">2024</th><td>455</td></tr><tr><th scope="row">2025</th><td>519</td></tr><tr><th scope="row">2026</th><td>435</td></tr></tbody>
+  </table>
+  <p class="dash-sintesi-nota">Ultimo aggiornamento dei dati: <time datetime="2026-10-16">16/10/2026</time>.</p>
+</section>
+  <!-- NUMERI:FINE -->
+
       <div class="dash" id="dashboard">
-        <p class="dash-caricamento">Caricamento dei dati…</p>
+        <p class="dash-caricamento">Caricamento dei grafici…</p>
       </div>
     </div>
   </section>

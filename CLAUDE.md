@@ -708,16 +708,45 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   voluto — farsi leggere è il presupposto per essere citati. C'è un `llms.txt` in radice
   con i fatti essenziali, i servizi, i recapiti e la nota che **per le emergenze si chiama
   il 112**, non la sede.
-  - ⚠️ **`numeri.html` è vuota per chi non esegue JavaScript**: il contenitore della
-    dashboard contiene solo «Caricamento dei dati…», e i crawler di ChatGPT, Claude,
-    Perplexity e Common Crawl leggono l'HTML grezzo. L'unica pagina con numeri verificabili
-    è quindi l'unica che nessun motore può citare. Il rimedio è un riquadro di testo
-    statico con le cifre chiave, scritto dallo stesso script notturno che aggiorna il JSON.
-    Non è ancora fatto.
-  - I contenuti a forma di domanda sono il formato che i motori generativi citano più
-    volentieri: oggi nel sito ci sono 3 titoli con punto interrogativo e sono tutti slogan
-    («Hai Domande?»). Manca un `FAQPage`. Le domande devono essere quelle vere che arrivano
-    in sede, non inventate a tavolino.
+  - **`numeri.html` ha un riquadro di testo con le cifre chiave** (dal 16/10/2026), fra i
+    marcatori `<!-- NUMERI:INIZIO -->` e `<!-- NUMERI:FINE -->`, **sopra** i grafici.
+    Esiste perché la dashboard la disegna JavaScript e i crawler di ChatGPT, Claude,
+    Perplexity e Common Crawl leggono l'HTML grezzo: senza, la sola pagina con numeri
+    verificabili era l'unica che nessun motore poteva citare (142 parole, e il contenitore
+    diceva solo «Caricamento dei dati…»).
+    - Lo riscrive ogni notte `pubblicaSintesiNumeri()` in `30_dashboard.js` del progetto
+      missioni, chiamata da `pubblicaDashboard()` subito dopo il PUT del JSON. A mano si
+      rigenera con `_materiali/numeri/genera_sintesi.py` (`--scrivi` per applicare).
+      ⚠️ Il formato è scritto **due volte**, nello script Apps Script e in quello Python:
+      se si cambia di là va cambiato anche di qua.
+    - Senza i marcatori la funzione **non tocca il file** e lo logga: meglio un riquadro
+      vecchio che una pagina rotta in produzione. E gira dentro un `try`: un problema qui
+      non deve far fallire la pubblicazione del JSON, che è la cosa importante.
+    - È testo normale, visibile anche nel browser: non è contenuto nascosto per i motori,
+      che sarebbe cloaking e verrebbe penalizzato.
+    - Gli stili `.dash-sintesi` stanno in **`style.css`**, non in `dashboard.css`:
+      quest'ultimo è caricato anche dalla riservata, che il riquadro non ha, e toccarlo
+      obbligherebbe ad alzare il `?v=` in due posti per niente.
+    - Dentro vanno **solo aggregati**. Nel riquadro: missioni dell'anno a oggi contro lo
+      stesso periodo dell'anno prima, totale dell'anno precedente, quota di interventi
+      sull'Altipiano, ore di turno, tabella delle missioni per anno. Fuori: l'elenco dei
+      66 comuni con i conteggi, km, tipologie e ore mensili — aggregati anche quelli, ma
+      dettaglio operativo che non aiuta a farsi citare.
+  - **FAQ in `servizi.html`** (`#faq`, dal 16/10/2026): sei domande vere con `FAQPage`.
+    Sono `<details>` nativi, quindi si aprono senza JavaScript e **il testo resta
+    nell'HTML anche da chiusi** — è quello che leggono motori e lettori di schermo.
+    - ⚠️ Lo schema `FAQPage` è **generato dal markup visibile**, non scritto a parte: una
+      sola fonte, così il testo in pagina e quello strutturato non possono divergere. Se si
+      aggiunge una domanda, va rigenerato anche lo schema.
+    - Sui **corsi non vanno scritte durate fisse**. Le fonti AREU non concordano: la pagina
+      dell'offerta formativa e il Regolamento 34 rev. 2023 danno l'SSE a **78 ore**, pagine
+      più vecchie dicono 120 (era il vecchio standard). Il percorso è TS → SSE e lo
+      stabilisce AREU, non l'Associazione: la FAQ rimanda a
+      `areu.lombardia.it/web/home/offerta-formativa`. Il BLSD per operatori laici (progetti
+      PAD) è invece confermato da AREU a **cinque ore**.
+    - La FAQ dice esplicitamente che in emergenza **si chiama il 112** e che il fisso della
+      sede non è un numero di emergenza né è presidiato di continuo. Vale anche in
+      `llms.txt`: è l'informazione che non deve essere sbagliata.
   - `lastmod` in `sitemap.xml` va tenuto allineato: era fermo ad aprile mentre le pagine
     erano di settembre. Per `numeri.html` vale la data di `dati/statistiche.json`, non
     quella del file HTML, perché è il dato a cambiare. Si ricava da
