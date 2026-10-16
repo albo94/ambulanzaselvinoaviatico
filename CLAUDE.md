@@ -790,12 +790,24 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   per sempre. Un link `href="#cookie"` in qualunque pagina la azzera e riapre il banner —
   c'è nel footer di tutte e sei. I due pulsanti hanno lo stesso peso visivo di proposito: un
   «rifiuta» sbiadito accanto a un «accetta» acceso non è una scelta libera.
-- **Search Console: verificata con file HTML** dal 16/10/2026. In radice c'è
-  `google0a9c787ee85afe3d.html` (53 byte, una riga). ⚠️ **Non va rimosso mai**, nemmeno
-  dopo l'esito positivo: Google ricontrolla periodicamente e, se sparisce, la proprietà
-  torna non verificata e si perdono i dati di ricerca. Non è un residuo da ripulire.
-  La nota precedente («verificato via TXT DNS») era superata: sul dominio c'è solo il TXT
-  dell'SPF, nessun `google-site-verification`.
+- **Search Console: verificata in due modi** dal 16/10/2026, ed è voluto — se un metodo
+  decade, la proprietà resta verificata con l'altro.
+  1. **File HTML**, per la proprietà con prefisso URL: `google0a9c787ee85afe3d.html` in
+     radice (53 byte, una riga).
+  2. **Record TXT**, per la proprietà del dominio: `google-site-verification=TDEr8xL6JJ3GF…`
+     sull'host `@`, aggiunto nel pannello DNS di Squarespace.
+
+  ⚠️ **Nessuno dei due va rimosso**, nemmeno dopo l'esito positivo: Google ricontrolla e,
+  se spariscono, la proprietà torna non verificata e si perde lo storico delle ricerche. Il
+  file in radice sembra un residuo da ripulire e non lo è.
+  ⚠️ **Sull'host `@` convivono tre record TXT**: verifica Google, SPF (`v=spf1
+  include:_spf.google.com ~all`) e — su `google._domainkey` — il DKIM. Più TXT sullo stesso
+  host sono legittimi: chi ne aggiunge uno **aggiunge**, non sostituisce. Sovrascrivere
+  l'SPF o il DKIM significa rompere la posta dell'associazione, ed è l'errore tipico di
+  questa procedura. Nel pannello Squarespace si usa **ADD RECORD**, mai *ADD PRESET*, che
+  riscrive gruppi interi di record (A, CNAME www e MX compresi).
+  La nota precedente in questo file («verificato via TXT DNS») era superata: prima del
+  16/10/2026 sul dominio c'era solo il TXT dell'SPF.
 
 ## DNS e hosting
 
