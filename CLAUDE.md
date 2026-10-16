@@ -771,10 +771,12 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
 - **`js/analytics.js`**: Google Analytics 4 con **Consent Mode v2**. Caricato solo dalle sei
   pagine pubbliche, **mai** da `quiz60.html`, `checklist/` e `sciesopoli/` — quest'ultima per
   regola non deve caricare nulla dal resto del sito, le altre due sono strumenti interni.
+- **Attivo dal 16/10/2026** con `ID_GA = 'G-831DHLZPVE'`. L'ID di misurazione **non è un
+  segreto**: sta nel sorgente di ogni pagina di qualunque sito che usa GA, serve solo a dire
+  a Google a quale proprietà attribuire i dati. Diverso da `BOT_TOKEN` o dal service
+  account, che restano fuori dal repo.
 - ⚠️ **`ID_GA` vuoto = tutto spento**: niente banner, niente `dataLayer`, niente cookie,
-  nessuna richiesta a Google. È lo stato attuale, in attesa dell'ID di misurazione
-  (`G-XXXXXXXXXX`, da Analytics → Amministrazione → Flussi di dati). Basta valorizzare
-  quella costante per accendere tutto.
+  nessuna richiesta a Google. È il modo per disattivare l'analytics senza rimuovere codice.
 - **Senza consenso GA non viene nemmeno scaricato.** Il default di Consent Mode è `denied`
   per tutto e viene dichiarato *prima* di caricare lo script: se qualcosa va storto, il
   punto di partenza resta "negato". `ad_storage` resta negato anche dopo l'accettazione —

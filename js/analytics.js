@@ -24,7 +24,7 @@
   /* ID di misurazione GA4, formato G-XXXXXXXXXX.
      Vuoto = analytics spento: niente banner, niente cookie, niente script.
      Si prende da Google Analytics > Amministrazione > Flussi di dati. */
-  var ID_GA = '';
+  var ID_GA = 'G-831DHLZPVE';
 
   /* dove si ricorda la scelta, e per quanto */
   var CHIAVE = 'amb-consenso';
