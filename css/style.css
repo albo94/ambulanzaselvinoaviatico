@@ -2234,26 +2234,6 @@ ul {
   font-size: .85rem;
   color: var(--text-light);
 }
-.dash-sintesi-tab {
-  border-collapse: collapse;
-  margin: 4px 0 14px;
-  font-variant-numeric: tabular-nums;
-}
-.dash-sintesi-tab caption {
-  text-align: left;
-  font-size: .85rem;
-  color: var(--text-light);
-  padding-bottom: 6px;
-}
-.dash-sintesi-tab th,
-.dash-sintesi-tab td {
-  border: 1px solid #ddd;
-  padding: 5px 14px;
-  text-align: left;
-  font-size: .9rem;
-}
-.dash-sintesi-tab thead th { background: var(--white); font-weight: 700; }
-.dash-sintesi-tab tbody th { font-weight: 600; }
 
 /* ============================================================
    FAQ (servizi.html) — <details> nativi: si aprono anche senza

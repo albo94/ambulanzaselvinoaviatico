@@ -220,13 +220,19 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
 - Lo **stesso** CSS e JS sono caricati anche dalla dashboard interna riservata (web app
   Apps Script), che li prende da questo dominio: se rinomini o sposti quei due file,
   la dashboard interna smette di disegnare i grafici. In `numeri.html` sono richiamati con
-  un `?v=<data>` di cache busting (oggi `?v=20260927a`): quando si modifica uno dei due file
+  un `?v=<data>` di cache busting (oggi `?v=20261016a`): quando si modifica uno dei due file
   va alzato **anche** nella web app, altrimenti una delle due dashboard resta sul file vecchio.
   ⚠️ È già successo (27/09/2026): la scheda Ossigeno era stata scritta, committata e pushata,
   ma con il `?v=` fermo al giorno prima il file servito restava quello vecchio — **senza alcun
   errore**, né a video né in console. Il sintomo è una funzione che "non c'è" pur essendo nel
   sorgente. Regola pratica: chi tocca `dashboard.js` o `dashboard.css` alza il `?v=` nello
   stesso commit, in **entrambi** i posti.
+  ⚠️ **È successo di nuovo**: il 30/09/2026 `dashboard.js` ha preso i tempi di partenza per
+  composizione dell'equipaggio con il `?v=` fermo al 27/09, sistemato solo il 16/10
+  (`20261016a`, web app riservata alla versione 32). Il secondo posto è fuori da questo
+  repository, ed è per questo che si dimentica: `dashboard.html` del progetto missioni,
+  poi `clasp --user ambulanza push --force`, `create-version` e `update-deployment`
+  sul deployment della web app (`AKfycbwOYoEz…`, non quello @HEAD).
 - **Un solo file JS, due payload diversi.** `dashboard.js` disegna sia la pagina pubblica sia
   la dashboard riservata, ma la parte "composizione" (un grafico per tipo di personale +
   tabella persone) si accende solo se nel payload c'è `volontari`. Nel JSON pubblico
@@ -470,7 +476,7 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   La dashboard riservata è `dashboard.html` **dentro il progetto missioni**: è lì che vive il
   secondo `?v=`, e la scheda Ossigeno si accende da `dashboard.js` (`montaSchede()`), non
   dall'HTML — cercare "ossigeno" nell'HTML non trova niente ed è normale.
-  ⚠️ La web app gira su una **versione fissata** (la 30 al 27/09/2026), non su HEAD: dopo un
+  ⚠️ La web app gira su una **versione fissata** (la 32 al 16/10/2026), non su HEAD: dopo un
   `clasp push` la riservata non cambia finché non si ridistribuisce. Per sapere cosa sta
   davvero servendo si confronta con
   `script.googleapis.com/v1/projects/<id>/content?versionNumber=<n>`.
@@ -762,7 +768,10 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
       obbligherebbe ad alzare il `?v=` in due posti per niente.
     - Dentro vanno **solo aggregati**. Nel riquadro: missioni dell'anno a oggi contro lo
       stesso periodo dell'anno prima, totale dell'anno precedente, quota di interventi
-      sull'Altipiano, ore di turno, tabella delle missioni per anno. Fuori: l'elenco dei
+      sull'Altipiano, ore di turno. **Niente tabella delle missioni per anno**: c'era, ed
+      è stata tolta il 16/10/2026 su richiesta perché ripeteva il grafico subito sotto.
+      Va tolta da tutti e due i generatori, `30_dashboard.js` e `genera_sintesi.py`:
+      togliendola solo dalla pagina, la notte dopo tornerebbe. Fuori anche l'elenco dei
       66 comuni con i conteggi, km, tipologie e ore mensili — aggregati anche quelli, ma
       dettaglio operativo che non aiuta a farsi citare.
   - **FAQ in `servizi.html`** (`#faq`, dal 16/10/2026): sei domande vere con `FAQPage`.
