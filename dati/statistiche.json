@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-10-17T02:44:07+02:00",
+ "aggiornato": "2026-10-18T02:43:10+02:00",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -1161,11 +1161,11 @@
     570,
     354,
     110,
-    72,
+    89,
     0,
     0
    ],
-   "totale": 2072,
+   "totale": 2088,
    "parziale": true
   }
  ],
@@ -1174,7 +1174,7 @@
    "tipo": "Manifestazioni",
    "valori": [
     422,
-    561
+    578
    ]
   },
   {
@@ -1230,22 +1230,22 @@
   },
   {
    "anno": 2026,
-   "ore": 14181,
-   "oreTutti": 25608,
-   "giorni": 289,
-   "al": "2026-10-16"
+   "ore": 14210,
+   "oreTutti": 25680,
+   "giorni": 290,
+   "al": "2026-10-17"
   }
  ],
  "confronto": {
   "finoAMese": 10,
-  "giorno": 17,
+  "giorno": 18,
   "missioni": {
    "prec": 414,
    "corr": 437
   },
   "ore": {
    "prec": 1481,
-   "corr": 2072
+   "corr": 2088
   }
  }
 }
