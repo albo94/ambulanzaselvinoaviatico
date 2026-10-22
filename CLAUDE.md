@@ -807,8 +807,11 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
 - `sitemap.xml` (6 pagine pubbliche, nessuna nascosta) e `robots.txt` con la riga
   `Sitemap:`. Nella Search Console la sitemap risulta letta con 6 pagine (14/10/2026).
   C'è anche una seconda voce, `http://www.../sitemap.xml` di tipo *Indice Sitemap*,
-  inviata il 12/01/2021: è quella di Wix, non letta dal 2024, e si può rimuovere dal menu
-  ⋮ della riga. Non fa danni, ma è un residuo.
+  inviata il 12/01/2021: è quella di Wix, non letta dal 2024. **Dalla proprietà del dominio
+  non si può rimuovere**: il menu ⋮ offre solo *See page indexing*, perché la sitemap è
+  stata inviata da un'altra proprietà (quella con prefisso `http://www.`, dei tempi di
+  Wix), e si toglie solo da lì. Si lascia: non fa danni, ha 0 pagine, e ora che `http://`
+  rimanda a `https://` Google smette di considerarla da solo.
 - Google Search Console: vedi *Analytics e consenso* (verificata con file HTML e TXT DNS).
 - **Indirizzi vecchi e 404** (mail di Search Console del 22/10/2026, *«New reasons prevent
   pages from being indexed»*, motivi: *Alternate page with proper canonical tag* e
@@ -842,11 +845,11 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
        a Google **24 link interni** (`href="index.html"` in logo, menu, menu mobile e
        footer di ogni pagina): dal 22/10/2026 sono `href="/"`. ⚠️ Non reintrodurre
        `index.html` nei link: `/index.html` resta raggiungibile, ma nessuno lo indica più.
-    2. **Le versioni `http://`**, finché HTTPS non è forzato (vedi *DNS e hosting*).
-       Questo si chiude solo dalle impostazioni di GitHub.
+    2. **Le versioni `http://`**: chiuse il 22/10/2026 forzando HTTPS (vedi *DNS e
+       hosting*), ora rispondono 301.
   - Dopo una correzione, in Search Console → *Pagine* → clic sul motivo → **Convalida
     correzione**: Google ricontrolla gli URL nei giorni successivi e manda una mail
-    con l'esito. Se compaiono nuovi 404, l'elenco esatto si esporta da lì (pulsante
+    con l'esito. **Convalida avviata il 22/10/2026** per entrambi i motivi. Se compaiono nuovi 404, l'elenco esatto si esporta da lì (pulsante
     *Esporta*), ed è più completo di Wayback Machine.
 
 
@@ -899,12 +902,16 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
 - **Dominio**: registrato su Squarespace Domains
 - **DNS**: A records → 185.199.108–111.153, CNAME www → albo94.github.io
 - Nameservers: Squarespace (migrato da Wix)
-- ⚠️ **HTTPS non forzato** (verificato il 16/10/2026): `http://www.ambulanzaselvinoaviatico.com/`
-  risponde 200 con la pagina invece di rimandare a `https://`. Il certificato c'è e
-  `https://` funziona: manca solo la spunta *Enforce HTTPS* in GitHub, repository →
-  Settings → Pages. Finché manca, ogni pagina esiste in due copie (i `canonical` su
-  `https://` limitano il danno) e chi arriva da un vecchio link in `http://` naviga
-  in chiaro, banner dei cookie compreso.
+- **HTTPS forzato dal 22/10/2026** (*Enforce HTTPS* in repository → Settings → Pages).
+  Verificato: `http://www…`, `http://…` e `https://…` senza www rispondono tutti **301**
+  verso `https://www.ambulanzaselvinoaviatico.com/`, pagina per pagina, e il certificato
+  è valido. Fino a quel giorno `http://` rispondeva 200 con la pagina: ogni pagina esisteva
+  in due copie e chi arrivava da un vecchio link navigava in chiaro.
+  ⚠️ Non togliere la spunta. Se si rimuove e si rimette il dominio custom, GitHub la
+  disattiva da solo e va rimessa a mano.
+  Il riquadro giallo *«DNS Check in Progress»* sotto il dominio, comparso subito dopo,
+  è un ricontrollo che GitHub rilancia quando si toccano le impostazioni: con il DNS
+  corretto torna verde da solo e non va toccato niente.
 
 ## Regole di sviluppo
 
