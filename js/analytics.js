@@ -14,7 +14,6 @@
    ⚠️ Questo file NON va incluso nelle pagine nascoste:
    - sciesopoli/  non deve caricare NULLA dal resto del sito
    - checklist/   e' uno strumento interno, non va tracciato
-   - quiz60.html  stessa logica
    ============================================================ */
 (function () {
   'use strict';

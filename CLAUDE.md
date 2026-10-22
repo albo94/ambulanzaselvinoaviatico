@@ -14,7 +14,6 @@ Repository: `https://github.com/albo94/ambulanzaselvinoaviatico`
 ├── contatti.html       – Mappa, indirizzi, orari
 ├── volontario.html     – Come diventare volontario, donazioni, contributi pubblici
 ├── numeri.html         – Dashboard statistiche pubblica (vedi sezione dedicata)
-├── quiz60.html         – Pagina nascosta: quiz del 60° AVIS (vedi *Pagine nascoste*)
 ├── sciesopoli/         – Pagina nascosta: modulo di manleva visitatori (vedi *Pagine nascoste*)
 ├── checklist/          – Pagina nascosta: check list dei mezzi, uso interno (vedi *Pagine nascoste*)
 ├── sitemap.xml
@@ -261,7 +260,7 @@ Dashboard con le statistiche reali del servizio, generate dal registro delle mis
 
 ## Pagine nascoste (fuori dal menu)
 
-Tre pagine del sito **non** sono raggiungibili dalla navigazione, **non** stanno in
+Due pagine del sito **non** sono raggiungibili dalla navigazione, **non** stanno in
 `sitemap.xml` e portano `<meta name="robots" content="noindex, nofollow, noarchive">`.
 Ci si arriva solo con un link diretto o un QR code.
 
@@ -269,10 +268,9 @@ Ci si arriva solo con un link diretto o un QR code.
 > scaricare la pagina non legge nemmeno il `noindex`, e l'URL può finire in SERP senza
 > contenuto. La regola giusta è quella attuale: crawling libero + `noindex` nella pagina.
 
-### `quiz60.html` — quiz del 60° AVIS
-Pagina singola autosufficiente, font Google, `ENDPOINT` vuoto (i tentativi non vengono
-inviati). Il commento nel codice cita `apps-script-salvataggio.gs`, che **non esiste nel
-repo**: se serve salvare i tentativi va scritto.
+C'era anche `quiz60.html`, il quiz del 60° AVIS: **rimosso il 22/10/2026** perché non si
+usa più. Chi apre un vecchio link o QR code finisce sulla `404.html`. Resta nella storia
+di git se mai servisse.
 
 ### `sciesopoli/index.html` — modulo di manleva dei visitatori di Sciesopoli
 Modulo digitale che sostituisce il cartaceo del Comune di Selvino per l'accesso al
@@ -850,16 +848,13 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     correzione**: Google ricontrolla gli URL nei giorni successivi e manda una mail
     con l'esito. Se compaiono nuovi 404, l'elenco esatto si esporta da lì (pulsante
     *Esporta*), ed è più completo di Wayback Machine.
-- ⚠️ `quiz60.html` chiede `images/avis.png`, che **non è mai esistito** nel repository
-  (nessun commit lo contiene): il logo AVIS del quiz è un'immagine rotta. La pagina è
-  `noindex, nofollow`, quindi pesa poco su Google, ma chi apre il quiz vede l'icona
-  dell'immagine mancante. Serve il file del logo dall'AVIS.
+
 
 ## Analytics e consenso
 
 - **`js/analytics.js`**: Google Analytics 4 con **Consent Mode v2**. Caricato solo dalle sei
-  pagine pubbliche, **mai** da `quiz60.html`, `checklist/` e `sciesopoli/` — quest'ultima per
-  regola non deve caricare nulla dal resto del sito, le altre due sono strumenti interni.
+  pagine pubbliche, **mai** da `checklist/` e `sciesopoli/` — quest'ultima per regola non
+  deve caricare nulla dal resto del sito, la prima è uno strumento interno.
 - **Attivo dal 16/10/2026** con `ID_GA = 'G-831DHLZPVE'`. L'ID di misurazione **non è un
   segreto**: sta nel sorgente di ogni pagina di qualunque sito che usa GA, serve solo a dire
   a Google a quale proprietà attribuire i dati. Diverso da `BOT_TOKEN` o dal service
@@ -924,7 +919,7 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   come `foto.jpg` funziona in locale e si rompe online
 - Le immagini stanno nella sottocartella della sezione che le usa (vedi *Struttura immagini*),
   non nella radice di `images/`
-- Le pagine nascoste (`quiz60.html`, `sciesopoli/`, `checklist/`) non vanno aggiunte a `sitemap.xml`
+- Le pagine nascoste (`sciesopoli/`, `checklist/`) non vanno aggiunte a `sitemap.xml`
   né linkate dal menu; `sciesopoli/` non deve caricare nulla dal resto del sito
 - Date: **1993** è l'associazione, **1968/oltre 55 anni** sono il servizio dei volontari
   (vedi *Dati associazione*) — vale anche in `<title>`, meta description, OG/Twitter e JSON-LD.

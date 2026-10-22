@@ -45,8 +45,8 @@ Poi `http://localhost:8777`.
 | `numeri.html` | Dashboard statistiche, aggiornata ogni notte |
 
 Più due **pagine nascoste**, fuori dal menu e fuori da `sitemap.xml`:
-`quiz60.html` (quiz del 60° AVIS) e `sciesopoli/` (modulo di manleva per i visitatori
-di Sciesopoli). Vedi la sezione *Pagine nascoste* in CLAUDE.md.
+`sciesopoli/` (modulo di manleva per i visitatori di Sciesopoli) e `checklist/`
+(check list dei mezzi, uso interno). Vedi la sezione *Pagine nascoste* in CLAUDE.md.
 
 ## Le cartelle
 
