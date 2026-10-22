@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- GitHub Pages serve questa pagina, con stato 404, per qualunque indirizzo che
+       non esiste, a qualunque profondita' (/account/my-account, /foto/vecchia.jpg...).
+       Per questo TUTTI i percorsi sono assoluti, con la barra iniziale: uno relativo
+       come css/style.css diventerebbe /account/css/style.css e la pagina uscirebbe
+       senza stile. Niente analytics, niente sitemap. -->
+  <title>Pagina non trovata | Ambulanza Selvino-Aviatico</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .pagina-404 { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+                  padding: 40px 20px; background: var(--gray); }
+    .riquadro-404 { max-width: 560px; width: 100%; background: var(--white); border-radius: 12px;
+                    border-top: 4px solid var(--orange); padding: 36px 32px;
+                    box-shadow: 0 6px 28px rgba(0,0,0,.08); text-align: center; }
+    .riquadro-404 img { width: 72px; height: 72px; object-fit: contain; margin-bottom: 14px; }
+    .riquadro-404 h1 { font-family: 'Titillium Web', sans-serif; font-size: 1.6rem; margin: 0 0 10px;
+                       color: var(--dark); }
+    .riquadro-404 p { margin: 0 0 22px; color: var(--text); line-height: 1.6; }
+    .link-404 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 24px; }
+    .link-404 a { display: block; padding: 12px 10px; border: 1px solid #e3e3e3; border-radius: 8px;
+                  color: var(--dark); text-decoration: none; font-family: 'Titillium Web', sans-serif;
+                  font-weight: 600; }
+    .link-404 a:hover { border-color: var(--orange); color: var(--orange); }
+    .emergenza-404 { font-size: .9rem; padding: 12px 14px; border-radius: 8px;
+                     background: #fdf0e9; color: var(--dark); margin: 0; }
+    .emergenza-404 strong { color: var(--orange); }
+    @media (max-width: 420px) { .link-404 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="pagina-404">
+    <div class="riquadro-404">
+      <a href="/"><img src="/images/logo.png" alt="Ambulanza Selvino-Aviatico" /></a>
+      <h1>Pagina non trovata</h1>
+      <p>L'indirizzo che hai seguito non esiste pi&ugrave;: probabilmente arriva dal vecchio
+         sito dell'Associazione. Quello che cercavi &egrave; quasi certamente qui:</p>
+      <nav class="link-404" aria-label="Pagine principali">
+        <a href="/">Home</a>
+        <a href="/associazione.html">L'Associazione</a>
+        <a href="/servizi.html">Servizi</a>
+        <a href="/contatti.html">Contatti</a>
+        <a href="/volontario.html">Diventa volontario</a>
+        <a href="/numeri.html">I nostri numeri</a>
+      </nav>
+      <p class="emergenza-404">In caso di emergenza chiama sempre il <strong>112</strong>.</p>
+    </div>
+  </main>
+</body>
+</html>

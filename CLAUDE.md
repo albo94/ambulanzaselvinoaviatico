@@ -21,6 +21,9 @@ Repository: `https://github.com/albo94/ambulanzaselvinoaviatico`
 ├── robots.txt
 ├── llms.txt            – Fatti essenziali per i motori generativi (vedi *SEO*)
 ├── google0a9c787ee85afe3d.html – Verifica Search Console: NON rimuovere (vedi *Analytics*)
+├── 404.html            – Pagina "non trovata" (vedi *SEO > Indirizzi vecchi e 404*)
+├── cosa-facciamo.html, diventa-volontario.html, who-we-are.html, news.html
+│                       – Reindirizzamenti dai vecchi indirizzi Wix: NON rimuovere
 ├── css/style.css       – Unico foglio di stile (tutto il sito)
 ├── css/dashboard.css   – Stili della dashboard statistiche
 ├── js/main.js          – Hamburger, stats counter, carousel, scroll reveal
@@ -809,6 +812,48 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   inviata il 12/01/2021: è quella di Wix, non letta dal 2024, e si può rimuovere dal menu
   ⋮ della riga. Non fa danni, ma è un residuo.
 - Google Search Console: vedi *Analytics e consenso* (verificata con file HTML e TXT DNS).
+- **Indirizzi vecchi e 404** (mail di Search Console del 22/10/2026, *«New reasons prevent
+  pages from being indexed»*, motivi: *Alternate page with proper canonical tag* e
+  *Not found (404)*).
+  - **I 404 sono gli indirizzi del vecchio sito Wix** rimasti nell'indice di Google, non
+    link rotti del sito attuale (verificato: i link interni delle sei pagine sono tutti
+    validi). Elenco ricavato dall'archivio di Wayback Machine
+    (`web.archive.org/cdx/search/cdx?url=ambulanzaselvinoaviatico.com/*`), perché il report
+    di Search Console richiede il login.
+  - Quelli **con un equivalente oggi** hanno una pagina di reindirizzamento in radice:
+    `/cosa-facciamo` → servizi, `/diventa-volontario` → volontario, `/who-we-are` →
+    associazione, `/news` → home. `/associazione` funzionava già da solo, perché GitHub
+    Pages serve `/x` da `x.html`. GitHub Pages **non fa redirect lato server**: le pagine
+    usano `meta refresh` a 0 secondi, che Google tratta come redirect permanente, più il
+    `canonical` sulla destinazione. **Niente `noindex`**: insieme al canonical darebbe due
+    segnali opposti. Non stanno in `sitemap.xml` e non caricano analytics. ⚠️ **Non vanno
+    rimosse**: sembrano file inutili, ma sono loro che chiudono i 404.
+  - Quelli **senza equivalente** restano 404, ed è la risposta giusta: `/account`,
+    `/account/my-account`, `/profile`, `/blog-frontend-adapter-public` sono pagine di
+    sistema di Wix, e `/_files/ugd/65a176_...pdf` era un PDF ospitato da Wix (un indirizzo
+    `.pdf` non si può reindirizzare con una pagina HTML: GitHub Pages lo servirebbe come
+    PDF). Google li toglie dall'indice da solo. Per chi ci arriva c'è **`404.html`**, che
+    GitHub Pages serve con stato 404 per qualunque indirizzo inesistente.
+  - ⚠️ `404.html` usa **solo percorsi assoluti** (`/css/style.css`, `/images/logo.png`):
+    viene servita a qualunque profondità (`/account/my-account`), e un percorso relativo
+    diventerebbe `/account/css/style.css`, cioè una pagina senza stile.
+  - **«Alternate page with proper canonical tag» non è un errore**: è Google che trova
+    doppioni e conferma di aver scelto la pagina canonica giusta. I canonical delle sei
+    pagine sono tutti corretti (ognuna punta a se stessa). I doppioni erano due:
+    1. **`/index.html`**, che GitHub Pages serve sempre come copia di `/`. Lo segnalavano
+       a Google **24 link interni** (`href="index.html"` in logo, menu, menu mobile e
+       footer di ogni pagina): dal 22/10/2026 sono `href="/"`. ⚠️ Non reintrodurre
+       `index.html` nei link: `/index.html` resta raggiungibile, ma nessuno lo indica più.
+    2. **Le versioni `http://`**, finché HTTPS non è forzato (vedi *DNS e hosting*).
+       Questo si chiude solo dalle impostazioni di GitHub.
+  - Dopo una correzione, in Search Console → *Pagine* → clic sul motivo → **Convalida
+    correzione**: Google ricontrolla gli URL nei giorni successivi e manda una mail
+    con l'esito. Se compaiono nuovi 404, l'elenco esatto si esporta da lì (pulsante
+    *Esporta*), ed è più completo di Wayback Machine.
+- ⚠️ `quiz60.html` chiede `images/avis.png`, che **non è mai esistito** nel repository
+  (nessun commit lo contiene): il logo AVIS del quiz è un'immagine rotta. La pagina è
+  `noindex, nofollow`, quindi pesa poco su Google, ma chi apre il quiz vede l'icona
+  dell'immagine mancante. Serve il file del logo dall'AVIS.
 
 ## Analytics e consenso
 
