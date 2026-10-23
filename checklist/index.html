@@ -216,6 +216,13 @@
              box-shadow:0 1px 4px rgba(0,0,0,.45); }
   .segno-d.presa { cursor:grabbing; transform:scale(1.15); }
   .aiuto { margin:8px 0 0; font-size:.8rem; color:var(--ink-soft); }
+  .avviso-dif { margin:0 0 12px; padding:10px 12px; border-radius:var(--radius);
+                border:1px solid var(--line); background:var(--surface); font-size:.84rem;
+                color:var(--ink-soft); }
+  .avviso-dif.ko { border-color:var(--ko); background:var(--ko-bg); color:var(--ink); }
+  .avviso-dif button { display:block; margin-top:8px; border:1px solid var(--ko); background:#fff;
+                       color:var(--ko); border-radius:7px; padding:8px 14px;
+                       font:700 .84rem/1 inherit; cursor:pointer; min-height:0; }
   .scorciatoia { margin:14px 0 0; text-align:center; }
   .scorciatoia button { border:1px dashed var(--line); background:none; color:var(--ink-soft);
                         border-radius:var(--radius); padding:10px 14px; width:100%;
@@ -367,6 +374,7 @@
     segno o toccalo per toglierlo. Per ogni danno <b>scrivi dove si trova e cos&rsquo;&egrave;</b>:
     senza la nota non si prosegue. Se non c'&egrave; niente da segnalare, vai avanti.</p>
 
+    <div id="avvisoDifetti" hidden></div>
     <div class="tipi" id="tipiDanno"></div>
 
     <div class="disegno" id="disegno">
@@ -983,32 +991,90 @@
   /* I difetti aperti arrivano dal server quando si sceglie il mezzo, cosi'
      sono gia' pronti al passo 3. Si chiede con una POST perche' e' la strada
      che il browser percorre gia' verso Apps Script senza intoppi di CORS.
-     Se la chiamata non riesce si va avanti lo stesso: la check list non si
-     blocca per un elenco di difetti. */
-  function caricaDifetti() {
-    difettiCaricati = false;
-    danni = danni.filter(function (x) { return !x.esistente; });
-    disegnaDanni();
-    if (!ENDPOINT || !mezzo) { difettiCaricati = true; return; }
 
-    var x = new XMLHttpRequest();
-    x.open("POST", ENDPOINT, true);
-    x.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
-    x.timeout = 20000;
-    x.onload = function () {
-      difettiCaricati = true;
-      var r = null;
-      try { r = JSON.parse(x.responseText); } catch (e) {}
-      if (!r || !r.ok || !r.difetti) { disegnaDanni(); return; }
-      r.difetti.forEach(function (v) {
-        danni.push({ id: v.id, tipo: v.tipo, x: v.x, y: v.y, nota: v.nota || "",
-                     esistente: true, risolto: false, da: v.da, il: v.il });
-      });
-      disegnaDanni();
-    };
-    x.onerror = x.ontimeout = function () { difettiCaricati = true; disegnaDanni(); };
-    try { x.send(JSON.stringify({ azione: "difetti", mezzo: mezzo })); }
-    catch (e) { difettiCaricati = true; }
+     Il 23/10/2026 la chiamata e' fallita una volta, in silenzio: la check
+     list del Ducato e' partita senza i 7 difetti aperti e chi compilava li
+     ha segnalati di nuovo, come nuovi. Per questo ora:
+     - si riprova da soli (3 tentativi), perche' Apps Script ogni tanto
+       risponde con una pagina d'errore invece del JSON;
+     - una risposta che arriva dopo un cambio di mezzo si scarta (seqDifetti),
+       altrimenti i difetti di un mezzo finirebbero sull'altro;
+     - se non si riesce, il passo 3 lo dice e offre «Riprova», e per uscirne
+       bisogna premere Avanti una seconda volta: chi va avanti lo fa sapendo
+       che i difetti gia' segnalati non li sta vedendo. */
+  var statoDifetti = "";   /* "", "carico", "ok", "errore" */
+  var seqDifetti = 0;
+  var avvisatoDifetti = false;
+
+  function caricaDifetti() {
+    var mio = ++seqDifetti, quale = mezzo;
+    danni = danni.filter(function (x) { return !x.esistente; });
+    avvisatoDifetti = false;
+    if (!ENDPOINT || !mezzo) { statoDifetti = "ok"; difettiCaricati = true; disegnaDanni(); return; }
+    statoDifetti = "carico"; difettiCaricati = false;
+    disegnaDanni();
+
+    function tenta(n) {
+      var x = new XMLHttpRequest();
+      x.open("POST", ENDPOINT, true);
+      x.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
+      x.timeout = 25000;
+      function fallito() {
+        if (mio !== seqDifetti) return;
+        if (n < 3) { setTimeout(function () { tenta(n + 1); }, 1500 * n); return; }
+        statoDifetti = "errore"; difettiCaricati = false; disegnaDanni();
+      }
+      x.onload = function () {
+        if (mio !== seqDifetti) return;
+        var r = null;
+        try { r = JSON.parse(x.responseText); } catch (e) {}
+        if (!r || !r.ok || !r.difetti) { fallito(); return; }
+        danni = danni.filter(function (d) { return !d.esistente; });
+        r.difetti.forEach(function (v) {
+          danni.push({ id: v.id, tipo: v.tipo, x: v.x, y: v.y, nota: v.nota || "",
+                       esistente: true, risolto: false, da: v.da, il: v.il });
+        });
+        statoDifetti = "ok"; difettiCaricati = true;
+        disegnaDanni();
+      };
+      x.onerror = x.ontimeout = fallito;
+      try { x.send(JSON.stringify({ azione: "difetti", mezzo: quale })); }
+      catch (e) { fallito(); }
+    }
+    tenta(1);
+  }
+
+  function avvisoDifetti() {
+    var el = $("#avvisoDifetti");
+    if (!el) return;
+    if (statoDifetti === "carico") {
+      el.className = "avviso-dif";
+      el.innerHTML = "Sto caricando i difetti gi&agrave; segnalati per questo mezzo&hellip;";
+      el.hidden = false;
+    } else if (statoDifetti === "errore") {
+      el.className = "avviso-dif ko";
+      el.innerHTML = "<b>Non riesco a caricare i difetti gi&agrave; segnalati</b> per questo mezzo. " +
+        "Prima di segnarne di nuovi premi Riprova: altrimenti rischi di segnalare due volte " +
+        "danni che sono gi&agrave; in archivio." +
+        '<button type="button" id="riprovaDifetti">Riprova</button>';
+      el.hidden = false;
+      $("#riprovaDifetti").addEventListener("click", function () { pulisciStato(); caricaDifetti(); });
+    } else {
+      el.hidden = true;
+      el.innerHTML = "";
+    }
+  }
+
+  /* true se si puo' lasciare il passo 3 */
+  function controllaDifettiCaricati() {
+    if (statoDifetti === "ok" || statoDifetti === "") return true;
+    if (avvisatoDifetti) return true;
+    avvisatoDifetti = true;
+    errore("#stato3d", statoDifetti === "carico"
+      ? "Attendi qualche secondo: sto ancora caricando i difetti già segnalati. Premi di nuovo Avanti per proseguire comunque."
+      : "I difetti già segnalati non sono stati caricati: premi Riprova. Premi di nuovo Avanti solo se vuoi proseguire senza.");
+    try { $("#avvisoDifetti").scrollIntoView({ block: "center" }); } catch (e) {}
+    return false;
   }
 
   $$("[data-tipo]").forEach(function (b) {
@@ -1061,6 +1127,7 @@
   }
 
   function disegnaDanni() {
+    avvisoDifetti();
     $("#segni").innerHTML = danni.map(function (d, i) {
       var t = tipoInfo(d.tipo);
       var cls = 'segno-d' + (d.esistente ? ' vecchio' : '') + (d.risolto ? ' risolto' : '');
@@ -1300,6 +1367,7 @@
     if (passo === 3) {
       if (!controllaNote()) return;
       if (daControlli) { daControlli = false; $("#tornaBox").hidden = true; mostra(2); return; }
+      if (!controllaDifettiCaricati()) return;
       riepiloga(); mostra(4); return;
     }
     if (passo === 4) {

@@ -499,6 +499,11 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   does not have permission»*, che non fa capire che il problema è l'account. Un profilo
   dedicato regge a un login distratto. Per sapere con chi si è loggati:
   `clasp --user ambulanza show-authorized-user`.
+  ⚠️ **Il login scade per policy di Google Workspace**: il 23/10/2026 il rinnovo del token
+  rispondeva `invalid_grant` / `invalid_rapt` (*reauth related error*). Non è un
+  problema di permessi: l'account dell'associazione chiede di riautenticarsi ogni tanto, e
+  va rifatto a mano `clasp --user ambulanza login`. Finché non si rifà, niente push
+  né lettura delle esecuzioni; e `show-authorized-user` resta appeso invece di dare errore.
   `clasp run` però **non** funziona: vuole l'API di Apps Script
   abilitata, una distribuzione *API executable* e credenziali GCP dedicate. Per eseguire una
   funzione a mano (`setup()`, `ricalcolaOreTurnisti()`) si apre l'editor e si preme Run.
@@ -608,8 +613,23 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   - I difetti storici **non si trascinano** (la posizione è un dato del passato) e toccandoli
     non si cancellano: si marcano risolti.
   - L'elenco si chiede con una **POST** e non con una GET: è la strada che il browser
-    percorre già verso Apps Script, senza sorprese di CORS sul redirect. Se la chiamata non
-    riesce la check list va avanti lo stesso.
+    percorre già verso Apps Script, senza sorprese di CORS sul redirect.
+  - ⚠️ **Un caricamento fallito non deve essere silenzioso** (dal 23/10/2026). Quel giorno
+    la check list del Ducato è partita senza i 7 difetti aperti dal 02/10 (confermati il 9
+    e il 16/10), e chi compilava li ha segnalati di nuovo come nuovi: 14 aperti, metà
+    doppioni. Il registro era a posto e il backend rispondeva (20 richieste su 20 nello
+    stesso pomeriggio): la richiesta è fallita una volta, per rete o per una delle pagine
+    d'errore che Apps Script ogni tanto restituisce al posto del JSON, e la pagina andava
+    avanti come se il mezzo non avesse difetti. La variabile `difettiCaricati` esisteva
+    ma nessuno la leggeva. Ora:
+    - **3 tentativi** da soli, con una pausa crescente;
+    - le risposte arrivate dopo un **cambio di mezzo si scartano** (`seqDifetti`): prima,
+      toccando un mezzo e poi un altro, i difetti del primo potevano finire sul secondo;
+    - se non si riesce, il passo 3 mostra un **avviso rosso con «Riprova»**, e per
+      passare al riepilogo bisogna premere Avanti **due volte**: si può proseguire (la
+      check list non si blocca per un elenco di difetti), ma sapendolo;
+    - mentre carica, lo stesso riquadro dice «Sto caricando…».
+    Lo stato sta in `statoDifetti` (`"carico"`, `"ok"`, `"errore"`).
   - **Notifica Telegram** all'apertura e alla chiusura, una sola per check list con dentro
     tutto, al responsabile `Mezzi` (ripiego su `Dipendenti`). Vale lo stesso ragionamento
     delle scadenze: il nickname non è autenticato, la notifica è il rilevatore.
