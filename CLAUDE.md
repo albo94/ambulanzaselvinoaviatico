@@ -653,6 +653,14 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     (12 sul Crafter 006, 2 sul 007): erano tutti **senza nota** e un pallino con scritto
     «Graffio» non dice a nessuno dove guardare. Le prossime check list li risegnalano con
     la nota. I PDF di quel giorno restano com'erano.
+  - Il 23/10/2026 sono stati annullati **3 doppioni sul Ducato** (versioni 12 e 13), nati
+    dal caricamento fallito di quel giorno: le segnalazioni di Alessandro dello specchietto
+    sx, del cerchio anteriore dx e dell'ammaccatura sul portellone in alto a dx, già aperte
+    da Marta il 02/10. Si è tenuta la riga più vecchia, che porta la data giusta.
+    **Lasciate aperte di proposito** due coppie non sicure, finché non le guarda chi conosce
+    il mezzo: «Copri cerchio pos dx» / «graffio carrozzeria e cerchio parte dx dietro»
+    (la seconda aggiunge la carrozzeria) e «Portellone lat dx» / «graffio portellone
+    dietro parte dx» (laterale o posteriore?). Meglio un difetto di troppo che uno perso.
 - ⚠️ **Quando si aggiunge o si sposta un passo, si controllano TUTTE le chiamate a
   `mostra()`**, non solo quelle nella navigazione. Inserendo i danni erano
   rimaste indietro le due dentro `salva()`: la check list si salvava davvero
@@ -710,8 +718,8 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   e `clasp --user ambulanza update-deployment --versionNumber N <id produzione>`.
   ⚠️ **Mai `create-deployment`**: crea un URL nuovo, e la pagina continuerebbe a
   chiamare quello vecchio, fermo alla versione precedente. Al 23/10/2026 la produzione è
-  sulla **versione 11** (20/10/2026, *difetti senza nota sul nome*: vedi la notifica dei
-  difetti). Per sapere cosa gira davvero si confronta il codice locale con
+  sulla **versione 13**, con lo stesso codice della 11 (20/10/2026, *difetti senza nota sul
+  nome*: vedi la notifica dei difetti); la 12 era il ramo monouso del 23/10. Per sapere cosa gira davvero si confronta il codice locale con
   `script.googleapis.com/v1/projects/<id>/content?versionNumber=<n>`.
   ⚠️ Il registro delle **esecuzioni** (chi ha chiamato il backend e quando) da qui non si
   legge: il token di clasp non ha lo scope `script.processes`. Si guarda dall'editor,
