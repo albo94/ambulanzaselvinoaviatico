@@ -633,6 +633,10 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   - **Notifica Telegram** all'apertura e alla chiusura, una sola per check list con dentro
     tutto, al responsabile `Mezzi` (ripiego su `Dipendenti`). Vale lo stesso ragionamento
     delle scadenze: il nickname non è autenticato, la notifica è il rilevatore.
+    Dal 20/10/2026 (versione 11) la notifica dei difetti **non** ha più la riga «Il nome è
+    quello scelto nel modulo, non verificato»: l'unica differenza fra la 10 e la 11. Resta
+    invece nella notifica delle **scadenze corrette**, dove chi legge deve sapere che una data
+    di documento è stata cambiata da un nome dichiarato.
   - In `MODO_PROVA` i difetti **non** vengono scritti e non parte nessuna notifica: per
     questo il giro completo si prova con un endpoint finto in locale, non in produzione.
   - **Annullare un difetto** (segnato per errore, o senza nota) non è chiuderlo: la riga
@@ -705,8 +709,13 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   `clasp --user ambulanza push --force`, poi `clasp --user ambulanza create-version "..."`
   e `clasp --user ambulanza update-deployment --versionNumber N <id produzione>`.
   ⚠️ **Mai `create-deployment`**: crea un URL nuovo, e la pagina continuerebbe a
-  chiamare quello vecchio, fermo alla versione precedente. Al 09/10/2026 la produzione è
-  sulla versione 10.
+  chiamare quello vecchio, fermo alla versione precedente. Al 23/10/2026 la produzione è
+  sulla **versione 11** (20/10/2026, *difetti senza nota sul nome*: vedi la notifica dei
+  difetti). Per sapere cosa gira davvero si confronta il codice locale con
+  `script.googleapis.com/v1/projects/<id>/content?versionNumber=<n>`.
+  ⚠️ Il registro delle **esecuzioni** (chi ha chiamato il backend e quando) da qui non si
+  legge: il token di clasp non ha lo scope `script.processes`. Si guarda dall'editor,
+  menu *Esecuzioni*.
   ⚠️ `clasp create-script` **sovrascrive `appsscript.json`** con il suo default, che ha
   `timeZone: America/New_York`: ogni timestamp del registro sarebbe sfasato. Dopo una
   ricreazione va rimesso `Europe/Rome` insieme a `oauthScopes` e al blocco `webapp`.
