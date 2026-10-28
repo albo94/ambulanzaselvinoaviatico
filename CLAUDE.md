@@ -421,8 +421,9 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     targa + tipo delle correzioni) e `aggiornaScadenze()` le sostituisce alla copia, nei dati
     e, se la lista è già a video, anche nella riga. Se il backend non le manda resta la copia
     incorporata: per questo `scadenze.py --scrivi` serve ancora, ma come ripiego e non più
-    come unico canale. ⚠️ Richiede il backend alla **versione 14**: con la 13 la risposta non
-    ha `scadenze` e la pagina, senza errori, usa la copia.
+    come unico canale. Richiede il backend dalla **versione 14** (in produzione dal
+    28/10/2026, verificata sui tre mezzi): con una versione precedente la risposta non ha
+    `scadenze` e la pagina, senza errori, usa la copia.
   - ⚠️ **Ordine degli script**: `aggiorna_documenti.py` rilegge le date dal foglio
     `CONTROLLI OGNI CHECK LIST`, quindi va lanciato **prima** di `scadenze.py`, altrimenti
     riporta indietro le date già allineate. Al 27/09/2026 quel foglio ha ancora 31/10/2026
@@ -727,9 +728,10 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   `clasp --user ambulanza push --force`, poi `clasp --user ambulanza create-version "..."`
   e `clasp --user ambulanza update-deployment --versionNumber N <id produzione>`.
   ⚠️ **Mai `create-deployment`**: crea un URL nuovo, e la pagina continuerebbe a
-  chiamare quello vecchio, fermo alla versione precedente. Al 23/10/2026 la produzione è
-  sulla **versione 13**, con lo stesso codice della 11 (20/10/2026, *difetti senza nota sul
-  nome*: vedi la notifica dei difetti); la 12 era il ramo monouso del 23/10. Per sapere cosa gira davvero si confronta il codice locale con
+  chiamare quello vecchio, fermo alla versione precedente. Al 28/10/2026 la produzione è
+  sulla **versione 14**: rispetto alla 13 (stesso codice della 11, 20/10/2026, *difetti
+  senza nota sul nome*) aggiunge le scadenze vive nella risposta `difetti`. La 12 era il
+  ramo monouso del 23/10. Per sapere cosa gira davvero si confronta il codice locale con
   `script.googleapis.com/v1/projects/<id>/content?versionNumber=<n>`.
   ⚠️ Il registro delle **esecuzioni** (chi ha chiamato il backend e quando) da qui non si
   legge: il token di clasp non ha lo scope `script.processes`. Si guarda dall'editor,
