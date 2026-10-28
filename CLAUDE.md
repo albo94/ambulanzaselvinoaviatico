@@ -413,6 +413,16 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   **quattro voci su nove non tornavano**, col tagliando del Crafter 007 sfasato di oltre un anno.
   - `_materiali/checklist/scadenze.py` confronta i due e segnala le differenze; con `--scrivi`
     riscrive le date nella pagina e incorpora `scadenze` nei dati del mezzo. Il gestionale fa fede.
+  - ⚠️ **Le date nella pagina sono una copia, e invecchiano.** Il 28/10/2026 i tagliandi di
+    Crafter 006 e Ducato erano stati rinnovati nel gestionale (30/10 e 28/10/2027), ma la
+    check list mostrava ancora 30/10/2026: nessuno aveva lanciato `scadenze.py`, e niente lo
+    lancia da solo. Da quel giorno la pagina le **legge vive**: la risposta all'azione
+    `difetti` porta anche `scadenze` (`scadenzeAttuali_()` nel backend, stessa ricerca per
+    targa + tipo delle correzioni) e `aggiornaScadenze()` le sostituisce alla copia, nei dati
+    e, se la lista è già a video, anche nella riga. Se il backend non le manda resta la copia
+    incorporata: per questo `scadenze.py --scrivi` serve ancora, ma come ripiego e non più
+    come unico canale. ⚠️ Richiede il backend alla **versione 14**: con la 13 la risposta non
+    ha `scadenze` e la pagina, senza errori, usa la copia.
   - ⚠️ **Ordine degli script**: `aggiorna_documenti.py` rilegge le date dal foglio
     `CONTROLLI OGNI CHECK LIST`, quindi va lanciato **prima** di `scadenze.py`, altrimenti
     riporta indietro le date già allineate. Al 27/09/2026 quel foglio ha ancora 31/10/2026

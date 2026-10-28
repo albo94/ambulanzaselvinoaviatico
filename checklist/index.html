@@ -1035,6 +1035,7 @@
                        esistente: true, risolto: false, da: v.da, il: v.il });
         });
         statoDifetti = "ok"; difettiCaricati = true;
+        if (r.scadenze) aggiornaScadenze(quale, r.scadenze);
         disegnaDanni();
       };
       x.onerror = x.ontimeout = fallito;
@@ -1042,6 +1043,47 @@
       catch (e) { fallito(); }
     }
     tenta(1);
+  }
+
+  /* Le scadenze scritte in questa pagina sono una copia del gestionale, fatta
+     l'ultima volta che si e' lanciato scadenze.py: appena qualcuno aggiorna il
+     foglio, la copia e' vecchia. Il backend manda quelle di adesso insieme ai
+     difetti, e qui prendono il posto della copia: nei dati (data e testo della
+     voce) e, se la lista e' gia' a video, anche nella riga. Se la risposta non
+     arriva resta la copia: meglio una data forse vecchia che nessuna. */
+  function aggiornaScadenze(quale, sc) {
+    var m = DATI[quale];
+    if (!m) return;
+    m.scadenze = m.scadenze || {};
+    Object.keys(sc).forEach(function (t) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(sc[t])) return;
+      m.scadenze[t] = sc[t];
+      (m.documenti || []).forEach(function (s) {
+        s.voci = s.voci.map(function (v) {
+          return v.toLowerCase().indexOf(t.toLowerCase()) === 0
+            ? v.replace(/\d{2}\/\d{2}\/\d{4}/, itData(sc[t])) : v;
+        });
+      });
+    });
+
+    /* lista gia' preparata per questo mezzo: risposta arrivata in ritardo */
+    if (mezzo !== quale) return;
+    lista.forEach(function (v, i) {
+      var nuova = v.tipoScad && m.scadenze[v.tipoScad];
+      if (!nuova || nuova === v.scad) return;
+      v.scad = nuova;
+      v.nome = v.nome.replace(/\d{2}\/\d{2}\/\d{4}/, itData(nuova));
+      if (v.scadNuova === nuova) v.scadNuova = null;
+      var n = $("#voce" + i + " .voce-n");
+      if (!n) return;
+      if (n.firstChild && n.firstChild.nodeType === 3) n.firstChild.nodeValue = v.nome;
+      var vecchio = $(".scad", n);
+      if (vecchio) vecchio.parentNode.removeChild(vecchio);
+      var bott = $(".scad-mod", n);
+      if (bott) bott.insertAdjacentHTML("beforebegin", cartellinoScadenza(nuova));
+      var inp = $("[data-scaddata='" + i + "']");
+      if (inp && !v.scadNuova) inp.value = nuova;
+    });
   }
 
   function avvisoDifetti() {
