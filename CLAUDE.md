@@ -424,6 +424,38 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
     come unico canale. Richiede il backend dalla **versione 14** (in produzione dal
     28/10/2026, verificata sui tre mezzi): con una versione precedente la risposta non ha
     `scadenze` e la pagina, senza errori, usa la copia.
+  - **Riconoscimento delle righe, tollerante ai ritocchi** (28/10/2026, versione 15). I nomi
+    del gestionale si scrivono a mano e prima bastava poco per perdere una riga in silenzio:
+    si cercava la targa esatta e il tipo **all'inizio** del nome. Ora `valutaRiga_()` prende
+    una riga per (mezzo, tipo) se:
+    1. parla del **mezzo**: targa (spazi, trattini, maiuscole non contano: `fh 827-cz`)
+       oppure nome (`Ducato`, `Crafter 006`, `Crafter_006`, `crafter006`, `007`), e **non**
+       la targa o il nome di un altro mezzo (una riga che si contraddice, `Tagliando
+       Crafter_006 HA765XA`, non vale per nessuno dei due);
+    2. parla del **tipo** in qualunque punto e con qualunque desinenza (radici `assicur`,
+       `rca`, `polizz`, `revision`, `tagliand`): `Ducato – assicurazione`, `Tagliandi`,
+       `Revisióne`;
+    3. **non parla d'altro**: tolti tipo, mezzo, numeri, parole di 1-2 lettere e le
+       `PAROLE_NEUTRE` (annuale, scadenza, prossimo, del…) non deve restare niente. È questa
+       regola che tiene fuori `Impianto ossigeno Ducato FH827CZ`, `Revisione bombole
+       ossigeno Ducato`, `Revisione Caldaia`, `Polizza RC volontari`, `Revisione e tagliando
+       Ducato`. Se un giorno un nome giusto viene scartato perché contiene una parola in
+       più innocua, la si aggiunge a `PAROLE_NEUTRE`.
+    Fra più righe valide vince quella con la targa, poi la data più lontana. Le **colonne**
+    si trovano per intestazione (`nome` vince su `scadenza`, poi `responsabil`), non per
+    posizione; una data scritta come **testo** si legge all'italiana (`28/10/2027`).
+    Se un tipo non si riconosce, il log dell'esecuzione lo dice
+    (`Gestionale: nessuna scadenza riconosciuta per …`) e la pagina usa la sua copia.
+    Provato sui 40 nomi veri del foglio (nove riconosciuti, nessun falso) e su una serie di
+    varianti storpiate e trappole.
+    ⚠️ **Le regole stanno in tre posti**: `valutaRiga_()` in `gas/Codice.js`,
+    `valuta_riga()` in `scadenze.py` e, per le voci della check list, `tipoDellaVoce()` /
+    `conData()` nella pagina (la voce si riconosce dalla radice in qualunque punto, la data
+    nel testo in qualunque forma `30/10/2027`, `30-10-27`, `30.10.2027`, e se manca si
+    aggiunge). Chi ne cambia una cambia le altre.
+    ⚠️ La scrittura delle correzioni usa la stessa ricerca ma **non è stata provata dal
+    vivo** con la versione 15: farlo vorrebbe dire cambiare una data vera e mandare una
+    notifica al gruppo. La prima correzione vera dalla check list va guardata.
   - ⚠️ **Ordine degli script**: `aggiorna_documenti.py` rilegge le date dal foglio
     `CONTROLLI OGNI CHECK LIST`, quindi va lanciato **prima** di `scadenze.py`, altrimenti
     riporta indietro le date già allineate. Al 27/09/2026 quel foglio ha ancora 31/10/2026
@@ -448,8 +480,9 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   dice (il backend scarterebbe la correzione in silenzio, che è peggio).
   - Il backend scrive nel gestionale come **seriale**, non come testo: il foglio è in locale
     `en_US`, e `02/09/2027` scritto come stringa ci finisce come **9 febbraio**.
-  - La riga si cerca per **targa + tipo**: i nomi dei mezzi nel gestionale sono scritti a mano
-    e cambiano grafia, la targa no.
+  - La riga si trova con le regole di `valutaRiga_()` (vedi sotto, *riconoscimento delle
+    righe*): la stessa riga da cui la pagina ha letto la data, così si corregge quello che si
+    è visto.
   - La notifica Telegram non ha un chat id fisso: legge il foglio `CODICI` del gestionale e
     manda ai chat del **Responsabile** di quella riga, come fa già `sendPerResponsible_()`
     del progetto `gestionale`. Se cambiate gruppo, cambia da solo.
@@ -729,9 +762,9 @@ lo stesso nome di oggi (`AAAA_MM_GG Mezzo.pdf`), e una riga va in un registro de
   e `clasp --user ambulanza update-deployment --versionNumber N <id produzione>`.
   ⚠️ **Mai `create-deployment`**: crea un URL nuovo, e la pagina continuerebbe a
   chiamare quello vecchio, fermo alla versione precedente. Al 28/10/2026 la produzione è
-  sulla **versione 14**: rispetto alla 13 (stesso codice della 11, 20/10/2026, *difetti
-  senza nota sul nome*) aggiunge le scadenze vive nella risposta `difetti`. La 12 era il
-  ramo monouso del 23/10. Per sapere cosa gira davvero si confronta il codice locale con
+  sulla **versione 15**: la 14 aggiunge le scadenze vive nella risposta `difetti`, la 15
+  il riconoscimento tollerante delle righe del gestionale. La 13 aveva lo stesso codice
+  della 11 (20/10/2026, *difetti senza nota sul nome*); la 12 era il ramo monouso del 23/10. Per sapere cosa gira davvero si confronta il codice locale con
   `script.googleapis.com/v1/projects/<id>/content?versionNumber=<n>`.
   ⚠️ Il registro delle **esecuzioni** (chi ha chiamato il backend e quando) da qui non si
   legge: il token di clasp non ha lo scope `script.processes`. Si guarda dall'editor,

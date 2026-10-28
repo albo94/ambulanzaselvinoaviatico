@@ -646,13 +646,15 @@
 
     /* prima i documenti e il vano guida: si controllano davanti, salendo */
     var scad = m.scadenze || {};
+    var usati = {};
     (m.documenti || []).forEach(function (s) {
       s.voci.forEach(function (v) {
         /* assicurazione, revisione e tagliando portano la scadenza dal gestionale:
-           una revisione scaduta si deve vedere prima di uscire, non dopo */
+           una revisione scaduta si deve vedere prima di uscire, non dopo.
+           Ogni tipo va alla prima voce che lo nomina, ovunque lo nomini */
         var q = null, t0 = null;
         for (var t in scad) {
-          if (v.toLowerCase().indexOf(t.toLowerCase()) === 0) { q = scad[t]; t0 = t; break; }
+          if (!usati[t] && tipoDellaVoce(v) === t) { q = scad[t]; t0 = t; usati[t] = true; break; }
         }
         lista.push({ p: trovaParte(s.titolo, ""), qta: null, nome: v,
                      scad: q, tipoScad: t0, scadNuova: null, stato: null, nota: "" });
@@ -1051,6 +1053,33 @@
      difetti, e qui prendono il posto della copia: nei dati (data e testo della
      voce) e, se la lista e' gia' a video, anche nella riga. Se la risposta non
      arriva resta la copia: meglio una data forse vecchia che nessuna. */
+  /* Quale scadenza nomina una voce, se ne nomina una. Si cerca la radice in
+     qualunque punto e senza badare a maiuscole o accenti: "Tagliando (annuale
+     scadenza ...)" e "Controllo tagliando" valgono uguale. Stesse radici del
+     backend (RADICI_TIPO in Codice.js). */
+  var RADICI_SCAD = {
+    Assicurazione: ["assicur", "rca", "polizz"],
+    Revisione: ["revision"],
+    Tagliando: ["tagliand"]
+  };
+  function tipoDellaVoce(v) {
+    var parole = piatto(v).split(/[^a-z0-9]+/);
+    for (var t in RADICI_SCAD) {
+      if (parole.some(function (p) {
+        return RADICI_SCAD[t].some(function (r) { return p.indexOf(r) === 0; });
+      })) return t;
+    }
+    return null;
+  }
+
+  /* La data dentro il testo della voce, in qualunque forma (30/10/2027,
+     30-10-27, 30.10.2027): si sostituisce; se il testo non ne ha, si aggiunge. */
+  var DATA_NEL_TESTO = /\b\d{1,2}[\/.\-]\d{1,2}[\/.\-](?:\d{4}|\d{2})\b/;
+  function conData(v, iso) {
+    return DATA_NEL_TESTO.test(v) ? v.replace(DATA_NEL_TESTO, itData(iso))
+                                  : v.replace(/\s+$/, "") + " (scadenza " + itData(iso) + ")";
+  }
+
   function aggiornaScadenze(quale, sc) {
     var m = DATI[quale];
     if (!m) return;
@@ -1058,10 +1087,12 @@
     Object.keys(sc).forEach(function (t) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(sc[t])) return;
       m.scadenze[t] = sc[t];
+      var fatto = false;   /* come in preparaLista: solo la prima voce del tipo */
       (m.documenti || []).forEach(function (s) {
         s.voci = s.voci.map(function (v) {
-          return v.toLowerCase().indexOf(t.toLowerCase()) === 0
-            ? v.replace(/\d{2}\/\d{2}\/\d{4}/, itData(sc[t])) : v;
+          if (fatto || tipoDellaVoce(v) !== t) return v;
+          fatto = true;
+          return conData(v, sc[t]);
         });
       });
     });
@@ -1072,7 +1103,7 @@
       var nuova = v.tipoScad && m.scadenze[v.tipoScad];
       if (!nuova || nuova === v.scad) return;
       v.scad = nuova;
-      v.nome = v.nome.replace(/\d{2}\/\d{2}\/\d{4}/, itData(nuova));
+      v.nome = conData(v.nome, nuova);
       if (v.scadNuova === nuova) v.scadNuova = null;
       var n = $("#voce" + i + " .voce-n");
       if (!n) return;
