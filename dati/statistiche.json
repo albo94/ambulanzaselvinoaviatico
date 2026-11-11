@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-11-10T02:43:15+01:00",
+ "aggiornato": "2026-11-11T02:43:22+01:00",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -1175,26 +1175,26 @@
     354,
     110,
     144,
-    28,
+    46,
     0
    ],
-   "totale": 2171,
+   "totale": 2189,
    "parziale": true
   }
  ],
  "tipologie": [
   {
+   "tipo": "Programmate",
+   "valori": [
+    412,
+    596
+   ]
+  },
+  {
    "tipo": "Manifestazioni",
    "valori": [
     422,
     586
-   ]
-  },
-  {
-   "tipo": "Programmate",
-   "valori": [
-    412,
-    578
    ]
   },
   {
@@ -1243,22 +1243,22 @@
   },
   {
    "anno": 2026,
-   "ore": 15123,
-   "oreTutti": 27476,
-   "giorni": 313,
-   "al": "2026-11-09"
+   "ore": 15168,
+   "oreTutti": 27548,
+   "giorni": 314,
+   "al": "2026-11-10"
   }
  ],
  "confronto": {
   "finoAMese": 11,
-  "giorno": 10,
+  "giorno": 11,
   "missioni": {
    "prec": 449,
    "corr": 468
   },
   "ore": {
    "prec": 1560,
-   "corr": 2171
+   "corr": 2189
   }
  }
 }
