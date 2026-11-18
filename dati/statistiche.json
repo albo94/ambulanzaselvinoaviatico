@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-11-17T02:43:17+01:00",
+ "aggiornato": "2026-11-18T02:43:24+01:00",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -1165,31 +1165,24 @@
   {
    "anno": 2026,
    "mesi": [
-    77,
-    161,
+    55,
+    101,
     164,
     187,
     159,
-    218,
-    570,
+    160,
+    303,
     354,
-    110,
-    144,
-    54,
+    114,
+    162,
+    51,
     0
    ],
-   "totale": 2197,
+   "totale": 1808,
    "parziale": true
   }
  ],
  "tipologie": [
-  {
-   "tipo": "Programmate",
-   "valori": [
-    412,
-    604
-   ]
-  },
   {
    "tipo": "Manifestazioni",
    "valori": [
@@ -1198,10 +1191,10 @@
    ]
   },
   {
-   "tipo": "Presidio territorio",
+   "tipo": "Programmate",
    "valori": [
-    271,
-    411
+    412,
+    467
    ]
   },
   {
@@ -1212,10 +1205,17 @@
    ]
   },
   {
+   "tipo": "Presidio territorio",
+   "valori": [
+    271,
+    201
+   ]
+  },
+  {
    "tipo": "Formazione",
    "valori": [
     209,
-    254
+    194
    ]
   },
   {
@@ -1223,6 +1223,20 @@
    "valori": [
     0,
     23
+   ]
+  },
+  {
+   "tipo": "RAPPR",
+   "valori": [
+    0,
+    15
+   ]
+  },
+  {
+   "tipo": "OSP",
+   "valori": [
+    0,
+    3
    ]
   },
   {
@@ -1243,22 +1257,22 @@
   },
   {
    "anno": 2026,
-   "ore": 15417,
-   "oreTutti": 28008,
-   "giorni": 320,
-   "al": "2026-11-16"
+   "ore": 15462,
+   "oreTutti": 28080,
+   "giorni": 321,
+   "al": "2026-11-17"
   }
  ],
  "confronto": {
   "finoAMese": 11,
-  "giorno": 17,
+  "giorno": 18,
   "missioni": {
    "prec": 449,
    "corr": 477
   },
   "ore": {
    "prec": 1560,
-   "corr": 2197
+   "corr": 1808
   }
  }
 }
