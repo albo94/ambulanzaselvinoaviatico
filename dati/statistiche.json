@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-11-19T02:43:19+01:00",
+ "aggiornato": "2026-11-20T02:43:11+01:00",
  "annoCorrente": 2026,
  "anni": [
   2019,
@@ -1257,15 +1257,15 @@
   },
   {
    "anno": 2026,
-   "ore": 15514,
-   "oreTutti": 28150,
-   "giorni": 322,
-   "al": "2026-11-18"
+   "ore": 15553,
+   "oreTutti": 28227,
+   "giorni": 323,
+   "al": "2026-11-19"
   }
  ],
  "confronto": {
   "finoAMese": 11,
-  "giorno": 19,
+  "giorno": 20,
   "missioni": {
    "prec": 449,
    "corr": 478
